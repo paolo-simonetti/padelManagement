@@ -29,11 +29,12 @@ public class Club {
 	@OneToMany(mappedBy="club")
 	private Set<Court> courts=new HashSet<>();
 	
+	
 	@OneToOne(fetch=FetchType.LAZY)
 	private Admin admin;
 	
 	@OneToMany(mappedBy="club")
-	private Set<Promotion> promotions=new HashSet<>();
+	private Set<Notice> notices=new HashSet<>();
 	
 	@OneToMany(mappedBy="club")
 	private Set<JoinProposal> joinProposals=new HashSet<>();
@@ -97,12 +98,12 @@ public class Club {
 		this.admin = admin;
 	}
 
-	public Set<Promotion> getPromotions() {
-		return promotions;
+	public Set<Notice> getNotices() {
+		return notices;
 	}
 
-	public void setPromotions(Set<Promotion> promotions) {
-		this.promotions = promotions;
+	public void setNotices(Set<Notice> notices) {
+		this.notices = notices;
 	}
 
 	public Set<JoinProposal> getJoinProposals() {
@@ -123,13 +124,13 @@ public class Club {
 		}
 	}
 	
-	public void addToPromotions(Promotion promotion) {
-		this.promotions.add(promotion);
+	public void addToNotices(Notice notice) {
+		this.notices.add(notice);
 	}
 	
-	public void removeFromPromotions(Promotion promotion) {
-		if (this.promotions.contains(promotion)) {
-			this.promotions.remove(promotion);
+	public void removeFromNotices(Notice notice) {
+		if (this.notices.contains(notice)) {
+			this.notices.remove(notice);
 		}
 	}
 

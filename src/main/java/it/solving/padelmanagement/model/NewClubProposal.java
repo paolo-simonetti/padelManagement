@@ -1,6 +1,7 @@
 package it.solving.padelmanagement.model;
 
-import java.sql.Blob;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -24,7 +25,7 @@ public class NewClubProposal {
 	private ProposalStatus proposalStatus;
 	
 	@Lob
-	private Blob logo;
+	private Set<Byte> logo=new HashSet<>();
 	
 	@ManyToOne(fetch=FetchType.LAZY)
 	private User creator;
@@ -53,11 +54,11 @@ public class NewClubProposal {
 		this.city = city;
 	}
 
-	public Blob getLogo() {
+	public Set<Byte> getLogo() {
 		return logo;
 	}
 
-	public void setLogo(Blob logo) {
+	public void setLogo(Set<Byte> logo) {
 		this.logo = logo;
 	}
 
@@ -77,7 +78,7 @@ public class NewClubProposal {
 		this.proposalStatus = proposalStatus;
 	}
 
-	public NewClubProposal(Long id, String name, String city, Blob logo, ProposalStatus proposalStatus) {
+	public NewClubProposal(Long id, String name, String city, Set<Byte> logo, ProposalStatus proposalStatus) {
 		super();
 		this.id = id;
 		this.name = name;

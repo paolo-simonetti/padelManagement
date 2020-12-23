@@ -52,6 +52,14 @@ public class Player extends User {
 		}
 	}
 
+	public Club getClub() {
+		return club;
+	}
+
+	public void setClub(Club club) {
+		this.club = club;
+	}
+
 	public Player() {
 		super();
 	}

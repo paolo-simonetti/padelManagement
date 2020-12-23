@@ -1,25 +1,26 @@
 package it.solving.padelmanagement.mapper;
 
 import java.time.LocalDate;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
-import it.solving.padelmanagement.dto.UserDTO;
-import it.solving.padelmanagement.dto.message.insert.UserInsertMessageDTO;
-import it.solving.padelmanagement.dto.message.update.UserUpdateMessageDTO;
-import it.solving.padelmanagement.model.User;
+import it.solving.padelmanagement.dto.PlayerDTO;
+import it.solving.padelmanagement.dto.message.insert.PlayerInsertMessageDTO;
+import it.solving.padelmanagement.dto.message.update.PlayerUpdateMessageDTO;
+import it.solving.padelmanagement.model.Player;
 
 @Component
-public class UserMapper extends AbstractMapper<User, UserDTO, UserInsertMessageDTO, UserUpdateMessageDTO> {
+public class PlayerMapper extends AbstractMapper<Player, PlayerDTO, PlayerInsertMessageDTO, PlayerUpdateMessageDTO> {
 
 	@Override
-	public UserDTO convertEntityToDTO(User entity) {
+	public PlayerDTO convertEntityToDTO(Player entity) {
 		if(entity==null) {
-			return null;
+			return null;			
 		}
 		
-		UserDTO dto=new UserDTO();
+		PlayerDTO dto=new PlayerDTO();
 		
 		if (entity.getId()!=null) {
 			dto.setId(entity.getId().toString());
@@ -49,26 +50,29 @@ public class UserMapper extends AbstractMapper<User, UserDTO, UserInsertMessageD
 			dto.setProPicFile(entity.getProPicFile());
 		}
 		
-		if(entity.getNewClubProposals()!=null && entity.getNewClubProposals().size()>0) {
-			entity.getNewClubProposals().stream().forEach(newClubProposal-> 
-				dto.addToNewClubProposalsIds(newClubProposal.getId().toString()));
+		if (entity.getLevel()!=null) {
+			dto.setLevel(entity.getLevel().toString());
 		}
 		
-		if(entity.getJoinProposals()!=null && entity.getJoinProposals().size()>0) {
-			entity.getJoinProposals().stream().forEach(joinProposal-> 
-				dto.addToJoinProposalsIds(joinProposal.getId().toString()));
+		if (entity.getClub()!=null) {
+			dto.setClubId(entity.getClub().getId().toString());
+		}
+		
+		if (entity.getMatches()!=null && entity.getMatches().size()>0) {
+			dto.setMatchesIds(entity.getMatches().stream().map(match->
+				match.getId().toString()).collect(Collectors.toSet()));
 		}
 		
 		return dto;
 	}
 
 	@Override
-	public User convertDTOToEntity(UserDTO dto) {
+	public Player convertDTOToEntity(PlayerDTO dto) {
 		if(dto==null) {
-			return null;			
+			return null;
 		}
 		
-		User entity=new User();
+		Player entity=new Player();
 		
 		if (StringUtils.isNotBlank(dto.getId())) {
 			entity.setId(Long.parseLong(dto.getId()));
@@ -98,16 +102,20 @@ public class UserMapper extends AbstractMapper<User, UserDTO, UserInsertMessageD
 			entity.setProPicFile(dto.getProPicFile());
 		}
 		
+		if (StringUtils.isNotBlank(dto.getLevel())) {
+			entity.setLevel(Integer.parseInt(dto.getLevel()));
+		}
+		
 		return entity;
 	}
 
 	@Override
-	public User convertInsertMessageDTOToEntity(UserInsertMessageDTO insertMessageDTO) {
+	public Player convertInsertMessageDTOToEntity(PlayerInsertMessageDTO insertMessageDTO) {
 		if(insertMessageDTO==null) {
 			return null;			
 		}
 		
-		User entity=new User();
+		Player entity=new Player();
 		
 		if(StringUtils.isNotBlank(insertMessageDTO.getName())) {
 			entity.setName(insertMessageDTO.getName());
@@ -129,16 +137,20 @@ public class UserMapper extends AbstractMapper<User, UserDTO, UserInsertMessageD
 			entity.setMobile(insertMessageDTO.getMobile());
 		}
 		
+		if(StringUtils.isNotBlank(insertMessageDTO.getLevel())) {
+			entity.setLevel(Integer.parseInt(insertMessageDTO.getLevel()));
+		}
+		
 		return entity;
 	}
 
 	@Override
-	public User convertUpdateMessageDTOToEntity(UserUpdateMessageDTO updateMessageDTO) {
+	public Player convertUpdateMessageDTOToEntity(PlayerUpdateMessageDTO updateMessageDTO) {
 		if(updateMessageDTO==null) {
 			return null;			
 		}
 		
-		User entity=new User();
+		Player entity=new Player();
 		
 		if(StringUtils.isNotBlank(updateMessageDTO.getId())) {
 			entity.setId(Long.parseLong(updateMessageDTO.getId()));
@@ -162,6 +174,10 @@ public class UserMapper extends AbstractMapper<User, UserDTO, UserInsertMessageD
 		
 		if(StringUtils.isNotBlank(updateMessageDTO.getMobile())) {
 			entity.setMobile(updateMessageDTO.getMobile());
+		}
+		
+		if(StringUtils.isNotBlank(updateMessageDTO.getLevel())) {
+			entity.setLevel(Integer.parseInt(updateMessageDTO.getLevel()));
 		}
 		
 		return entity;

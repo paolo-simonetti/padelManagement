@@ -5,22 +5,21 @@ import java.time.LocalDate;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
-import it.solving.padelmanagement.dto.UserDTO;
+import it.solving.padelmanagement.dto.AdminDTO;
 import it.solving.padelmanagement.dto.message.insert.UserInsertMessageDTO;
-import it.solving.padelmanagement.dto.message.update.UserUpdateMessageDTO;
-import it.solving.padelmanagement.model.User;
+import it.solving.padelmanagement.dto.message.update.AdminUpdateMessageDTO;
+import it.solving.padelmanagement.model.Admin;
 
 @Component
-public class UserMapper extends AbstractMapper<User, UserDTO, UserInsertMessageDTO, UserUpdateMessageDTO> {
+public class AdminMapper extends AbstractMapper<Admin, AdminDTO, UserInsertMessageDTO,AdminUpdateMessageDTO> {
 
 	@Override
-	public UserDTO convertEntityToDTO(User entity) {
+	public AdminDTO convertEntityToDTO(Admin entity) {
 		if(entity==null) {
-			return null;
+			return null;			
 		}
 		
-		UserDTO dto=new UserDTO();
-		
+		AdminDTO dto=new AdminDTO();
 		if (entity.getId()!=null) {
 			dto.setId(entity.getId().toString());
 		}
@@ -45,30 +44,20 @@ public class UserMapper extends AbstractMapper<User, UserDTO, UserInsertMessageD
 			dto.setMobile(entity.getMobile());
 		}
 		
-		if(entity.getProPicFile()!=null && entity.getProPicFile().size()>0) {
-			dto.setProPicFile(entity.getProPicFile());
-		}
-		
-		if(entity.getNewClubProposals()!=null && entity.getNewClubProposals().size()>0) {
-			entity.getNewClubProposals().stream().forEach(newClubProposal-> 
-				dto.addToNewClubProposalsIds(newClubProposal.getId().toString()));
-		}
-		
-		if(entity.getJoinProposals()!=null && entity.getJoinProposals().size()>0) {
-			entity.getJoinProposals().stream().forEach(joinProposal-> 
-				dto.addToJoinProposalsIds(joinProposal.getId().toString()));
+		if(entity.getClub()!=null) {
+			dto.setClubId(entity.getClub().getId().toString());
 		}
 		
 		return dto;
 	}
 
 	@Override
-	public User convertDTOToEntity(UserDTO dto) {
+	public Admin convertDTOToEntity(AdminDTO dto) {
 		if(dto==null) {
 			return null;			
 		}
 		
-		User entity=new User();
+		Admin entity=new Admin();
 		
 		if (StringUtils.isNotBlank(dto.getId())) {
 			entity.setId(Long.parseLong(dto.getId()));
@@ -94,20 +83,16 @@ public class UserMapper extends AbstractMapper<User, UserDTO, UserInsertMessageD
 			entity.setMobile(dto.getMobile());
 		}
 		
-		if (dto.getProPicFile()!=null && dto.getProPicFile().size()>0) {
-			entity.setProPicFile(dto.getProPicFile());
-		}
-		
 		return entity;
 	}
 
 	@Override
-	public User convertInsertMessageDTOToEntity(UserInsertMessageDTO insertMessageDTO) {
+	public Admin convertInsertMessageDTOToEntity(UserInsertMessageDTO insertMessageDTO) {
 		if(insertMessageDTO==null) {
 			return null;			
 		}
 		
-		User entity=new User();
+		Admin entity=new Admin();
 		
 		if(StringUtils.isNotBlank(insertMessageDTO.getName())) {
 			entity.setName(insertMessageDTO.getName());
@@ -133,12 +118,12 @@ public class UserMapper extends AbstractMapper<User, UserDTO, UserInsertMessageD
 	}
 
 	@Override
-	public User convertUpdateMessageDTOToEntity(UserUpdateMessageDTO updateMessageDTO) {
+	public Admin convertUpdateMessageDTOToEntity(AdminUpdateMessageDTO updateMessageDTO) {
 		if(updateMessageDTO==null) {
 			return null;			
 		}
 		
-		User entity=new User();
+		Admin entity=new Admin();
 		
 		if(StringUtils.isNotBlank(updateMessageDTO.getId())) {
 			entity.setId(Long.parseLong(updateMessageDTO.getId()));
@@ -167,4 +152,6 @@ public class UserMapper extends AbstractMapper<User, UserDTO, UserInsertMessageD
 		return entity;
 	}
 
+	
+	
 }

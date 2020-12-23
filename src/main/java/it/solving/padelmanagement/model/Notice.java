@@ -10,7 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
 @Entity
-public class Promotion {
+public class Notice {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -55,11 +55,11 @@ public class Promotion {
 		this.club = club;
 	}
 
-	private Promotion() {
+	public Notice() {
 		super();
 	}
 
-	private Promotion(Long id, String message, LocalDate creationDate, Club club) {
+	public Notice(Long id, String message, LocalDate creationDate, Club club) {
 		super();
 		this.id = id;
 		this.message = message;

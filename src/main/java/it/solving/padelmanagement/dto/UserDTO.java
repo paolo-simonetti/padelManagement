@@ -120,5 +120,21 @@ public class UserDTO {
 			this.joinProposalsIds.remove(id);			
 		}
 	}
+
+	public UserDTO(String id, String name, String surname, String dateOfBirth, String mailAddress, String mobile) {
+		super();
+		this.id = id;
+		this.name = name;
+		this.surname = surname;
+		this.dateOfBirth = dateOfBirth;
+		this.mailAddress = mailAddress;
+		this.mobile = mobile;
+	}
+
+	public UserDTO() {
+		super();
+	}
+	
+	
 	
 }

@@ -1,14 +1,15 @@
 package it.solving.padelmanagement.model;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.ManyToMany;
 
 @Entity
 public enum Slot {
@@ -51,9 +52,9 @@ public enum Slot {
 	
 	private Integer minute;
 	
-	@ManyToOne(fetch=FetchType.LAZY)
-	private Match match;
-	
+	@ManyToMany(mappedBy="slots")
+	private Set<Match> matches=new HashSet<>();
+		
 	Slot(Integer id, Integer hour, Integer minute) {
 		this.id=id;
 		this.hour=hour;
@@ -84,6 +85,20 @@ public enum Slot {
 		this.minute = minute;
 	}
 	
+	public Set<Match> getMatches() {
+		return matches;
+	}
+
+	public void addToMatches(Match match) {
+		this.matches.add(match);
+	}
+	
+	public void removeFromMatches(Match match) {
+		if(this.matches.contains(match)) {
+			this.matches.remove(match);
+		}
+	}
+
 	public static Map<Integer, Slot> idToSlotConversion = new HashMap<>();
 	
 	static {

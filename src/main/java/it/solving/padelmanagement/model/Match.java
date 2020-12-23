@@ -12,7 +12,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 
 @Entity
 public class Match {
@@ -34,7 +33,7 @@ public class Match {
 	@ManyToOne(fetch=FetchType.LAZY)
 	private Player creator;
 	
-	@OneToMany(mappedBy="match")
+	@ManyToMany(fetch=FetchType.LAZY)
 	private Set<Slot> slots=new HashSet<>();
 	
 	@ManyToOne(fetch=FetchType.LAZY)
