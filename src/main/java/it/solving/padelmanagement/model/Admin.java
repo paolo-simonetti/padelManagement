@@ -3,6 +3,7 @@ package it.solving.padelmanagement.model;
 import java.time.LocalDate;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.OneToOne;
@@ -10,7 +11,7 @@ import javax.persistence.OneToOne;
 @Entity
 public class Admin extends User {
 
-	@OneToOne(fetch=FetchType.LAZY)
+	@OneToOne(fetch=FetchType.LAZY, cascade=CascadeType.REMOVE)
 	private Club club;
 	
 	private static final Role role=Role.ROLE_ADMIN;

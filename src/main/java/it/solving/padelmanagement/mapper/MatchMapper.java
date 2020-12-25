@@ -52,8 +52,8 @@ public class MatchMapper extends AbstractMapper<Match, MatchDTO, MatchInsertMess
 					.map(slot->slot.getId().toString()).collect(Collectors.toSet()));
 		} 
 
-		if(entity.getClub()!=null) {
-			dto.setClubId(entity.getClub().getId().toString());
+		if(entity.getCourt()!=null) {
+			dto.setCourtId(entity.getCourt().getId().toString());
 		}
 		
 		return dto;

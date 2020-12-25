@@ -11,6 +11,8 @@ public class PlayerDTO extends UserDTO {
 	
 	private Set<String> matchesIds=new HashSet<>();
 	
+	private Set<String> matchesJoinedIds=new HashSet<>();
+	
 	private String clubId;
 
 	public String getLevel() {
@@ -41,6 +43,14 @@ public class PlayerDTO extends UserDTO {
 		return role;
 	}
 	
+	public Set<String> getMatchesJoinedIds() {
+		return matchesJoinedIds;
+	}
+
+	public void setMatchesJoinedIds(Set<String> matchesJoinedIds) {
+		this.matchesJoinedIds = matchesJoinedIds;
+	}
+
 	public void addToMatchesIds(String id) {
 		this.matchesIds.add(id);
 	}
@@ -51,6 +61,17 @@ public class PlayerDTO extends UserDTO {
 		}
 	}
 
+	public void addToMatchesJoinedIds(String id) {
+		this.matchesJoinedIds.add(id);
+	}
+	
+	public void removeFromMatchesJoinedIds(String id) {
+		if(this.matchesJoinedIds.contains(id)) {
+			this.matchesJoinedIds.remove(id);
+		}
+	}
+
+	
 	public PlayerDTO(String id, String name, String surname, String dateOfBirth, String mailAddress, String mobile,
 			String level, Set<String> matchesIds, String clubId) {
 		super(id, name, surname, dateOfBirth, mailAddress, mobile);

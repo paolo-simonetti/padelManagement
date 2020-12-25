@@ -63,6 +63,11 @@ public class PlayerMapper extends AbstractMapper<Player, PlayerDTO, PlayerInsert
 				match.getId().toString()).collect(Collectors.toSet()));
 		}
 		
+		if (entity.getMatchesJoined()!=null && entity.getMatchesJoined().size()>0) {
+			dto.setMatchesJoinedIds(entity.getMatchesJoined().stream().map(match->
+				match.getId().toString()).collect(Collectors.toSet()));
+		}
+		
 		return dto;
 	}
 

@@ -30,7 +30,7 @@ public class MatchInsertMessageDTO {
 	private Set<String> slotsIds=new HashSet<>();
 
 	@Positive
-	private String clubId;
+	private String courtId;
 
 	public String getDate() {
 		return date;
@@ -72,12 +72,12 @@ public class MatchInsertMessageDTO {
 		this.slotsIds = slotsIds;
 	}
 
-	public String getClubId() {
-		return clubId;
+	public String getCourtId() {
+		return courtId;
 	}
 
-	public void setClubId(String clubId) {
-		this.clubId = clubId;
+	public void setCourtId(String courtId) {
+		this.courtId = courtId;
 	}
 
 	public void addToSlotsIds(String id) {

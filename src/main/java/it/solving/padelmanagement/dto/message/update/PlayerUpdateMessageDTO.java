@@ -18,6 +18,8 @@ public class PlayerUpdateMessageDTO extends UserUpdateMessageDTO {
 	
 	private Set<String> matchesIds=new HashSet<>();
 
+	private Set<String> matchesJoinedIds=new HashSet<>();
+	
 	public String getLevel() {
 		return level;
 	}
@@ -36,6 +38,35 @@ public class PlayerUpdateMessageDTO extends UserUpdateMessageDTO {
 
 	public static String getRole() {
 		return role;
+	}
+
+	public Set<String> getMatchesJoinedIds() {
+		return matchesJoinedIds;
+	}
+
+	public void setMatchesJoinedIds(Set<String> matchesJoinedIds) {
+		this.matchesJoinedIds = matchesJoinedIds;
+	}
+	
+	public void addToMatchesIds(String id) {
+		this.matchesIds.add(id);
+	}
+	
+	public void removeFromMatchesIds(String id) {
+		if(this.matchesIds.contains(id)) {
+			this.matchesIds.remove(id);
+		}
+	}
+
+	
+	public void addToMatchesJoinedIds(String id) {
+		this.matchesIds.add(id);
+	}
+	
+	public void removeFromMatchesJoinedIds(String id) {
+		if(this.matchesIds.contains(id)) {
+			this.matchesIds.remove(id);
+		}
 	}
 
 	public PlayerUpdateMessageDTO(@NotBlank String id, @NotBlank String name, @NotBlank String surname,

@@ -33,12 +33,12 @@ public class Match {
 	@ManyToOne(fetch=FetchType.LAZY)
 	private Player creator;
 	
-	@ManyToMany(fetch=FetchType.LAZY)
+	@ManyToMany(fetch=FetchType.EAGER)
 	private Set<Slot> slots=new HashSet<>();
 	
 	@ManyToOne(fetch=FetchType.LAZY)
-	private Club club;
-
+	private Court court;
+	
 	public Long getId() {
 		return id;
 	}
@@ -94,15 +94,15 @@ public class Match {
 	public void setSlots(Set<Slot> slots) {
 		this.slots = slots;
 	}
-
-	public Club getClub() {
-		return club;
-	}
-
-	public void setClub(Club club) {
-		this.club = club;
-	}
 	
+	public Court getCourt() {
+		return court;
+	}
+
+	public void setCourt(Court court) {
+		this.court = court;
+	}
+
 	public void addToOtherPlayers(Player player) {
 		this.otherPlayers.add(player);
 	}

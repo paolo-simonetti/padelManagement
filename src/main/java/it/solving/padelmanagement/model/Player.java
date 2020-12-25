@@ -6,6 +6,7 @@ import java.util.Set;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
@@ -18,6 +19,9 @@ public class Player extends User {
 	
 	@OneToMany(mappedBy="creator")
 	private Set<Match> matches=new HashSet<>();
+	
+	@ManyToMany(mappedBy="otherPlayers")
+	private Set<Match> matchesJoined=new HashSet<>();
 	
 	@ManyToOne(fetch=FetchType.LAZY)
 	private Club club;
@@ -41,6 +45,14 @@ public class Player extends User {
 	public void setMatches(Set<Match> matches) {
 		this.matches = matches;
 	}
+	
+	public Set<Match> getMatchesJoined() {
+		return matchesJoined;
+	}
+
+	public void setMatchesJoined(Set<Match> matchesJoined) {
+		this.matchesJoined = matchesJoined;
+	}
 
 	public void addToMatches(Match match) {
 		this.matches.add(match);
@@ -52,6 +64,17 @@ public class Player extends User {
 		}
 	}
 
+	public void addToMatchesJoined(Match match) {
+		this.matchesJoined.add(match);
+	}
+	
+	public void removeFromMatchesJoined(Match match) {
+		if(this.matchesJoined.contains(match)) {
+			this.matchesJoined.remove(match);
+		}
+	}
+
+	
 	public Club getClub() {
 		return club;
 	}

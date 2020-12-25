@@ -1,7 +1,12 @@
 package it.solving.padelmanagement.dto.message.update;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Positive;
+
+import it.solving.padelmanagement.model.Match;
 
 public class CourtUpdateMessageDTO {
 
@@ -15,6 +20,8 @@ public class CourtUpdateMessageDTO {
 	@NotBlank
 	@Positive
 	private String clubId;
+	
+	private Set<String> matchesIds=new HashSet<>();
 
 	public String getId() {
 		return id;
@@ -38,6 +45,24 @@ public class CourtUpdateMessageDTO {
 
 	public void setClubId(String clubId) {
 		this.clubId = clubId;
+	}
+
+	public void addToMatchesIds(String matchId) {
+		this.matchesIds.add(matchId);
+	}
+	
+	public void removeFromMatches(String matchId) {
+		if (this.matchesIds.contains(matchId)) {
+			this.matchesIds.remove(matchId);
+		}
+	}
+	
+	public Set<String> getMatchesIds() {
+		return matchesIds;
+	}
+
+	public void setMatchesIds(Set<String> matchesIds) {
+		this.matchesIds = matchesIds;
 	}
 
 	public CourtUpdateMessageDTO(@NotBlank @Positive String id, @NotBlank String name,

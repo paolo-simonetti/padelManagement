@@ -7,11 +7,11 @@ import org.springframework.stereotype.Component;
 
 import it.solving.padelmanagement.dto.AdminDTO;
 import it.solving.padelmanagement.dto.message.insert.UserInsertMessageDTO;
-import it.solving.padelmanagement.dto.message.update.AdminUpdateMessageDTO;
+import it.solving.padelmanagement.dto.message.update.UserUpdateMessageDTO;
 import it.solving.padelmanagement.model.Admin;
 
 @Component
-public class AdminMapper extends AbstractMapper<Admin, AdminDTO, UserInsertMessageDTO,AdminUpdateMessageDTO> {
+public class AdminMapper extends AbstractMapper<Admin, AdminDTO, UserInsertMessageDTO,UserUpdateMessageDTO> {
 
 	@Override
 	public AdminDTO convertEntityToDTO(Admin entity) {
@@ -118,7 +118,7 @@ public class AdminMapper extends AbstractMapper<Admin, AdminDTO, UserInsertMessa
 	}
 
 	@Override
-	public Admin convertUpdateMessageDTOToEntity(AdminUpdateMessageDTO updateMessageDTO) {
+	public Admin convertUpdateMessageDTOToEntity(UserUpdateMessageDTO updateMessageDTO) {
 		if(updateMessageDTO==null) {
 			return null;			
 		}

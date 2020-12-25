@@ -11,7 +11,7 @@ public class CourtInsertMessageDTO {
 	@NotBlank
 	@Positive
 	private String clubId;
-
+	
 	public String getName() {
 		return name;
 	}

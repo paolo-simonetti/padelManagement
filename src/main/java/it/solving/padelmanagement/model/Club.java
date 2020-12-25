@@ -3,6 +3,7 @@ package it.solving.padelmanagement.model;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -26,20 +27,20 @@ public class Club {
 	@Lob
 	private Set<Byte> logo=new HashSet<>();
 	
-	@OneToMany(mappedBy="club")
+	@OneToMany(mappedBy="club", cascade=CascadeType.REMOVE)
 	private Set<Court> courts=new HashSet<>();
 	
 	
-	@OneToOne(fetch=FetchType.LAZY)
+	@OneToOne(fetch=FetchType.LAZY, orphanRemoval=true)
 	private Admin admin;
 	
-	@OneToMany(mappedBy="club")
+	@OneToMany(mappedBy="club", cascade=CascadeType.REMOVE)
 	private Set<Notice> notices=new HashSet<>();
 	
-	@OneToMany(mappedBy="club")
+	@OneToMany(mappedBy="club", cascade=CascadeType.REMOVE)
 	private Set<JoinProposal> joinProposals=new HashSet<>();
 
-	@OneToMany(mappedBy="club") 
+	@OneToMany(mappedBy="club", cascade=CascadeType.REMOVE) 
 	private Set<Player> players=new HashSet<>();
 	
 	public Long getId() {

@@ -19,7 +19,7 @@ public class MatchDTO {
 
 	private Set<String> slotsIds=new HashSet<>();
 
-	private String clubId;
+	private String courtId;
 
 	public String getId() {
 		return id;
@@ -77,12 +77,12 @@ public class MatchDTO {
 		this.slotsIds = slotsIds;
 	}
 
-	public String getClubId() {
-		return clubId;
+	public String getCourtId() {
+		return courtId;
 	}
 
-	public void setClubId(String clubId) {
-		this.clubId = clubId;
+	public void setCourtId(String courtId) {
+		this.courtId = courtId;
 	}
 
 	public void addToOtherPlayersIds(String id) {

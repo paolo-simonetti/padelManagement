@@ -35,7 +35,7 @@ public class MatchUpdateMessageDTO {
 	private Set<String> slotsIds=new HashSet<>();
 
 	@Positive
-	private String clubId;
+	private String courtId;
 
 	public String getId() {
 		return id;
@@ -93,12 +93,12 @@ public class MatchUpdateMessageDTO {
 		this.slotsIds = slotsIds;
 	}
 
-	public String getClubId() {
-		return clubId;
+	public String getCourtId() {
+		return courtId;
 	}
 
-	public void setClubId(String clubId) {
-		this.clubId = clubId;
+	public void setCourtId(String courtId) {
+		this.courtId = courtId;
 	}
 
 	public void addToOtherPlayersIds(String id) {
