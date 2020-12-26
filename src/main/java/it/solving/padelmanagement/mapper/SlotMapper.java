@@ -1,5 +1,6 @@
 package it.solving.padelmanagement.mapper;
 
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
@@ -39,6 +40,10 @@ public class SlotMapper {
 		return dto;
 	}
 	
+	public Set<SlotDTO> convertEntityToDTO (Set<Slot> entities) {
+		return entities.stream().map(this::convertEntityToDTO).collect(Collectors.toSet());
+	}
+	
 	public Slot convertDTOToEntity(SlotDTO dto) {
 		if(dto==null) {
 			return null;
@@ -53,6 +58,11 @@ public class SlotMapper {
 		}
 		
 	}
+
+	public Set<Slot> convertDTOToEntity (Set<SlotDTO> dtos) {
+		return dtos.stream().map(this::convertDTOToEntity).collect(Collectors.toSet());
+	}
+
 	
 	public Slot convertUpdateMessageDTOToEntity(SlotUpdateMessageDTO updateMessageDTO) {
 		if(updateMessageDTO==null) {

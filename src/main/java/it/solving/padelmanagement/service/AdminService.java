@@ -33,10 +33,15 @@ public class AdminService {
 	@Autowired
 	private ClubMapper clubMapper;
 	
+	@Autowired
+	private UserService userService;
 	
 	public void insert (UserInsertMessageDTO adminInsertMessageDTO, ClubInsertMessageDTO clubInsertMessageDTO) {
 		Admin admin=adminMapper.convertInsertMessageDTOToEntity(adminInsertMessageDTO);
 		Club club=clubMapper.convertInsertMessageDTOToEntity(clubInsertMessageDTO);		
+		// Rimuovo l'admin dalla tabella User
+		userService.delete(admin.getId());
+		// Imposto il club all'admin e salvo tutto nel contesto di persistenza
 		admin.setClub(club);
 		club.setAdmin(admin);
 		clubRepository.save(club);

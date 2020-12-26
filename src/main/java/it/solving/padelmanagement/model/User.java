@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -15,7 +16,7 @@ import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 
 @Entity
-@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+@Inheritance(strategy = InheritanceType.JOINED)
 public class User {
 
 	@Id
@@ -37,11 +38,11 @@ public class User {
 	@Lob
 	protected Set<Byte> proPicFile = new HashSet<>();
 		
-	@OneToMany(fetch=FetchType.LAZY)
+	@OneToMany(fetch=FetchType.LAZY, cascade=CascadeType.REMOVE)
 	private Set<NewClubProposal> newClubProposals=new HashSet<>();
 	
 	
-	@OneToMany(mappedBy="applicant")
+	@OneToMany(mappedBy="applicant", cascade=CascadeType.REMOVE)
 	private Set<JoinProposal> joinProposals=new HashSet<>();
 
 

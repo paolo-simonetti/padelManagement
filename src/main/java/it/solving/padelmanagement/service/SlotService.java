@@ -45,5 +45,8 @@ public class SlotService {
 		return slotRepository.findByIdWithMatches(id).orElse(null);
 	}
 	
+	public Set<SlotDTO> findAllWithMatches() {
+		return slotMapper.convertEntityToDTO(slotRepository.findAllWithMatches().stream().collect(Collectors.toSet()));
+	}
 	
 }
