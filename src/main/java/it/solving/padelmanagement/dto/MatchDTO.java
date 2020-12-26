@@ -104,7 +104,7 @@ public class MatchDTO {
 	}
 
 	public MatchDTO(String id, String date, String payed, String missingPlayers, 
-			String creatorId, Set<String> slotsIds, String clubId) {
+			String creatorId, Set<String> slotsIds, String courtId) {
 		super();
 		this.id = id;
 		this.date = date;
@@ -112,7 +112,7 @@ public class MatchDTO {
 		this.missingPlayers = missingPlayers;
 		this.creatorId = creatorId;
 		this.slotsIds = slotsIds;
-		this.clubId = clubId;
+		this.courtId = courtId;
 	}
 
 	public MatchDTO() {

@@ -46,7 +46,7 @@ public class PlayerMapper extends AbstractMapper<Player, PlayerDTO, PlayerInsert
 			dto.setMobile(entity.getMobile());
 		}
 		
-		if(entity.getProPicFile()!=null && entity.getProPicFile().size()>0) {
+		if(entity.getProPicFile()!=null) {
 			dto.setProPicFile(entity.getProPicFile());
 		}
 		
@@ -103,7 +103,7 @@ public class PlayerMapper extends AbstractMapper<Player, PlayerDTO, PlayerInsert
 			entity.setMobile(dto.getMobile());
 		}
 		
-		if (dto.getProPicFile()!=null && dto.getProPicFile().size()>0) {
+		if (dto.getProPicFile()!=null) {
 			entity.setProPicFile(dto.getProPicFile());
 		}
 		

@@ -1,5 +1,6 @@
 package it.solving.padelmanagement.dto;
 
+import java.sql.Blob;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -15,11 +16,11 @@ public class UserDTO {
 	
 	protected String mailAddress;
 		
-	protected static final String role="guest";
+	private String role;
 	
 	protected String mobile;
 	
-	protected Set<Byte> proPicFile = new HashSet<>();
+	protected Blob proPicFile;
 	
 	private Set<String> newClubProposalsIds=new HashSet<>();
 	
@@ -64,6 +65,14 @@ public class UserDTO {
 	public void setMailAddress(String mailAddress) {
 		this.mailAddress = mailAddress;
 	}
+	
+	public void setRole(String role) {
+		this.role = role;
+	}
+	
+	public String getRole() {
+		return role;
+	}
 
 	public String getMobile() {
 		return mobile;
@@ -73,11 +82,11 @@ public class UserDTO {
 		this.mobile = mobile;
 	}
 
-	public Set<Byte> getProPicFile() {
+	public Blob getProPicFile() {
 		return proPicFile;
 	}
 
-	public void setProPicFile(Set<Byte> proPicFile) {
+	public void setProPicFile(Blob proPicFile) {
 		this.proPicFile = proPicFile;
 	}
 
@@ -97,9 +106,6 @@ public class UserDTO {
 		this.joinProposalsIds = joinProposalsIds;
 	}
 
-	public static String getRole() {
-		return role;
-	}
 	
 	public void addToNewClubProposalsIds(String id) {
 		this.newClubProposalsIds.add(id);
@@ -121,13 +127,15 @@ public class UserDTO {
 		}
 	}
 
-	public UserDTO(String id, String name, String surname, String dateOfBirth, String mailAddress, String mobile) {
+	public UserDTO(String id, String name, String surname, String dateOfBirth, String mailAddress, String role,
+			String mobile) {
 		super();
 		this.id = id;
 		this.name = name;
 		this.surname = surname;
 		this.dateOfBirth = dateOfBirth;
 		this.mailAddress = mailAddress;
+		this.role=role;
 		this.mobile = mobile;
 	}
 

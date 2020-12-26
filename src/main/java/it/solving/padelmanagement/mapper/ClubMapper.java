@@ -33,7 +33,7 @@ public class ClubMapper extends AbstractMapper<Club, ClubDTO, ClubInsertMessageD
 			dto.setCity(entity.getCity());
 		}
 		
-		if(entity.getLogo()!=null && entity.getLogo().size()>0) {
+		if(entity.getLogo()!=null) {
 			dto.setLogo(entity.getLogo());
 		}
 		
@@ -80,7 +80,7 @@ public class ClubMapper extends AbstractMapper<Club, ClubDTO, ClubInsertMessageD
 			entity.setCity(dto.getCity());
 		}
 		
-		if(dto.getLogo()!=null && dto.getLogo().size()>0) {
+		if(dto.getLogo()!=null) {
 			entity.setLogo(dto.getLogo());
 		}
 				
@@ -103,7 +103,7 @@ public class ClubMapper extends AbstractMapper<Club, ClubDTO, ClubInsertMessageD
 			entity.setCity(insertMessageDTO.getCity());
 		}
 		
-		if(insertMessageDTO.getLogo()!=null && insertMessageDTO.getLogo().size()>0) {
+		if(insertMessageDTO.getLogo()!=null) {
 			entity.setLogo(insertMessageDTO.getLogo());
 		}
 		
@@ -130,7 +130,7 @@ public class ClubMapper extends AbstractMapper<Club, ClubDTO, ClubInsertMessageD
 			entity.setCity(updateMessageDTO.getCity());
 		}
 		
-		if(updateMessageDTO.getLogo()!=null && updateMessageDTO.getLogo().size()>0) {
+		if(updateMessageDTO.getLogo()!=null) {
 			entity.setLogo(updateMessageDTO.getLogo());
 		}
 				

@@ -1,5 +1,6 @@
 package it.solving.padelmanagement.model;
 
+import java.sql.Blob;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -25,11 +26,10 @@ public class Club {
 	private String city;
 	
 	@Lob
-	private Set<Byte> logo=new HashSet<>();
+	private Blob logo;
 	
 	@OneToMany(mappedBy="club", cascade=CascadeType.REMOVE)
 	private Set<Court> courts=new HashSet<>();
-	
 	
 	@OneToOne(fetch=FetchType.LAZY, orphanRemoval=true)
 	private Admin admin;
@@ -67,11 +67,11 @@ public class Club {
 		this.city = city;
 	}
 
-	public Set<Byte> getLogo() {
+	public Blob getLogo() {
 		return logo;
 	}
 
-	public void setLogo(Set<Byte> logo) {
+	public void setLogo(Blob logo) {
 		this.logo = logo;
 	}
 
@@ -155,7 +155,7 @@ public class Club {
 		}
 	}
 	
-	public Club(Long id, String name, String city, Set<Byte> logo, Admin admin) {
+	public Club(Long id, String name, String city, Blob logo, Admin admin) {
 		super();
 		this.id = id;
 		this.name = name;

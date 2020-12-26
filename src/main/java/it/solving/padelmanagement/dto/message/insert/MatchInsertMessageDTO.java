@@ -89,14 +89,14 @@ public class MatchInsertMessageDTO {
 	}
 
 	public MatchInsertMessageDTO(@Future String date, @AssertFalse String payed, @Min(0) @Max(3) String missingPlayers,
-			@Positive String creatorId, @Size(min = 3, max = 28) Set<String> slotsIds, @Positive String clubId) {
+			@Positive String creatorId, @Size(min = 3, max = 28) Set<String> slotsIds, @Positive String courtId) {
 		super();
 		this.date = date;
 		this.payed = payed;
 		this.missingPlayers = missingPlayers;
 		this.creatorId = creatorId;
 		this.slotsIds = slotsIds;
-		this.clubId = clubId;
+		this.courtId = courtId;
 	}
 
 	public MatchInsertMessageDTO() {

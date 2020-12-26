@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.Query;
 
 import it.solving.padelmanagement.model.Slot;
 
+
+
 public interface SlotRepository extends JpaRepository<Slot, Integer> {
 	
 	@Query("from Slot s left join fetch s.matches m where s.id=?1")

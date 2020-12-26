@@ -121,7 +121,7 @@ public class MatchUpdateMessageDTO {
 
 	public MatchUpdateMessageDTO(@Positive String id, @FutureOrPresent String date, String payed,
 			@Min(0) @Max(3) String missingPlayers, @Min(0) @Max(3) Set<String> otherPlayersIds,
-			@Positive String creatorId, @Size(min = 3, max = 28) Set<String> slotsIds, @Positive String clubId) {
+			@Positive String creatorId, @Size(min = 3, max = 28) Set<String> slotsIds, @Positive String courtId) {
 		super();
 		this.id = id;
 		this.date = date;
@@ -130,7 +130,7 @@ public class MatchUpdateMessageDTO {
 		this.otherPlayersIds = otherPlayersIds;
 		this.creatorId = creatorId;
 		this.slotsIds = slotsIds;
-		this.clubId = clubId;
+		this.courtId = courtId;
 	}
 
 	public MatchUpdateMessageDTO() {

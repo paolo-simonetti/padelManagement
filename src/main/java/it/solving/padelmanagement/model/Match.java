@@ -26,15 +26,16 @@ public class Match {
 	
 	private Integer missingPlayers;
 	
-	@ManyToMany(fetch=FetchType.LAZY)
+	@ManyToMany
 	@JoinTable(name="match_players")
 	private Set<Player> otherPlayers=new HashSet<>();
 	
 	@ManyToOne(fetch=FetchType.LAZY)
 	private Player creator;
 	
-	@ManyToMany(fetch=FetchType.EAGER)
-	private Set<Slot> slots=new HashSet<>();
+	@ManyToMany
+	@JoinTable(name="match_slots")
+	private Set<Slot> slots= new HashSet<>();
 	
 	@ManyToOne(fetch=FetchType.LAZY)
 	private Court court;
@@ -86,7 +87,7 @@ public class Match {
 	public void setCreator(Player creator) {
 		this.creator = creator;
 	}
-
+	
 	public Set<Slot> getSlots() {
 		return slots;
 	}
@@ -94,7 +95,7 @@ public class Match {
 	public void setSlots(Set<Slot> slots) {
 		this.slots = slots;
 	}
-	
+
 	public Court getCourt() {
 		return court;
 	}
@@ -118,8 +119,8 @@ public class Match {
 	}
 
 	public void removeFromSlots(Slot slot) {
-		if(this.slots.contains(slot)) {
-			this.slots.remove(slot);			
+		if (this.slots.contains(slot)) {
+			this.slots.remove(slot);
 		}
 	}
 
@@ -134,6 +135,5 @@ public class Match {
 	public Match() {
 		super();
 	}
-	
 	
 }

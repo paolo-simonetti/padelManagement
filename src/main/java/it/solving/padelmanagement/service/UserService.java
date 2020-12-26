@@ -13,6 +13,7 @@ import it.solving.padelmanagement.dto.message.update.UserUpdateMessageDTO;
 import it.solving.padelmanagement.mapper.UserMapper;
 import it.solving.padelmanagement.model.JoinProposal;
 import it.solving.padelmanagement.model.NewClubProposal;
+import it.solving.padelmanagement.model.Role;
 import it.solving.padelmanagement.model.User;
 import it.solving.padelmanagement.repository.JoinProposalRepository;
 import it.solving.padelmanagement.repository.NewClubProposalRepository;
@@ -98,6 +99,10 @@ public class UserService {
 	
 	public Set<UserDTO> findAll() {
 		return userMapper.convertEntityToDTO(userRepository.findAll().stream().collect(Collectors.toSet()));
+	}
+	
+	public boolean isSuperAdminPresent() {
+		return userRepository.findByRole(Role.ROLE_SUPER_ADMIN).isPresent();
 	}
 	
 }

@@ -40,7 +40,7 @@ public class SlotService {
 		}
 		slotRepository.save(slotMapper.convertDTOToEntity(slotDTO));
 	}
-	
+		
 	public Slot findByIdWithMatches(Integer id) {
 		return slotRepository.findByIdWithMatches(id).orElse(null);
 	}

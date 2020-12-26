@@ -1,7 +1,6 @@
 package it.solving.padelmanagement.dto.message.insert;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.sql.Blob;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
@@ -14,8 +13,7 @@ public class ClubInsertMessageDTO {
 	@NotBlank
 	private String city;
 	
-	@NotEmpty
-	private Set<Byte> logo=new HashSet<>();
+	private Blob logo;
 
 	public String getName() {
 		return name;
@@ -32,16 +30,16 @@ public class ClubInsertMessageDTO {
 	public void setCity(String city) {
 		this.city = city;
 	}
-
-	public Set<Byte> getLogo() {
+	
+	public Blob getLogo() {
 		return logo;
 	}
 
-	public void setLogo(Set<Byte> logo) {
+	public void setLogo(Blob logo) {
 		this.logo = logo;
 	}
 
-	public ClubInsertMessageDTO(@NotBlank String name, @NotBlank String city, @NotEmpty Set<Byte> logo) {
+	public ClubInsertMessageDTO(@NotBlank String name, @NotBlank String city, @NotEmpty Blob logo) {
 		super();
 		this.name = name;
 		this.city = city;

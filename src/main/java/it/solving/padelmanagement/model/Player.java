@@ -1,6 +1,5 @@
 package it.solving.padelmanagement.model;
 
-import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -32,10 +31,6 @@ public class Player extends User {
 
 	public void setLevel(Integer level) {
 		this.level = level;
-	}
-
-	public static Role getRole() {
-		return role;
 	}
 
 	public Set<Match> getMatches() {
@@ -86,14 +81,5 @@ public class Player extends User {
 	public Player() {
 		super();
 	}
-
-	public Player(Long id, String name, String surname, LocalDate dateOfBirth, String mailAddress, String mobile,
-			Set<Byte> proPicFile, Integer level) {
-		super(id, name, surname, dateOfBirth, mailAddress, mobile, proPicFile);
-		this.level=level;
-	}
-	
-
-	
 	
 }

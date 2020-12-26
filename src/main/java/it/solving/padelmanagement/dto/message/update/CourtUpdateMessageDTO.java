@@ -6,8 +6,6 @@ import java.util.Set;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Positive;
 
-import it.solving.padelmanagement.model.Match;
-
 public class CourtUpdateMessageDTO {
 
 	@NotBlank

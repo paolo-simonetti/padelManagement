@@ -1,5 +1,6 @@
 package it.solving.padelmanagement.dto.message.update;
 
+import java.sql.Blob;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -29,7 +30,7 @@ public class UserUpdateMessageDTO {
 	@NotBlank
 	protected String mobile;
 	
-	protected Set<Byte> proPicFile = new HashSet<>();
+	protected Blob proPicFile;
 	
 	private Set<String> newClubProposalsIds=new HashSet<>();
 	
@@ -83,11 +84,11 @@ public class UserUpdateMessageDTO {
 		this.mobile = mobile;
 	}
 
-	public Set<Byte> getProPicFile() {
+	public Blob getProPicFile() {
 		return proPicFile;
 	}
 
-	public void setProPicFile(Set<Byte> proPicFile) {
+	public void setProPicFile(Blob proPicFile) {
 		this.proPicFile = proPicFile;
 	}
 

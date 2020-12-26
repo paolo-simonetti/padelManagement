@@ -1,5 +1,6 @@
 package it.solving.padelmanagement.dto;
 
+import java.sql.Blob;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -11,7 +12,7 @@ public class ClubDTO {
 	
 	private String city;
 	
-	private Set<Byte> logo=new HashSet<>();
+	private Blob logo;
 	
 	private Set<String> courtsIds=new HashSet<>();
 	
@@ -46,12 +47,12 @@ public class ClubDTO {
 	public void setCity(String city) {
 		this.city = city;
 	}
-
-	public Set<Byte> getLogo() {
+	
+	public Blob getLogo() {
 		return logo;
 	}
 
-	public void setLogo(Set<Byte> logo) {
+	public void setLogo(Blob logo) {
 		this.logo = logo;
 	}
 
@@ -135,7 +136,7 @@ public class ClubDTO {
 		}
 	}
 
-	public ClubDTO(String id, String name, String city, Set<Byte> logo) {
+	public ClubDTO(String id, String name, String city, Blob logo) {
 		super();
 		this.id = id;
 		this.name = name;

@@ -39,9 +39,6 @@ public class PlayerDTO extends UserDTO {
 		this.clubId = clubId;
 	}
 
-	public static String getRole() {
-		return role;
-	}
 	
 	public Set<String> getMatchesJoinedIds() {
 		return matchesJoinedIds;
@@ -69,19 +66,6 @@ public class PlayerDTO extends UserDTO {
 		if(this.matchesJoinedIds.contains(id)) {
 			this.matchesJoinedIds.remove(id);
 		}
-	}
-
-	
-	public PlayerDTO(String id, String name, String surname, String dateOfBirth, String mailAddress, String mobile,
-			String level, Set<String> matchesIds, String clubId) {
-		super(id, name, surname, dateOfBirth, mailAddress, mobile);
-		this.level = level;
-		this.matchesIds = matchesIds;
-		this.clubId = clubId;
-	}
-
-	public PlayerDTO(String id, String name, String surname, String dateOfBirth, String mailAddress, String mobile) {
-		super(id, name, surname, dateOfBirth, mailAddress, mobile);
 	}
 
 	public PlayerDTO() {

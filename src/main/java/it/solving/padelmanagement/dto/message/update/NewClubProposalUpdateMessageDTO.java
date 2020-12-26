@@ -1,10 +1,8 @@
 package it.solving.padelmanagement.dto.message.update;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.sql.Blob;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Positive;
 
 public class NewClubProposalUpdateMessageDTO {
@@ -21,8 +19,7 @@ public class NewClubProposalUpdateMessageDTO {
 	@NotBlank
 	private String proposalStatus;
 	
-	@NotEmpty
-	private Set<Byte> logo=new HashSet<>();
+	private Blob logo;
 	
 	@Positive
 	private String creatorId;
@@ -58,12 +55,12 @@ public class NewClubProposalUpdateMessageDTO {
 	public void setProposalStatus(String proposalStatus) {
 		this.proposalStatus = proposalStatus;
 	}
-
-	public Set<Byte> getLogo() {
+	
+	public Blob getLogo() {
 		return logo;
 	}
 
-	public void setLogo(Set<Byte> logo) {
+	public void setLogo(Blob logo) {
 		this.logo = logo;
 	}
 
@@ -76,7 +73,7 @@ public class NewClubProposalUpdateMessageDTO {
 	}
 
 	public NewClubProposalUpdateMessageDTO(@Positive String id, @NotBlank String name, @NotBlank String city,
-			@NotBlank String proposalStatus, @NotEmpty Set<Byte> logo, @Positive String creatorId) {
+			@NotBlank String proposalStatus, Blob logo, @Positive String creatorId) {
 		super();
 		this.id = id;
 		this.name = name;

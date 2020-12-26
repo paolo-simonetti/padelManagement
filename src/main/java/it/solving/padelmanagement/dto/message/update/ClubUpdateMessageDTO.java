@@ -1,5 +1,6 @@
 package it.solving.padelmanagement.dto.message.update;
 
+import java.sql.Blob;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -16,7 +17,7 @@ public class ClubUpdateMessageDTO {
 	@NotBlank
 	private String city;
 	
-	private Set<Byte> logo=new HashSet<>();
+	private Blob logo;
 	
 	private Set<String> courtsIds=new HashSet<>();
 	
@@ -53,11 +54,11 @@ public class ClubUpdateMessageDTO {
 		this.city = city;
 	}
 
-	public Set<Byte> getLogo() {
+	public Blob getLogo() {
 		return logo;
 	}
 
-	public void setLogo(Set<Byte> logo) {
+	public void setLogo(Blob logo) {
 		this.logo = logo;
 	}
 
@@ -101,7 +102,7 @@ public class ClubUpdateMessageDTO {
 		this.playersIds = playersIds;
 	}
 
-	public ClubUpdateMessageDTO(@NotBlank String id, @NotBlank String name, @NotBlank String city, Set<Byte> logo) {
+	public ClubUpdateMessageDTO(@NotBlank String id, @NotBlank String name, @NotBlank String city, Blob logo) {
 		super();
 		this.id = id;
 		this.name = name;

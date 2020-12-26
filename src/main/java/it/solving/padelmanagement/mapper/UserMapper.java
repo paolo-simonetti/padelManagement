@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 import it.solving.padelmanagement.dto.UserDTO;
 import it.solving.padelmanagement.dto.message.insert.UserInsertMessageDTO;
 import it.solving.padelmanagement.dto.message.update.UserUpdateMessageDTO;
+import it.solving.padelmanagement.model.Role;
 import it.solving.padelmanagement.model.User;
 
 @Component
@@ -45,8 +46,12 @@ public class UserMapper extends AbstractMapper<User, UserDTO, UserInsertMessageD
 			dto.setMobile(entity.getMobile());
 		}
 		
-		if(entity.getProPicFile()!=null && entity.getProPicFile().size()>0) {
+		if(entity.getProPicFile()!=null) {
 			dto.setProPicFile(entity.getProPicFile());
+		}
+		
+		if(entity.getRole()!=null) {
+			dto.setRole(entity.getRole().getStringRole());
 		}
 		
 		if(entity.getNewClubProposals()!=null && entity.getNewClubProposals().size()>0) {
@@ -89,12 +94,16 @@ public class UserMapper extends AbstractMapper<User, UserDTO, UserInsertMessageD
 		if (StringUtils.isNotBlank(dto.getMailAddress())) {
 			entity.setMailAddress(dto.getMailAddress());
 		}
+		
+		if (StringUtils.isNotBlank(dto.getRole())) {
+			entity.setRole(Role.conversionRole.get(dto.getRole()));
+		}
 
 		if (StringUtils.isNotBlank(dto.getMobile())) {
 			entity.setMobile(dto.getMobile());
 		}
 		
-		if (dto.getProPicFile()!=null && dto.getProPicFile().size()>0) {
+		if (dto.getProPicFile()!=null) {
 			entity.setProPicFile(dto.getProPicFile());
 		}
 		

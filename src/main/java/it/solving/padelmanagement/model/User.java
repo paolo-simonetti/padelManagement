@@ -1,5 +1,6 @@
 package it.solving.padelmanagement.model;
 
+import java.sql.Blob;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
@@ -31,12 +32,12 @@ public class User {
 	
 	protected String mailAddress;
 	
-	private static final Role role = Role.ROLE_GUEST;
+	private Role role;
 	
 	protected String mobile;
 	
 	@Lob
-	protected Set<Byte> proPicFile = new HashSet<>();
+	protected Blob proPicFile;
 		
 	@OneToMany(fetch=FetchType.LAZY, cascade=CascadeType.REMOVE)
 	private Set<NewClubProposal> newClubProposals=new HashSet<>();
@@ -94,11 +95,16 @@ public class User {
 	public void setMailAddress(String mailAddress) {
 		this.mailAddress = mailAddress;
 	}
-
-
-	public static Role getRole() {
+	
+	public Role getRole() {
 		return role;
 	}
+
+
+	public void setRole(Role role) {
+		this.role = role;
+	}
+
 
 	public String getMobile() {
 		return mobile;
@@ -108,16 +114,14 @@ public class User {
 	public void setMobile(String mobile) {
 		this.mobile = mobile;
 	}
-	
-	public Set<Byte> getProPicFile() {
+
+	public Blob getProPicFile() {
 		return proPicFile;
 	}
 
-
-	public void setProPicFile(Set<Byte> proPicFile) {
+	public void setProPicFile(Blob proPicFile) {
 		this.proPicFile = proPicFile;
 	}
-
 
 	public Set<JoinProposal> getJoinProposals() {
 		return joinProposals;
@@ -159,7 +163,7 @@ public class User {
 
 	
 	public User(Long id, String name, String surname, LocalDate dateOfBirth, String mailAddress, String mobile,
-			Set<Byte> proPicFile) {
+			Role role, Blob proPicFile) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -167,6 +171,7 @@ public class User {
 		this.dateOfBirth = dateOfBirth;
 		this.mailAddress = mailAddress;
 		this.mobile = mobile;
+		this.role=role;
 		this.proPicFile = proPicFile;
 	}
 

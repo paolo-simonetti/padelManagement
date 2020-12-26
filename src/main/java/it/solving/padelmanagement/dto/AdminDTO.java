@@ -15,13 +15,6 @@ public class AdminDTO extends UserDTO {
 	public AdminDTO() {
 		super();
 	}
-
-	public AdminDTO(String id, String name, String surname, String dateOfBirth, String mailAddress, String mobile, 
-			String clubId) {
-		super(id, name, surname, dateOfBirth, mailAddress, mobile);
-		this.clubId=clubId;
-	}
-	
 	
 	
 }
