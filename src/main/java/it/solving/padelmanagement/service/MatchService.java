@@ -12,7 +12,7 @@ import it.solving.padelmanagement.dto.message.insert.MatchInsertMessageDTO;
 import it.solving.padelmanagement.dto.message.update.MatchUpdateMessageDTO;
 import it.solving.padelmanagement.mapper.MatchMapper;
 import it.solving.padelmanagement.model.Court;
-import it.solving.padelmanagement.model.Match;
+import it.solving.padelmanagement.model.PadelMatch;
 import it.solving.padelmanagement.model.Player;
 import it.solving.padelmanagement.model.Slot;
 import it.solving.padelmanagement.repository.CourtRepository;
@@ -39,7 +39,7 @@ public class MatchService {
 	private SlotRepository slotRepository;
 	
 	public void insert(MatchInsertMessageDTO matchInsertMessageDTO) {
-		Match match=matchMapper.convertInsertMessageDTOToEntity(matchInsertMessageDTO);
+		PadelMatch match=matchMapper.convertInsertMessageDTOToEntity(matchInsertMessageDTO);
 		Player creator=playerRepository.findById(Long.parseLong(matchInsertMessageDTO.getCreatorId())).get();
 		Set<Slot> slots=matchInsertMessageDTO.getSlotsIds().stream().map(stringId->
 			Slot.convertIdToSlot(Integer.parseInt(stringId))).collect(Collectors.toSet());
@@ -62,7 +62,7 @@ public class MatchService {
 	}
 	
 	public void update(MatchUpdateMessageDTO matchUpdateMessageDTO) {
-		Match match=matchMapper.convertUpdateMessageDTOToEntity(matchUpdateMessageDTO);
+		PadelMatch match=matchMapper.convertUpdateMessageDTOToEntity(matchUpdateMessageDTO);
 		if (matchUpdateMessageDTO.getOtherPlayersIds()!=null && matchUpdateMessageDTO.getOtherPlayersIds().size()>0) {
 			Set<Player> otherPlayers=matchUpdateMessageDTO.getOtherPlayersIds().stream()
 					.map(stringId->playerRepository.findById(Long.parseLong(stringId)).orElse(null))
@@ -110,7 +110,7 @@ public class MatchService {
 	
 	public void delete (Long id) {
 		if (matchRepository.findByIdWithCompleteInfo(id).isPresent()) {
-			Match match=matchRepository.findByIdWithCompleteInfo(id).get();
+			PadelMatch match=matchRepository.findByIdWithCompleteInfo(id).get();
 			
 			// Elimino la partita dall'elenco di quelle a cui partecipano i giocatori
 			if (match.getOtherPlayers()!=null && match.getOtherPlayers().size()>0) {

@@ -9,12 +9,11 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 
 @Entity
-public class Match {
+public class PadelMatch {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -27,14 +26,12 @@ public class Match {
 	private Integer missingPlayers;
 	
 	@ManyToMany
-	@JoinTable(name="match_players")
 	private Set<Player> otherPlayers=new HashSet<>();
 	
 	@ManyToOne(fetch=FetchType.LAZY)
 	private Player creator;
 	
 	@ManyToMany
-	@JoinTable(name="match_slots")
 	private Set<Slot> slots= new HashSet<>();
 	
 	@ManyToOne(fetch=FetchType.LAZY)
@@ -124,7 +121,7 @@ public class Match {
 		}
 	}
 
-	public Match(Long id, LocalDate date, Boolean payed, Integer missingPlayers) {
+	public PadelMatch(Long id, LocalDate date, Boolean payed, Integer missingPlayers) {
 		super();
 		this.id = id;
 		this.date = date;
@@ -132,7 +129,7 @@ public class Match {
 		this.missingPlayers = missingPlayers;
 	}
 
-	public Match() {
+	public PadelMatch() {
 		super();
 	}
 	

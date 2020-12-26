@@ -4,6 +4,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
@@ -14,13 +16,14 @@ public class Player extends User {
 	
 	private Integer level;
 	
+	@Enumerated(EnumType.STRING)
 	private static final Role role=Role.ROLE_PLAYER;
 	
 	@OneToMany(mappedBy="creator")
-	private Set<Match> matches=new HashSet<>();
+	private Set<PadelMatch> matches=new HashSet<>();
 	
 	@ManyToMany(mappedBy="otherPlayers")
-	private Set<Match> matchesJoined=new HashSet<>();
+	private Set<PadelMatch> matchesJoined=new HashSet<>();
 	
 	@ManyToOne(fetch=FetchType.LAZY)
 	private Club club;
@@ -33,37 +36,37 @@ public class Player extends User {
 		this.level = level;
 	}
 
-	public Set<Match> getMatches() {
+	public Set<PadelMatch> getMatches() {
 		return matches;
 	}
 
-	public void setMatches(Set<Match> matches) {
+	public void setMatches(Set<PadelMatch> matches) {
 		this.matches = matches;
 	}
 	
-	public Set<Match> getMatchesJoined() {
+	public Set<PadelMatch> getMatchesJoined() {
 		return matchesJoined;
 	}
 
-	public void setMatchesJoined(Set<Match> matchesJoined) {
+	public void setMatchesJoined(Set<PadelMatch> matchesJoined) {
 		this.matchesJoined = matchesJoined;
 	}
 
-	public void addToMatches(Match match) {
+	public void addToMatches(PadelMatch match) {
 		this.matches.add(match);
 	}
 	
-	public void removeFromMatches(Match match) {
+	public void removeFromMatches(PadelMatch match) {
 		if(this.matches.contains(match)) {
 			this.matches.remove(match);
 		}
 	}
 
-	public void addToMatchesJoined(Match match) {
+	public void addToMatchesJoined(PadelMatch match) {
 		this.matchesJoined.add(match);
 	}
 	
-	public void removeFromMatchesJoined(Match match) {
+	public void removeFromMatchesJoined(PadelMatch match) {
 		if(this.matchesJoined.contains(match)) {
 			this.matchesJoined.remove(match);
 		}

@@ -12,7 +12,7 @@ import it.solving.padelmanagement.dto.message.insert.PlayerInsertMessageDTO;
 import it.solving.padelmanagement.dto.message.update.PlayerUpdateMessageDTO;
 import it.solving.padelmanagement.mapper.PlayerMapper;
 import it.solving.padelmanagement.model.Club;
-import it.solving.padelmanagement.model.Match;
+import it.solving.padelmanagement.model.PadelMatch;
 import it.solving.padelmanagement.model.Player;
 import it.solving.padelmanagement.repository.ClubRepository;
 import it.solving.padelmanagement.repository.MatchRepository;
@@ -69,7 +69,7 @@ public class PlayerService {
 		
 		// Aggiorno i match creati
 		if (playerUpdateMessageDTO.getMatchesIds()!=null && playerUpdateMessageDTO.getMatchesIds().size()>0) {
-			Set<Match> matches=playerUpdateMessageDTO.getMatchesIds().stream().map(stringId->
+			Set<PadelMatch> matches=playerUpdateMessageDTO.getMatchesIds().stream().map(stringId->
 			matchRepository.findById(Long.parseLong(stringId)).get()).collect(Collectors.toSet());
 			player.setMatches(matches);
 			matches.stream().forEach(match-> {
@@ -81,7 +81,7 @@ public class PlayerService {
 		// Aggiorno i match a cui partecipa
 		if(playerUpdateMessageDTO.getMatchesJoinedIds()!=null && 
 				playerUpdateMessageDTO.getMatchesJoinedIds().size()>0) {
-			Set<Match> matchesJoined=playerUpdateMessageDTO.getMatchesJoinedIds().stream().map(stringId->			
+			Set<PadelMatch> matchesJoined=playerUpdateMessageDTO.getMatchesJoinedIds().stream().map(stringId->			
 				matchRepository.findById(Long.parseLong(stringId)).get()).collect(Collectors.toSet());
 			player.setMatchesJoined(matchesJoined);
 			matchesJoined.stream().forEach(match-> {
@@ -97,8 +97,8 @@ public class PlayerService {
 	public void delete (Long id) {
 		if (playerRepository.findById(id).isPresent()) {
 			Player player = playerRepository.findByIdWithAllMatches(id).get();
-			Set<Match> matches=player.getMatches();
-			Set<Match> matchesJoined=player.getMatchesJoined();
+			Set<PadelMatch> matches=player.getMatches();
+			Set<PadelMatch> matchesJoined=player.getMatchesJoined();
 			if (matches!=null && matches.size()>0) {
 				player.setMatches(null);
 				matches.stream().forEach(match-> {

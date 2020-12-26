@@ -3,6 +3,8 @@ package it.solving.padelmanagement.model;
 import java.sql.Blob;
 
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -21,6 +23,7 @@ public class NewClubProposal {
 	
 	private String city;
 	
+	@Enumerated(EnumType.STRING)
 	private ProposalStatus proposalStatus;
 	
 	@Lob

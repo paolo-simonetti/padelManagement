@@ -1,6 +1,8 @@
 package it.solving.padelmanagement.model;
 
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -16,6 +18,7 @@ public class JoinProposal {
 	
 	private Integer userLevel;
 	
+	@Enumerated(EnumType.STRING)
 	private ProposalStatus proposalStatus;
 	
 	@ManyToOne(fetch=FetchType.LAZY)

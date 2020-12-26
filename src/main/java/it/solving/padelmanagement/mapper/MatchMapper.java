@@ -9,13 +9,13 @@ import org.springframework.stereotype.Component;
 import it.solving.padelmanagement.dto.MatchDTO;
 import it.solving.padelmanagement.dto.message.insert.MatchInsertMessageDTO;
 import it.solving.padelmanagement.dto.message.update.MatchUpdateMessageDTO;
-import it.solving.padelmanagement.model.Match;
+import it.solving.padelmanagement.model.PadelMatch;
 
 @Component
-public class MatchMapper extends AbstractMapper<Match, MatchDTO, MatchInsertMessageDTO, MatchUpdateMessageDTO> {
+public class MatchMapper extends AbstractMapper<PadelMatch, MatchDTO, MatchInsertMessageDTO, MatchUpdateMessageDTO> {
 
 	@Override
-	public MatchDTO convertEntityToDTO(Match entity) {
+	public MatchDTO convertEntityToDTO(PadelMatch entity) {
 		if(entity==null) {
 			return null;			
 		}
@@ -60,12 +60,12 @@ public class MatchMapper extends AbstractMapper<Match, MatchDTO, MatchInsertMess
 	}
 
 	@Override
-	public Match convertDTOToEntity(MatchDTO dto) {
+	public PadelMatch convertDTOToEntity(MatchDTO dto) {
 		if(dto==null) {
 			return null;			
 		}
 		
-		Match entity=new Match();
+		PadelMatch entity=new PadelMatch();
 		
 		if(StringUtils.isNotBlank(dto.getId())) {
 			entity.setId(Long.parseLong(dto.getId()));
@@ -87,12 +87,12 @@ public class MatchMapper extends AbstractMapper<Match, MatchDTO, MatchInsertMess
 	}
 
 	@Override
-	public Match convertInsertMessageDTOToEntity(MatchInsertMessageDTO insertMessageDTO) {
+	public PadelMatch convertInsertMessageDTOToEntity(MatchInsertMessageDTO insertMessageDTO) {
 		if(insertMessageDTO==null) {
 			return null;			
 		}
 		
-		Match entity=new Match();
+		PadelMatch entity=new PadelMatch();
 		
 		if(StringUtils.isNotBlank(insertMessageDTO.getDate())) {
 			entity.setDate(LocalDate.parse(insertMessageDTO.getDate()));
@@ -110,13 +110,13 @@ public class MatchMapper extends AbstractMapper<Match, MatchDTO, MatchInsertMess
 	}
 
 	@Override
-	public Match convertUpdateMessageDTOToEntity(MatchUpdateMessageDTO updateMessageDTO) {
+	public PadelMatch convertUpdateMessageDTOToEntity(MatchUpdateMessageDTO updateMessageDTO) {
 		
 		if(updateMessageDTO==null) {
 			return null;
 		}
 		
-		Match entity=new Match();
+		PadelMatch entity=new PadelMatch();
 		
 		if(StringUtils.isNotBlank(updateMessageDTO.getId())) {
 			entity.setId(Long.parseLong(updateMessageDTO.getId()));

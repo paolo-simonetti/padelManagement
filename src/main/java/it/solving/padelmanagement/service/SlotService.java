@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 
 import it.solving.padelmanagement.dto.SlotDTO;
 import it.solving.padelmanagement.mapper.SlotMapper;
-import it.solving.padelmanagement.model.Match;
+import it.solving.padelmanagement.model.PadelMatch;
 import it.solving.padelmanagement.model.Slot;
 import it.solving.padelmanagement.repository.MatchRepository;
 import it.solving.padelmanagement.repository.SlotRepository;
@@ -29,7 +29,7 @@ public class SlotService {
 		if (slotRepository.findById(Integer.parseInt(slotDTO.getId())).isPresent()) {
 			Slot slot =slotRepository.findById(Integer.parseInt(slotDTO.getId())).get();
 			if (slotDTO.getMatchesIds()!=null && slotDTO.getMatchesIds().size()>0) {
-				Set<Match> matches=slotDTO.getMatchesIds().stream().map(stringId->matchRepository
+				Set<PadelMatch> matches=slotDTO.getMatchesIds().stream().map(stringId->matchRepository
 						.findById(Long.parseLong(stringId)).get()).collect(Collectors.toSet());
 				matches.stream().forEach(match-> {
 					slot.addToMatches(match);

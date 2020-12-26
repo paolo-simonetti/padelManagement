@@ -25,7 +25,7 @@ public class Court {
 	private Club club;
 
 	@OneToMany(mappedBy="court", cascade=CascadeType.REMOVE)
-	private Set<Match> matches = new HashSet<>();
+	private Set<PadelMatch> matches = new HashSet<>();
 	
 	public Long getId() {
 		return id;
@@ -51,19 +51,19 @@ public class Court {
 		this.club = club;
 	}
 
-	public Set<Match> getMatches() {
+	public Set<PadelMatch> getMatches() {
 		return matches;
 	}
 
-	public void setMatches(Set<Match> matches) {
+	public void setMatches(Set<PadelMatch> matches) {
 		this.matches = matches;
 	}
 	
-	public void addToMatches(Match match) {
+	public void addToMatches(PadelMatch match) {
 		this.matches.add(match);
 	}
 	
-	public void removeFromMatches(Match match) {
+	public void removeFromMatches(PadelMatch match) {
 		if (this.matches.contains(match)) {
 			this.matches.remove(match);
 		}

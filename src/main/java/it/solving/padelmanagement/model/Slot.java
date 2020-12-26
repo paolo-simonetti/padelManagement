@@ -23,7 +23,7 @@ public class Slot {
 	private Integer minute;
 	
 	@ManyToMany(mappedBy="slots")
-	private Set<Match> matches=new HashSet<>();
+	private Set<PadelMatch> matches=new HashSet<>();
 
 	public Slot(Integer id, Integer hour, Integer minute) {
 		super();
@@ -60,15 +60,15 @@ public class Slot {
 		this.minute = minute;
 	}
 	
-	public Set<Match> getMatches() {
+	public Set<PadelMatch> getMatches() {
 		return matches;
 	}
 
-	public void addToMatches(Match match) {
+	public void addToMatches(PadelMatch match) {
 		this.matches.add(match);
 	}
 	
-	public void removeFromMatches(Match match) {
+	public void removeFromMatches(PadelMatch match) {
 		if(this.matches.contains(match)) {
 			this.matches.remove(match);
 		}
