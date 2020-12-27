@@ -2,6 +2,7 @@ package it.solving.padelmanagement.service;
 
 import java.util.NoSuchElementException;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -110,23 +111,31 @@ public class UserService {
 	public boolean hasAnotherPendingProposal(Long id) {
 		User user = userRepository.findByIdWithProposals(id).orElse(null);
 		if (user!=null) {
-			boolean newClubResult=false;
-			boolean joinResult=false;
+			AtomicBoolean newClubResult=new AtomicBoolean();
+			AtomicBoolean joinResult=new AtomicBoolean();
 			// Determino se lo user abbia un'altra proposta di istituzione di Circolo da valutare
 			Set<NewClubProposal> newClubProposals=user.getNewClubProposals();
 			Set<JoinProposal> joinProposals=user.getJoinProposals();
 			if (newClubProposals!=null && newClubProposals.size()>0) {
-				newClubResult=newClubProposals.stream().filter(proposal->
-					proposal.getProposalStatus()==ProposalStatus.PENDING).findFirst().orElse(null)==null;
+				newClubProposals.stream().forEach(proposal-> {
+					if(proposal.getProposalStatus()==ProposalStatus.PENDING) {
+						newClubResult.getAndSet(true);
+					}
+
+				});
 			}
 			
 			// Determino se lo user abbia un'altra Proposta di Adesione a un Circolo da valutare
 			if (joinProposals!=null && joinProposals.size()>0) {
-				joinResult=joinProposals.stream().filter(proposal->
-					proposal.getProposalStatus()==ProposalStatus.PENDING).findFirst().orElse(null)==null;
+				joinProposals.stream().forEach(proposal-> {
+					if(proposal.getProposalStatus()==ProposalStatus.PENDING) {
+						joinResult.getAndSet(true);
+					}
+
+				});
 			}
 
-			return (newClubResult||joinResult);
+			return (newClubResult.get()||joinResult.get());
 			
 		} else {
 			throw new NoSuchElementException();

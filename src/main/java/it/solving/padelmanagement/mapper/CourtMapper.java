@@ -31,6 +31,12 @@ public class CourtMapper extends AbstractMapper<Court, CourtDTO, CourtInsertMess
 			dto.setClubId(entity.getClub().getId().toString());
 		}
 		
+		if (entity.mayBeReserved()) {
+			dto.setMayBeReserved("true");
+		} else {
+			dto.setMayBeReserved("false");
+		}
+		
 		return dto;
 	}
 
@@ -50,6 +56,10 @@ public class CourtMapper extends AbstractMapper<Court, CourtDTO, CourtInsertMess
 			entity.setName(dto.getName());
 		}
 		
+		if(StringUtils.isNotBlank(dto.getMayBeReserved())) {
+			entity.setMayBeReserved(Boolean.parseBoolean(dto.getMayBeReserved()));
+		}
+		
 		return entity;
 	}
 
@@ -61,13 +71,11 @@ public class CourtMapper extends AbstractMapper<Court, CourtDTO, CourtInsertMess
 		
 		Court entity=new Court();
 		
-		if (StringUtils.isNotBlank(entity.getName())) {
-			insertMessageDTO.setName(entity.getName());
+		if (StringUtils.isNotBlank(insertMessageDTO.getName())) {
+			entity.setName(insertMessageDTO.getName());
 		}
-		
-		if (entity.getClub()!=null) {
-			insertMessageDTO.setClubId(entity.getClub().getId().toString());
-		}
+				
+		entity.setMayBeReserved(true);
 		
 		return entity;
 	}
@@ -86,6 +94,10 @@ public class CourtMapper extends AbstractMapper<Court, CourtDTO, CourtInsertMess
 		
 		if(StringUtils.isNotBlank(updateMessageDTO.getName())) {
 			entity.setName(updateMessageDTO.getName());
+		}
+		
+		if(StringUtils.isNotBlank(updateMessageDTO.getMayBeReserved())) {
+			entity.setMayBeReserved(Boolean.parseBoolean(updateMessageDTO.getMayBeReserved()));
 		}
 		
 		return entity;

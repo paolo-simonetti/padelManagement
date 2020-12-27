@@ -1,9 +1,17 @@
 package it.solving.padelmanagement.repository;
 
+import java.time.LocalDate;
+import java.util.Optional;
+import java.util.Set;
+
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import it.solving.padelmanagement.model.Court;
 
 public interface CourtRepository extends JpaRepository<Court, Long> {
-
+	
+	@Query("from Court c left join fetch c.matches m left join fetch m.slots s where m.date=?1 group by c.id order by s.id")
+	public Optional<Set<Court>> findAllWithMatchesAndTheirSlotsByDate(LocalDate date);
+	
 }

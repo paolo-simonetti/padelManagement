@@ -69,6 +69,10 @@ public class NewClubProposalMapper extends
 			entity.setProposalStatus(ProposalStatus.conversionProposalStatus.get(dto.getProposalStatus()));
 		}
 		
+		if(dto.getCity()!=null) {
+			entity.setCity(dto.getCity());
+		}
+		
 		if(dto.getLogo()!=null) {
 			entity.setLogo(dto.getLogo());
 		}
@@ -88,8 +92,11 @@ public class NewClubProposalMapper extends
 			entity.setName(insertMessageDTO.getName());
 		}
 		
-		if(StringUtils.isNotBlank(insertMessageDTO.getProposalStatus())) {
-			entity.setProposalStatus(ProposalStatus.conversionProposalStatus.get(insertMessageDTO.getProposalStatus()));
+		
+		entity.setProposalStatus(ProposalStatus.PENDING);
+		
+		if(StringUtils.isNotBlank(insertMessageDTO.getCity())) {
+			entity.setCity(insertMessageDTO.getCity());
 		}
 		
 		if(insertMessageDTO.getLogo()!=null) {
@@ -117,6 +124,10 @@ public class NewClubProposalMapper extends
 		
 		if(StringUtils.isNotBlank(updateMessageDTO.getProposalStatus())) {
 			entity.setProposalStatus(ProposalStatus.conversionProposalStatus.get(updateMessageDTO.getProposalStatus()));
+		}
+		
+		if(StringUtils.isNotBlank(updateMessageDTO.getCity())) {
+			entity.setCity(updateMessageDTO.getCity());
 		}
 		
 		if(updateMessageDTO.getLogo()!=null) {
