@@ -36,16 +36,20 @@ public class AdminService {
 	@Autowired
 	private UserService userService;
 	
-	public void insert (UserInsertMessageDTO adminInsertMessageDTO, ClubInsertMessageDTO clubInsertMessageDTO) {
+	public void insert (UserInsertMessageDTO adminInsertMessageDTO, ClubInsertMessageDTO clubInsertMessageDTO, 
+			Long idUserToBeDeleted) {
 		Admin admin=adminMapper.convertInsertMessageDTOToEntity(adminInsertMessageDTO);
 		Club club=clubMapper.convertInsertMessageDTOToEntity(clubInsertMessageDTO);		
 		// Rimuovo l'admin dalla tabella User
-		userService.delete(admin.getId());
-		// Imposto il club all'admin e salvo tutto nel contesto di persistenza
+		userService.delete(idUserToBeDeleted);
+		// Inserisco club e admin nel contesto di persistenza
+		adminRepository.save(admin);
+		clubRepository.save(club);
+		// Li lego tra loro
 		admin.setClub(club);
 		club.setAdmin(admin);
-		clubRepository.save(club);
 		adminRepository.save(admin);
+		clubRepository.save(club);
 	}
 	
 	public void update (UserUpdateMessageDTO adminUpdateMessageDTO) throws NoSuchElementException {

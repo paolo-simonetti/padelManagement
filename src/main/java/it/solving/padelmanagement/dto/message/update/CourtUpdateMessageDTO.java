@@ -19,6 +19,9 @@ public class CourtUpdateMessageDTO {
 	@Positive
 	private String clubId;
 	
+	@NotBlank
+	private String mayBeReserved;
+	
 	private Set<String> matchesIds=new HashSet<>();
 
 	public String getId() {
@@ -43,6 +46,14 @@ public class CourtUpdateMessageDTO {
 
 	public void setClubId(String clubId) {
 		this.clubId = clubId;
+	}
+	
+	public String getMayBeReserved() {
+		return mayBeReserved;
+	}
+
+	public void setMayBeReserved(String mayBeReserved) {
+		this.mayBeReserved = mayBeReserved;
 	}
 
 	public void addToMatchesIds(String matchId) {

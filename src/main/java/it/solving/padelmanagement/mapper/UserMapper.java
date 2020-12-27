@@ -38,6 +38,14 @@ public class UserMapper extends AbstractMapper<User, UserDTO, UserInsertMessageD
 			dto.setDateOfBirth(entity.getDateOfBirth().toString());
 		}
 		
+		if (StringUtils.isNotBlank(entity.getUsername())) {
+			dto.setUsername(entity.getUsername());
+		}
+		
+		if (StringUtils.isNotBlank(entity.getPassword())) {
+			dto.setPassword(entity.getPassword());
+		}
+		
 		if (StringUtils.isNotBlank(entity.getMailAddress())) {
 			dto.setMailAddress(entity.getMailAddress());
 		}
@@ -91,6 +99,10 @@ public class UserMapper extends AbstractMapper<User, UserDTO, UserInsertMessageD
 			entity.setDateOfBirth(LocalDate.parse(dto.getDateOfBirth()));
 		}
 		
+		if (StringUtils.isNotBlank(dto.getUsername())) {
+			entity.setUsername(dto.getUsername());
+		}
+		
 		if (StringUtils.isNotBlank(dto.getMailAddress())) {
 			entity.setMailAddress(dto.getMailAddress());
 		}
@@ -130,6 +142,14 @@ public class UserMapper extends AbstractMapper<User, UserDTO, UserInsertMessageD
 			entity.setDateOfBirth(LocalDate.parse(insertMessageDTO.getDateOfBirth()));
 		}
 		
+		if(StringUtils.isNotBlank(insertMessageDTO.getUsername())) {
+			entity.setUsername(insertMessageDTO.getUsername());
+		}
+		
+		if(StringUtils.isNotBlank(insertMessageDTO.getPassword())) {
+			entity.setPassword(insertMessageDTO.getPassword());
+		}
+		
 		if(StringUtils.isNotBlank(insertMessageDTO.getMailAddress())) {
 			entity.setMailAddress(insertMessageDTO.getMailAddress());
 		}
@@ -138,6 +158,9 @@ public class UserMapper extends AbstractMapper<User, UserDTO, UserInsertMessageD
 			entity.setMobile(insertMessageDTO.getMobile());
 		}
 		
+		entity.setRole(Role.ROLE_GUEST);
+
+
 		return entity;
 	}
 
@@ -165,6 +188,14 @@ public class UserMapper extends AbstractMapper<User, UserDTO, UserInsertMessageD
 			entity.setDateOfBirth(LocalDate.parse(updateMessageDTO.getDateOfBirth()));
 		}
 		
+		if(StringUtils.isNotBlank(updateMessageDTO.getUsername())) {
+			entity.setUsername(updateMessageDTO.getUsername());
+		}
+		
+		if(StringUtils.isNotBlank(updateMessageDTO.getPassword())) {
+			entity.setPassword(updateMessageDTO.getPassword());
+		}
+		
 		if(StringUtils.isNotBlank(updateMessageDTO.getMailAddress())) {
 			entity.setMailAddress(updateMessageDTO.getMailAddress());
 		}
@@ -172,6 +203,8 @@ public class UserMapper extends AbstractMapper<User, UserDTO, UserInsertMessageD
 		if(StringUtils.isNotBlank(updateMessageDTO.getMobile())) {
 			entity.setMobile(updateMessageDTO.getMobile());
 		}
+		
+		entity.setRole(Role.ROLE_GUEST);
 		
 		return entity;
 	}

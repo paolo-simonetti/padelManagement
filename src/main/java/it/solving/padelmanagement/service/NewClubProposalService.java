@@ -29,7 +29,6 @@ public class NewClubProposalService {
 	private UserRepository userRepository;
 	
 	public void insert (NewClubProposalInsertMessageDTO newClubProposalInsertMessageDTO) {
-		// TODO: mettere nel validator un controllo sul fatto che non abbia presentato altre proposte
 		NewClubProposal newClubProposal=newClubProposalMapper
 				.convertInsertMessageDTOToEntity(newClubProposalInsertMessageDTO);
 		User creator=userRepository.findById(Long.parseLong(newClubProposalInsertMessageDTO.
@@ -73,6 +72,14 @@ public class NewClubProposalService {
 	public NewClubProposalDTO findById(Long id) {
 		if (newClubProposalRepository.findById(id).isPresent()) {
 			return newClubProposalMapper.convertEntityToDTO(newClubProposalRepository.findById(id).get());
+		} else {
+			throw new NoSuchElementException();
+		}
+	}
+	
+	public NewClubProposal findByIdWithCreator(Long id) {
+		if (newClubProposalRepository.findByIdWithCreator(id).isPresent()) {
+			return newClubProposalRepository.findByIdWithCreator(id).get();
 		} else {
 			throw new NoSuchElementException();
 		}

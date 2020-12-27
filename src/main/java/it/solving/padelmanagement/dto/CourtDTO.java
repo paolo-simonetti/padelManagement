@@ -7,6 +7,8 @@ public class CourtDTO {
 	private String name;
 	
 	private String clubId;
+	
+	private String mayBeReserved;
 
 	public String getId() {
 		return id;
@@ -30,6 +32,14 @@ public class CourtDTO {
 
 	public void setClubId(String clubId) {
 		this.clubId = clubId;
+	}
+	
+	public String getMayBeReserved() {
+		return mayBeReserved;
+	}
+
+	public void setMayBeReserved(String mayBeReserved) {
+		this.mayBeReserved = mayBeReserved;
 	}
 
 	public CourtDTO(String id, String name, String clubId) {

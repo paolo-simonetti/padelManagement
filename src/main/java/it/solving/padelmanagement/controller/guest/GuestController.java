@@ -19,11 +19,11 @@ import it.solving.padelmanagement.dto.ResultDTO;
 import it.solving.padelmanagement.dto.message.insert.JoinProposalInsertMessageDTO;
 import it.solving.padelmanagement.dto.message.insert.NewClubProposalInsertMessageDTO;
 import it.solving.padelmanagement.exception.NonAdmissibleProposalException;
-import it.solving.padelmanagement.model.JoinProposal;
-import it.solving.padelmanagement.model.NewClubProposal;
 import it.solving.padelmanagement.service.ClubService;
 import it.solving.padelmanagement.service.JoinProposalService;
-import it.solving.padelmanagement.validator.ProposalsValidator;
+import it.solving.padelmanagement.service.NewClubProposalService;
+import it.solving.padelmanagement.validator.JoinProposalsValidator;
+import it.solving.padelmanagement.validator.NewClubProposalsValidator;
 
 @RestController
 @RequestMapping("guest")
@@ -36,10 +36,13 @@ public class GuestController {
 	private JoinProposalService joinProposalService;
 	
 	@Autowired
-	private ProposalsValidator<JoinProposal> joinProposalsValidator;
+	private NewClubProposalService newClubProposalService;
 	
 	@Autowired
-	private ProposalsValidator<NewClubProposal> newClubProposalsValidator;
+	private JoinProposalsValidator joinProposalsValidator;
+	
+	@Autowired
+	private NewClubProposalsValidator newClubProposalsValidator;
 	
 	@GetMapping("findAllClubs")
 	public ResponseEntity<Set<ClubDTO>> findAll() {
@@ -52,7 +55,7 @@ public class GuestController {
 					throws NonAdmissibleProposalException {
 		joinProposalsValidator.validate(joinProposalInsertMessageDTO, bindingResult);
 		if (bindingResult.hasErrors()) {
-			throw new NonAdmissibleProposalException("The applicant has already a pending request");
+			throw new NonAdmissibleProposalException("Encountered errors in the applicant field");
 		}
 		
 		joinProposalService.insert(joinProposalInsertMessageDTO);
@@ -63,12 +66,12 @@ public class GuestController {
 	public ResponseEntity<ResultDTO> insertNewClubProposal(@Valid @RequestBody 
 			NewClubProposalInsertMessageDTO newClubProposalInsertMessageDTO, BindingResult bindingResult) 
 					throws NonAdmissibleProposalException {
-		joinProposalsValidator.validate(newClubProposalInsertMessageDTO, bindingResult);
+		newClubProposalsValidator.validate(newClubProposalInsertMessageDTO, bindingResult);
 		if (bindingResult.hasErrors()) {
-			throw new NonAdmissibleProposalException("The applicant has already a pending request");
+			return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResultDTO("Encountered errors in the creator field"));
 		}
 		
-		joinProposalService.insert(newClubProposalInsertMessageDTO);
+		newClubProposalService.insert(newClubProposalInsertMessageDTO);
 		return ResponseEntity.status(HttpStatus.OK).body(new ResultDTO("The proposal will be evaluated by the superAdmin"));
 	}
 

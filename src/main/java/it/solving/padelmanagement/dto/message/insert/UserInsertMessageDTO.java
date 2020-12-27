@@ -1,7 +1,7 @@
 package it.solving.padelmanagement.dto.message.insert;
 
-import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
 public class UserInsertMessageDTO {
 	
@@ -15,9 +15,15 @@ public class UserInsertMessageDTO {
 	protected String dateOfBirth;
 	
 	@NotBlank
-	@Email
 	protected String mailAddress;
-		
+	
+	@NotBlank
+	protected String username;
+	
+	@NotBlank
+	@Size(min=6)
+	protected String password;
+	
 	protected static final String role="guest";
 	
 	@NotBlank
@@ -53,6 +59,22 @@ public class UserInsertMessageDTO {
 
 	public void setMailAddress(String mailAddress) {
 		this.mailAddress = mailAddress;
+	}
+	
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
 	}
 
 	public String getMobile() {

@@ -12,6 +12,8 @@ public class CourtInsertMessageDTO {
 	@Positive
 	private String clubId;
 	
+	private static final String mayBeReserved="true";
+	
 	public String getName() {
 		return name;
 	}
@@ -26,6 +28,10 @@ public class CourtInsertMessageDTO {
 
 	public void setClubId(String clubId) {
 		this.clubId = clubId;
+	}
+	
+	public static String getMayBeReserved() {
+		return mayBeReserved;
 	}
 
 	public CourtInsertMessageDTO(@NotBlank String name, @NotBlank @Positive String clubId) {

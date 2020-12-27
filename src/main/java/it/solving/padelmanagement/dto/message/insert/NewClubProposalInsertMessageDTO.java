@@ -13,8 +13,7 @@ public class NewClubProposalInsertMessageDTO {
 	@NotBlank
 	private String city;
 	
-	@NotBlank
-	private String proposalStatus;
+	private static final String proposalStatus="pending";
 	
 	private Blob logo;
 	
@@ -37,12 +36,8 @@ public class NewClubProposalInsertMessageDTO {
 		this.city = city;
 	}
 
-	public String getProposalStatus() {
+	public static String getProposalStatus() {
 		return proposalStatus;
-	}
-
-	public void setProposalStatus(String proposalStatus) {
-		this.proposalStatus = proposalStatus;
 	}
 
 	public Blob getLogo() {
@@ -62,11 +57,10 @@ public class NewClubProposalInsertMessageDTO {
 	}
 
 	public NewClubProposalInsertMessageDTO(@NotBlank String name, @NotBlank String city,
-			@NotBlank String proposalStatus, Blob logo, @Positive String creatorId) {
+			 Blob logo, @Positive String creatorId) {
 		super();
 		this.name = name;
 		this.city = city;
-		this.proposalStatus = proposalStatus;
 		this.logo = logo;
 		this.creatorId = creatorId;
 	}

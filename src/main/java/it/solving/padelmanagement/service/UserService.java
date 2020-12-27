@@ -132,4 +132,8 @@ public class UserService {
 			throw new NoSuchElementException();
 		}
 	}
+	
+	public boolean userAlreadyExists(String username) {
+		return (userRepository.findByUsername(username).isPresent());
+	}
 }

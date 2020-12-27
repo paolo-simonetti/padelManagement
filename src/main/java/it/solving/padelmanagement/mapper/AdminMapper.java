@@ -9,6 +9,7 @@ import it.solving.padelmanagement.dto.AdminDTO;
 import it.solving.padelmanagement.dto.message.insert.UserInsertMessageDTO;
 import it.solving.padelmanagement.dto.message.update.UserUpdateMessageDTO;
 import it.solving.padelmanagement.model.Admin;
+import it.solving.padelmanagement.model.User;
 
 @Component
 public class AdminMapper extends AbstractMapper<Admin, AdminDTO, UserInsertMessageDTO,UserUpdateMessageDTO> {
@@ -151,7 +152,5 @@ public class AdminMapper extends AbstractMapper<Admin, AdminDTO, UserInsertMessa
 		
 		return entity;
 	}
-
-	
 	
 }

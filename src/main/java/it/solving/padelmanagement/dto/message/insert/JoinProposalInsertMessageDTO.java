@@ -10,7 +10,7 @@ public class JoinProposalInsertMessageDTO {
 	@Max(7)
 	private String userLevel;
 	
-	private String proposalStatus;
+	private static final String proposalStatus="pending";
 
 	@Positive
 	private String applicantId;
@@ -26,12 +26,8 @@ public class JoinProposalInsertMessageDTO {
 		this.userLevel = userLevel;
 	}
 
-	public String getProposalStatus() {
+	public static String getProposalStatus() {
 		return proposalStatus;
-	}
-
-	public void setProposalStatus(String proposalStatus) {
-		this.proposalStatus = proposalStatus;
 	}
 
 	public String getApplicantId() {
@@ -50,11 +46,10 @@ public class JoinProposalInsertMessageDTO {
 		this.clubId = clubId;
 	}
 
-	public JoinProposalInsertMessageDTO(@Min(1) @Max(7) String userLevel, String proposalStatus,
+	public JoinProposalInsertMessageDTO(@Min(1) @Max(7) String userLevel,
 			@Positive String applicantId, @Positive String clubId) {
 		super();
 		this.userLevel = userLevel;
-		this.proposalStatus = proposalStatus;
 		this.applicantId = applicantId;
 		this.clubId = clubId;
 	}

@@ -4,6 +4,7 @@ import java.sql.Blob;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Past;
 
@@ -21,6 +22,13 @@ public class UserUpdateMessageDTO {
 	@NotBlank
 	@Past
 	protected String dateOfBirth;
+	
+	@NotBlank
+	protected String username;
+	
+	@NotBlank
+	@Min(6)
+	protected String password;
 	
 	@NotBlank
 	protected String mailAddress;
@@ -66,6 +74,22 @@ public class UserUpdateMessageDTO {
 
 	public void setDateOfBirth(String dateOfBirth) {
 		this.dateOfBirth = dateOfBirth;
+	}
+	
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
 	}
 
 	public String getMailAddress() {

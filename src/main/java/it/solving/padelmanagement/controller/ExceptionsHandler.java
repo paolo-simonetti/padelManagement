@@ -11,7 +11,7 @@ import it.solving.padelmanagement.dto.ResultDTO;
 import it.solving.padelmanagement.exception.NonAdmissibleProposalException;
 
 
-@ControllerAdvice(basePackages = "it.solvingteam.padelmanagement.controller")
+@ControllerAdvice(basePackages = "it.solving.padelmanagement.controller")
 public class ExceptionsHandler {
 
 	@ExceptionHandler(NoSuchElementException.class)

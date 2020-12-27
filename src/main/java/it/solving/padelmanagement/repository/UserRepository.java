@@ -13,6 +13,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	
 	public Optional<Set<User>> findAllByRole(Role role);
 	
+	@Query("from User u where u.username=?1")
+	public Optional<User> findByUsername(String username);
+	
 	@Query("from User u left join fetch u.joinProposals jp left join fetch u.newClubProposals ncp where u.id=?1")
 	public Optional<User> findByIdWithProposals(Long id);
 

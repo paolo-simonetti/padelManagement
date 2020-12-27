@@ -23,6 +23,8 @@ public class Court {
 	
 	@ManyToOne(fetch=FetchType.LAZY)
 	private Club club;
+	
+	private boolean mayBeReserved;
 
 	@OneToMany(mappedBy="court", cascade=CascadeType.REMOVE)
 	private Set<PadelMatch> matches = new HashSet<>();
@@ -49,6 +51,14 @@ public class Court {
 
 	public void setClub(Club club) {
 		this.club = club;
+	}
+
+	public boolean mayBeReserved() {
+		return mayBeReserved;
+	}
+
+	public void setMayBeReserved(boolean mayBeReserved) {
+		this.mayBeReserved = mayBeReserved;
 	}
 
 	public Set<PadelMatch> getMatches() {

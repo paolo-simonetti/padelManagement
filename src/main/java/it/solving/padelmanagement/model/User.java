@@ -34,6 +34,10 @@ public class User {
 	
 	protected String mailAddress;
 	
+	protected String username;
+	
+	protected String password;
+	
 	@Enumerated(EnumType.STRING)
 	private Role role;
 	
@@ -99,6 +103,23 @@ public class User {
 		this.mailAddress = mailAddress;
 	}
 	
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+
 	public Role getRole() {
 		return role;
 	}

@@ -39,6 +39,8 @@ public class PadelmanagementApplicationRunner implements ApplicationRunner {
 			superAdmin.setName("Aldo");
 			superAdmin.setSurname("Giannuli");
 			superAdmin.setDateOfBirth(LocalDate.of(1952,06,18));
+			superAdmin.setUsername("ricercatoreAttempato");
+			superAdmin.setPassword("buongiornissimo!SISMI?");
 			superAdmin.setMailAddress("mafiaMondiale@protonmail.com");
 			superAdmin.setMobile("39102487629");
 			superAdmin.setRole(Role.ROLE_SUPER_ADMIN);
