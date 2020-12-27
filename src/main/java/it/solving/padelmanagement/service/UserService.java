@@ -13,6 +13,7 @@ import it.solving.padelmanagement.dto.message.update.UserUpdateMessageDTO;
 import it.solving.padelmanagement.mapper.UserMapper;
 import it.solving.padelmanagement.model.JoinProposal;
 import it.solving.padelmanagement.model.NewClubProposal;
+import it.solving.padelmanagement.model.ProposalStatus;
 import it.solving.padelmanagement.model.Role;
 import it.solving.padelmanagement.model.User;
 import it.solving.padelmanagement.repository.JoinProposalRepository;
@@ -106,4 +107,29 @@ public class UserService {
 		return userRepository.findAllByRole(superAdminRole).isPresent();
 	}
 	
+	public boolean hasAnotherPendingProposal(Long id) {
+		User user = userRepository.findByIdWithProposals(id).orElse(null);
+		if (user!=null) {
+			boolean newClubResult=false;
+			boolean joinResult=false;
+			// Determino se lo user abbia un'altra proposta di istituzione di Circolo da valutare
+			Set<NewClubProposal> newClubProposals=user.getNewClubProposals();
+			Set<JoinProposal> joinProposals=user.getJoinProposals();
+			if (newClubProposals!=null && newClubProposals.size()>0) {
+				newClubResult=newClubProposals.stream().filter(proposal->
+					proposal.getProposalStatus()==ProposalStatus.PENDING).findFirst().orElse(null)==null;
+			}
+			
+			// Determino se lo user abbia un'altra Proposta di Adesione a un Circolo da valutare
+			if (joinProposals!=null && joinProposals.size()>0) {
+				joinResult=joinProposals.stream().filter(proposal->
+					proposal.getProposalStatus()==ProposalStatus.PENDING).findFirst().orElse(null)==null;
+			}
+
+			return (newClubResult||joinResult);
+			
+		} else {
+			throw new NoSuchElementException();
+		}
+	}
 }

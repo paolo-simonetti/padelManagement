@@ -119,4 +119,5 @@ public class JoinProposalService {
 	public Set<JoinProposalDTO> findAll() {
 		return joinProposalMapper.convertEntityToDTO(joinProposalRepository.findAll().stream().collect(Collectors.toSet()));
 	}
+	
 }
