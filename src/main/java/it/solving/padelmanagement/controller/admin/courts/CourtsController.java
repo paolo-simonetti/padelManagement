@@ -1,6 +1,5 @@
 package it.solving.padelmanagement.controller.admin.courts;
 
-import java.time.LocalDate;
 import java.util.Set;
 
 import javax.validation.Valid;
@@ -18,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import it.solving.padelmanagement.dto.CourtDTO;
 import it.solving.padelmanagement.dto.ResultDTO;
+import it.solving.padelmanagement.dto.message.clubmanagement.ClubManagementMessageDTO;
 import it.solving.padelmanagement.dto.message.insert.CourtInsertMessageDTO;
 import it.solving.padelmanagement.dto.message.update.CourtUpdateMessageDTO;
 import it.solving.padelmanagement.exception.CourtBeReservedException;
@@ -39,8 +39,8 @@ public class CourtsController {
 		
 	// qui ho scelto di far visualizzare solo i campi non dismessi
 	@GetMapping("findAllMatchesByDate")
-	public ResponseEntity<Set<CourtDTO>> findAllMatchesByDate(@RequestBody LocalDate date) {
-		return ResponseEntity.status(HttpStatus.OK).body(courtService.findAllWithMatchesAndTheirSlotsByDate(date));
+	public ResponseEntity<Set<CourtDTO>> findAllMatchesByDate(@RequestBody ClubManagementMessageDTO inputMessage) {
+		return ResponseEntity.status(HttpStatus.OK).body(courtService.findAllWithMatchesAndTheirSlotsByDate(inputMessage));
 	}
 	
 	// qui faccio visualizzare tutti i campi

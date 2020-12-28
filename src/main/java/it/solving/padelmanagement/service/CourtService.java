@@ -9,16 +9,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import it.solving.padelmanagement.dto.CourtDTO;
+import it.solving.padelmanagement.dto.message.clubmanagement.ClubManagementMessageDTO;
+import it.solving.padelmanagement.dto.message.createpadelmatch.InputVerifyAvailabilityMessageDTO;
 import it.solving.padelmanagement.dto.message.insert.CourtInsertMessageDTO;
 import it.solving.padelmanagement.dto.message.update.CourtUpdateMessageDTO;
 import it.solving.padelmanagement.exception.CourtBeReservedException;
+import it.solving.padelmanagement.exception.VerifyAvailabilityException;
 import it.solving.padelmanagement.mapper.CourtMapper;
 import it.solving.padelmanagement.model.Club;
 import it.solving.padelmanagement.model.Court;
 import it.solving.padelmanagement.model.PadelMatch;
+import it.solving.padelmanagement.model.Player;
+import it.solving.padelmanagement.model.Slot;
 import it.solving.padelmanagement.repository.ClubRepository;
 import it.solving.padelmanagement.repository.CourtRepository;
 import it.solving.padelmanagement.repository.MatchRepository;
+import it.solving.padelmanagement.repository.PlayerRepository;
+import it.solving.padelmanagement.util.MyUtil;
 
 @Service
 public class CourtService {
@@ -34,6 +41,12 @@ public class CourtService {
 	
 	@Autowired
 	private MatchRepository matchRepository;
+	
+	@Autowired
+	private PlayerRepository playerRepository;
+	
+	@Autowired
+	private MyUtil myUtil;
 	
 	public Court findById(Long id) {
 		if (courtRepository.findById(id).isPresent()) {
@@ -119,9 +132,22 @@ public class CourtService {
 		return courtMapper.convertEntityToDTO(courtRepository.findAll().stream().collect(Collectors.toSet()));
 	}
 	
-	public Set<CourtDTO> findAllWithMatchesAndTheirSlotsByDate(LocalDate date) {
-		return courtMapper.convertEntityToDTO(courtRepository.findAllWithMatchesAndTheirSlotsByDate(date).get()
+	public Set<CourtDTO> findAllWithMatchesAndTheirSlotsByDate(ClubManagementMessageDTO inputMessage) {
+		return courtMapper.convertEntityToDTO(courtRepository.findAllWithMatchesAndTheirSlotsByDate(
+				LocalDate.parse(inputMessage.getDate()), Long.parseLong(inputMessage.getClubId())).get()
 				.stream().filter(court->court.mayBeReserved()).collect(Collectors.toSet()));
+	}
+	
+	public Set<CourtDTO> verifyAvailability(InputVerifyAvailabilityMessageDTO inputMessage) 
+		throws VerifyAvailabilityException {
+		Set<Slot> requiredSlots=myUtil.convertInputVerifyAvailabilityMessageDTOToSlots(inputMessage);
+		Player player=playerRepository.findByIdWithClub(Long.parseLong(inputMessage.getPlayerId()))
+			.orElseThrow(NoSuchElementException::new);
+		Club club=player.getClub();
+		ClubManagementMessageDTO clubManagementMessageDTO = 
+			new ClubManagementMessageDTO(inputMessage.getDate(),club.getId().toString());
+		Set<CourtDTO> result=this.findAllWithMatchesAndTheirSlotsByDate(clubManagementMessageDTO);
+		// scrivere un metodo booleano in court che verifica che non ci siano sovrapposizioni tra match previsti nel court
 	}
 	
 }

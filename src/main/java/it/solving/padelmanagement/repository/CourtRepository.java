@@ -11,8 +11,9 @@ import it.solving.padelmanagement.model.Court;
 
 public interface CourtRepository extends JpaRepository<Court, Long> {
 	
-	@Query("from Court c left join fetch c.matches m left join fetch m.slots s where m.date=?1 group by c.id order by s.id")
-	public Optional<Set<Court>> findAllWithMatchesAndTheirSlotsByDate(LocalDate date);
+	@Query("from Court c left join fetch c.matches m left join fetch m.slots s left join fetch c.club cl "
+			+ "where m.date=?1 and cl.id=?2 group by c.id order by s.id")
+	public Optional<Set<Court>> findAllWithMatchesAndTheirSlotsByDate(LocalDate date, Long clubId);
 	
 	@Query("from Court c left join fetch c.matches m left join fetch c.club cl where c.id=?1")
 	public Optional<Court> findByIdWithCompleteInfos(Long id);
