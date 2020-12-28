@@ -11,11 +11,14 @@ import org.springframework.stereotype.Service;
 import it.solving.padelmanagement.dto.CourtDTO;
 import it.solving.padelmanagement.dto.message.insert.CourtInsertMessageDTO;
 import it.solving.padelmanagement.dto.message.update.CourtUpdateMessageDTO;
+import it.solving.padelmanagement.exception.CourtBeReservedException;
 import it.solving.padelmanagement.mapper.CourtMapper;
 import it.solving.padelmanagement.model.Club;
 import it.solving.padelmanagement.model.Court;
+import it.solving.padelmanagement.model.PadelMatch;
 import it.solving.padelmanagement.repository.ClubRepository;
 import it.solving.padelmanagement.repository.CourtRepository;
+import it.solving.padelmanagement.repository.MatchRepository;
 
 @Service
 public class CourtService {
@@ -29,6 +32,9 @@ public class CourtService {
 	@Autowired
 	private ClubRepository clubRepository;
 	
+	@Autowired
+	private MatchRepository matchRepository;
+	
 	public Court findById(Long id) {
 		if (courtRepository.findById(id).isPresent()) {
 			return courtRepository.findById(id).get();			
@@ -38,9 +44,26 @@ public class CourtService {
 	}
 	
 	public void update(CourtUpdateMessageDTO courtUpdateMessageDTO) {
-		if(this.findById(Long.parseLong(courtUpdateMessageDTO.getId()))!=null) {
-			courtRepository.save(courtMapper.convertUpdateMessageDTOToEntity(courtUpdateMessageDTO));
-		}
+		Court oldCourt=courtRepository.findByIdWithCompleteInfos(Long.parseLong(courtUpdateMessageDTO.getId()))
+				.orElseThrow(NoSuchElementException::new);
+		Court newCourt=courtMapper.convertUpdateMessageDTOToEntity(courtUpdateMessageDTO);
+		
+		// Il mapper non trasferisce le informazioni sul mayBeReserved, sul club e sulle partite
+		Set<PadelMatch> matches=oldCourt.getMatches();
+		Club club=oldCourt.getClub();
+		club.removeFromCourts(oldCourt);
+		club.addToCourts(newCourt);
+		newCourt.setClub(club);
+		clubRepository.save(club);
+
+		matches.stream().forEach(match-> {
+			match.setCourt(newCourt);
+			matchRepository.save(match);
+		});
+		
+		newCourt.setMatches(matches);
+		newCourt.setMayBeReserved(oldCourt.mayBeReserved());
+		courtRepository.save(newCourt);
 	}
 	
 	public void insert(CourtInsertMessageDTO courtInsertMessageDTO) throws NoSuchElementException {
@@ -59,6 +82,30 @@ public class CourtService {
 		
 	} 
 	
+	public void cannotBeReserved(Long courtId) throws CourtBeReservedException {
+		Court court=courtRepository.findByIdWithMatches(courtId).orElseThrow(NoSuchElementException::new);
+		if (court.getMatches()!=null && court.getMatches().size()>0) {
+			throw new CourtBeReservedException("Forbidden operation: there are scheduled matches for that court!");
+		} 
+		
+		if (court.mayBeReserved()) {
+			court.setMayBeReserved(false);
+			courtRepository.save(court);
+		} else {
+			throw new CourtBeReservedException("Forbidden operation: the court couldn't already be reserved!");
+		}
+	}
+	
+	public void canBeReserved(Long courtId) throws CourtBeReservedException {
+		Court court=courtRepository.findById(courtId).orElseThrow(NoSuchElementException::new); 
+		if (!court.mayBeReserved()) {
+			court.setMayBeReserved(true);
+			courtRepository.save(court);
+		} else {
+			throw new CourtBeReservedException("Forbidden operation: the court could already be reserved!");
+		}
+	}
+	
 	public void delete(Long id) {
 		if(courtRepository.findById(id).isPresent()) {
 			courtRepository.delete(courtRepository.findById(id).get());
@@ -73,7 +120,8 @@ public class CourtService {
 	}
 	
 	public Set<CourtDTO> findAllWithMatchesAndTheirSlotsByDate(LocalDate date) {
-		return courtMapper.convertEntityToDTO(courtRepository.findAllWithMatchesAndTheirSlotsByDate(date).get());
+		return courtMapper.convertEntityToDTO(courtRepository.findAllWithMatchesAndTheirSlotsByDate(date).get()
+				.stream().filter(court->court.mayBeReserved()).collect(Collectors.toSet()));
 	}
 	
 }

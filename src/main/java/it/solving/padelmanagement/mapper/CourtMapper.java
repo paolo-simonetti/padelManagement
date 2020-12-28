@@ -96,10 +96,6 @@ public class CourtMapper extends AbstractMapper<Court, CourtDTO, CourtInsertMess
 			entity.setName(updateMessageDTO.getName());
 		}
 		
-		if(StringUtils.isNotBlank(updateMessageDTO.getMayBeReserved())) {
-			entity.setMayBeReserved(Boolean.parseBoolean(updateMessageDTO.getMayBeReserved()));
-		}
-		
 		return entity;
 	}
 

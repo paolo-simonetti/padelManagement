@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import it.solving.padelmanagement.dto.MatchDTO;
 import it.solving.padelmanagement.dto.message.insert.MatchInsertMessageDTO;
 import it.solving.padelmanagement.dto.message.update.MatchUpdateMessageDTO;
+import it.solving.padelmanagement.exception.MatchPaymentException;
 import it.solving.padelmanagement.mapper.MatchMapper;
 import it.solving.padelmanagement.model.Court;
 import it.solving.padelmanagement.model.PadelMatch;
@@ -155,6 +156,17 @@ public class MatchService {
 	
 	public Set<MatchDTO> findAll() {
 		return matchMapper.convertEntityToDTO(matchRepository.findAll().stream().collect(Collectors.toSet()));
+	}
+	
+	public void writeDownPayment(Long matchId) throws MatchPaymentException {
+		PadelMatch match=matchRepository.findById(matchId).orElseThrow(NoSuchElementException::new);
+		if (!match.isPayed()) {
+			match.setPayed(true);
+			matchRepository.save(match);
+		} else {
+			throw new MatchPaymentException("The match was already payed!");
+		}
+		
 	}
 	
 }

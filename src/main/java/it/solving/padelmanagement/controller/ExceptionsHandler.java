@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import it.solving.padelmanagement.dto.ResultDTO;
+import it.solving.padelmanagement.exception.CourtBeReservedException;
+import it.solving.padelmanagement.exception.MatchPaymentException;
 import it.solving.padelmanagement.exception.NonAdmissibleProposalException;
 
 
@@ -19,9 +21,19 @@ public class ExceptionsHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResultDTO("One of the requested elements is not present in the persistence context."));
     }
 
+	@ExceptionHandler(MatchPaymentException.class)
+	public ResponseEntity<ResultDTO> handleMatchPaymentException(MatchPaymentException e){
+	    return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResultDTO(e.getMessage()));
+	}
+	
 	@ExceptionHandler(NonAdmissibleProposalException.class)
 	public ResponseEntity<ResultDTO> handleNonAdmissibleProposalException(NonAdmissibleProposalException e){
 	    return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResultDTO(e.getMessage()));
+	}
+	
+	@ExceptionHandler(CourtBeReservedException.class) 
+	public ResponseEntity<ResultDTO> handleCourtBeReservedException (CourtBeReservedException e) {
+		return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResultDTO(e.getMessage()));
 	}
 	   
 	

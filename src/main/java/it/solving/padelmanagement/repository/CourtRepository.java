@@ -14,4 +14,9 @@ public interface CourtRepository extends JpaRepository<Court, Long> {
 	@Query("from Court c left join fetch c.matches m left join fetch m.slots s where m.date=?1 group by c.id order by s.id")
 	public Optional<Set<Court>> findAllWithMatchesAndTheirSlotsByDate(LocalDate date);
 	
+	@Query("from Court c left join fetch c.matches m left join fetch c.club cl where c.id=?1")
+	public Optional<Court> findByIdWithCompleteInfos(Long id);
+	
+	@Query("from Court c left join fetch c.matches m where c.id=?1")
+	public Optional<Court> findByIdWithMatches(Long id);
 }

@@ -53,7 +53,7 @@ public class PadelMatch {
 		this.date = date;
 	}
 
-	public Boolean getPayed() {
+	public Boolean isPayed() {
 		return payed;
 	}
 

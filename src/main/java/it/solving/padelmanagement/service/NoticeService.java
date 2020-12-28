@@ -1,11 +1,13 @@
 package it.solving.padelmanagement.service;
 
+import java.time.LocalDate;
 import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import it.solving.padelmanagement.dto.NoticeDTO;
 import it.solving.padelmanagement.dto.message.insert.NoticeInsertMessageDTO;
@@ -42,44 +44,38 @@ public class NoticeService {
 	
 	public void insert(NoticeInsertMessageDTO noticeInsertMessageDTO) {
 		Notice notice=noticeMapper.convertInsertMessageDTOToEntity(noticeInsertMessageDTO);
-		Club club=clubRepository.findById(Long.parseLong(noticeInsertMessageDTO.getClubId())).orElse(null);
-		if(club!=null) {
-			notice.setClub(club);
-			club.addToNotices(notice);
-			noticeRepository.save(notice);
-			clubRepository.save(club);
-		} else {
-			throw new NoSuchElementException();
-		}
-	}
+		Club club=clubRepository.findById(Long.parseLong(noticeInsertMessageDTO.getClubId()))
+				.orElseThrow(NoSuchElementException::new);
 	
-	public void update(NoticeUpdateMessageDTO noticeUpdateMessageDTO) {
-		if (noticeRepository.findById(Long.parseLong(noticeUpdateMessageDTO.getId())).isPresent()) {
-			Notice notice=noticeMapper.convertUpdateMessageDTOToEntity(noticeUpdateMessageDTO);
-			Club club=clubRepository.findById(Long.parseLong(noticeUpdateMessageDTO.getClubId())).orElse(null);
-			if(club!=null) {
-				notice.setClub(club);
-				club.addToNotices(notice);
-				noticeRepository.save(notice);
-				clubRepository.save(club);
-			} else {
-				throw new NoSuchElementException();
-			}			
-		} else {
-			throw new NoSuchElementException();
-		}
+		notice.setClub(club);
+		notice.setCreationDate(LocalDate.now());
+		club.addToNotices(notice);
+		noticeRepository.save(notice);
+		clubRepository.save(club);
 		
 	}
 	
-	public void delete (Long id) {
-		if (noticeRepository.findByIdWithClub(id).isPresent()) {
-			Notice notice=noticeRepository.findByIdWithClub(id).get();
-			Club club=notice.getClub();
-			club.removeFromNotices(notice);
-			notice.setClub(null);
-			clubRepository.save(club);
-			noticeRepository.delete(notice);
-		}
+	public void update(NoticeUpdateMessageDTO noticeUpdateMessageDTO) {
+		Notice oldNotice=noticeRepository.findByIdWithClub(Long.parseLong(noticeUpdateMessageDTO.getId()))
+			.orElseThrow(NoSuchElementException::new);
+		Club club=oldNotice.getClub();
+		Notice newNotice=noticeMapper.convertUpdateMessageDTOToEntity(noticeUpdateMessageDTO);
+		newNotice.setClub(club);
+		newNotice.setCreationDate(oldNotice.getCreationDate());
+		club.removeFromNotices(oldNotice);
+		club.addToNotices(newNotice);
+		noticeRepository.save(newNotice);
+		clubRepository.save(club);
+					
+	}
+	
+	public void delete (@RequestParam Long noticeId) {
+		Notice notice=noticeRepository.findByIdWithClub(noticeId).orElseThrow(NoSuchElementException::new);
+		Club club=notice.getClub();
+		club.removeFromNotices(notice);
+		notice.setClub(null);
+		clubRepository.save(club);
+		noticeRepository.delete(notice);
 	}
 	
 }

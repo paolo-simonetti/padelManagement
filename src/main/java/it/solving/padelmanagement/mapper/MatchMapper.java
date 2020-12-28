@@ -30,8 +30,8 @@ public class MatchMapper extends AbstractMapper<PadelMatch, MatchDTO, MatchInser
 			dto.setDate(entity.getDate().toString());
 		}
 		
-		if(entity.getPayed()!=null) {
-			dto.setPayed(entity.getPayed().toString());
+		if(entity.isPayed()!=null) {
+			dto.setPayed(entity.isPayed().toString());
 		}
 		
 		if(entity.getMissingPlayers()!=null) {
