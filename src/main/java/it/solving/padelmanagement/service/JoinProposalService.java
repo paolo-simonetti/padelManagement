@@ -73,16 +73,6 @@ public class JoinProposalService {
 		
 	}
 	
-	public Set<JoinProposalDTO> findAllByApplicant(Long applicantId) {
-		User applicant = userRepository.findById(applicantId).orElse(null);
-		
-		if (applicant!=null ) {
-			return joinProposalMapper.convertEntityToDTO(joinProposalRepository.findAllByApplicant(applicant));
-		} else {
-			throw new NoSuchElementException();
-		}
-	}
-	
 	public void update(JoinProposalUpdateMessageDTO joinProposalUpdateMessageDTO) throws NoSuchElementException {
 		if(joinProposalRepository.findById(Long.parseLong(joinProposalUpdateMessageDTO.getId())).orElse(null)!=null) {
 			JoinProposal joinProposal=joinProposalMapper.convertUpdateMessageDTOToEntity(joinProposalUpdateMessageDTO);
@@ -120,4 +110,29 @@ public class JoinProposalService {
 		return joinProposalMapper.convertEntityToDTO(joinProposalRepository.findAll().stream().collect(Collectors.toSet()));
 	}
 	
+	public Set<JoinProposalDTO> findAllByApplicant(Long applicantId) {
+		User applicant = userRepository.findById(applicantId).orElse(null);
+		
+		if (applicant!=null ) {
+			return joinProposalMapper.convertEntityToDTO(joinProposalRepository.findAllByApplicant(applicant));
+		} else {
+			throw new NoSuchElementException();
+		}
+	}
+	
+	public Set<JoinProposalDTO> findAllPendingWithApplicantByClub(Long clubId) {
+		return joinProposalMapper.convertEntityToDTO(joinProposalRepository
+			.findAllPendingWithApplicantByClub(clubId)
+			.stream().filter(joinProposal->joinProposal.getProposalStatus()==ProposalStatus.PENDING)
+			.collect(Collectors.toSet()));
+	}
+	
+	public void approve(Long id) {
+		
+	}
+	
+	public void reject(Long id) {
+		
+	}
+
 }
