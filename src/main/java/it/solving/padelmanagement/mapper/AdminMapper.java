@@ -9,7 +9,6 @@ import it.solving.padelmanagement.dto.AdminDTO;
 import it.solving.padelmanagement.dto.message.insert.UserInsertMessageDTO;
 import it.solving.padelmanagement.dto.message.update.UserUpdateMessageDTO;
 import it.solving.padelmanagement.model.Admin;
-import it.solving.padelmanagement.model.User;
 
 @Component
 public class AdminMapper extends AbstractMapper<Admin, AdminDTO, UserInsertMessageDTO,UserUpdateMessageDTO> {
@@ -39,6 +38,14 @@ public class AdminMapper extends AbstractMapper<Admin, AdminDTO, UserInsertMessa
 		
 		if (StringUtils.isNotBlank(entity.getMailAddress())) {
 			dto.setMailAddress(entity.getMailAddress());
+		}
+		
+		if (StringUtils.isNotBlank(entity.getUsername())) {
+			dto.setUsername(entity.getUsername());
+		}
+		
+		if (StringUtils.isNotBlank(entity.getPassword())) {
+			dto.setPassword(entity.getPassword());
 		}
 		
 		if(StringUtils.isNotBlank(entity.getMobile())) {
@@ -79,6 +86,14 @@ public class AdminMapper extends AbstractMapper<Admin, AdminDTO, UserInsertMessa
 		if (StringUtils.isNotBlank(dto.getMailAddress())) {
 			entity.setMailAddress(dto.getMailAddress());
 		}
+		
+		if(StringUtils.isNotBlank(dto.getUsername())) {
+			entity.setUsername(dto.getUsername());
+		}
+		
+		if(StringUtils.isNotBlank(dto.getPassword())) {
+			entity.setPassword(dto.getPassword());
+		}
 
 		if (StringUtils.isNotBlank(dto.getMobile())) {
 			entity.setMobile(dto.getMobile());
@@ -109,6 +124,14 @@ public class AdminMapper extends AbstractMapper<Admin, AdminDTO, UserInsertMessa
 		
 		if(StringUtils.isNotBlank(insertMessageDTO.getMailAddress())) {
 			entity.setMailAddress(insertMessageDTO.getMailAddress());
+		}
+		
+		if(StringUtils.isNotBlank(insertMessageDTO.getUsername())) {
+			entity.setUsername(insertMessageDTO.getUsername());
+		}
+		
+		if(StringUtils.isNotBlank(insertMessageDTO.getPassword())) {
+			entity.setPassword(insertMessageDTO.getPassword());
 		}
 		
 		if(StringUtils.isNotBlank(insertMessageDTO.getMobile())) {
@@ -144,6 +167,14 @@ public class AdminMapper extends AbstractMapper<Admin, AdminDTO, UserInsertMessa
 		
 		if(StringUtils.isNotBlank(updateMessageDTO.getMailAddress())) {
 			entity.setMailAddress(updateMessageDTO.getMailAddress());
+		}
+		
+		if(StringUtils.isNotBlank(updateMessageDTO.getUsername())) {
+			entity.setUsername(updateMessageDTO.getUsername());
+		}
+		
+		if(StringUtils.isNotBlank(updateMessageDTO.getPassword())) {
+			entity.setPassword(updateMessageDTO.getPassword());
 		}
 		
 		if(StringUtils.isNotBlank(updateMessageDTO.getMobile())) {

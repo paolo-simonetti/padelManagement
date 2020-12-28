@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -55,7 +56,9 @@ public class GuestController {
 					throws NonAdmissibleProposalException {
 		joinProposalsValidator.validate(joinProposalInsertMessageDTO, bindingResult);
 		if (bindingResult.hasErrors()) {
-			throw new NonAdmissibleProposalException("Encountered errors in the applicant field");
+			throw new NonAdmissibleProposalException(bindingResult.getAllErrors().stream()
+				.map(obj->(FieldError) obj).map(fieldError->fieldError.getDefaultMessage()).reduce(
+						(message1,message2)->message1+";\n "+message2).get());
 		}
 		
 		joinProposalService.insert(joinProposalInsertMessageDTO);

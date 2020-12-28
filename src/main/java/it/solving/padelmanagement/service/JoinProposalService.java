@@ -11,22 +11,25 @@ import it.solving.padelmanagement.dto.JoinProposalDTO;
 import it.solving.padelmanagement.dto.message.insert.JoinProposalInsertMessageDTO;
 import it.solving.padelmanagement.dto.message.update.JoinProposalUpdateMessageDTO;
 import it.solving.padelmanagement.exception.NonAdmissibleProposalException;
+import it.solving.padelmanagement.exception.ProposalStatusException;
 import it.solving.padelmanagement.mapper.JoinProposalMapper;
 import it.solving.padelmanagement.model.Club;
 import it.solving.padelmanagement.model.JoinProposal;
-import it.solving.padelmanagement.model.NewClubProposal;
 import it.solving.padelmanagement.model.ProposalStatus;
 import it.solving.padelmanagement.model.User;
 import it.solving.padelmanagement.repository.ClubRepository;
 import it.solving.padelmanagement.repository.JoinProposalRepository;
-import it.solving.padelmanagement.repository.NewClubProposalRepository;
 import it.solving.padelmanagement.repository.UserRepository;
+import it.solving.padelmanagement.util.MyUtil;
 
 @Service
 public class JoinProposalService {
 
 	@Autowired
 	private JoinProposalRepository joinProposalRepository;
+	
+	@Autowired
+	private PlayerService playerService;
 	
 	@Autowired
 	private JoinProposalMapper joinProposalMapper;
@@ -38,39 +41,23 @@ public class JoinProposalService {
 	private ClubRepository clubRepository;
 	
 	@Autowired
-	private NewClubProposalRepository newClubProposalRepository;	
+	private MyUtil myUtil;
+	
 	
 	public void insert(JoinProposalInsertMessageDTO joinProposalInsertMessageDTO) throws NonAdmissibleProposalException {
-		User user = userRepository.findById(Long.parseLong(joinProposalInsertMessageDTO.getApplicantId())).orElse(null);
-		Club club = clubRepository.findById(Long.parseLong(joinProposalInsertMessageDTO.getClubId())).orElse(null);
-		
-		if (user!=null && club!=null) {
-			// TODO: sposta questi controlli in un validator
-			// controllo che lo user non abbia già altre proposte pending in qualche circolo
-			Set<JoinProposal> previousJoinProposals=joinProposalRepository.findAllByApplicant(user);
-			Set<NewClubProposal> previousNewClubProposals=newClubProposalRepository.findAllByCreator(user);
-			if (previousJoinProposals.stream().filter(joinProposal->joinProposal.getProposalStatus()!=
-					ProposalStatus.PENDING).findFirst().orElse(null)!=null) {
-				throw new NonAdmissibleProposalException("The user already has a pending join proposal to some club!");
-			}
-			if (previousNewClubProposals.stream().filter(newClubProposal->newClubProposal.getProposalStatus()!=
-					ProposalStatus.PENDING).findFirst().orElse(null)!=null) {
-				throw new NonAdmissibleProposalException("The user already has a pending proposal for a new club!");
-			}
-			
-			JoinProposal joinProposal=joinProposalMapper.convertInsertMessageDTOToEntity(joinProposalInsertMessageDTO);
-			joinProposal.setApplicant(user);
-			joinProposal.setProposalStatus(ProposalStatus.PENDING);
-			user.addToJoinProposals(joinProposal);
-			joinProposal.setClub(club);
-			club.addToJoinProposals(joinProposal);
-			joinProposalRepository.save(joinProposal);
-			userRepository.save(user);
-			clubRepository.save(club);
-		} else {
-			throw new NoSuchElementException();
-		}
-		
+		User user = userRepository.findById(Long.parseLong(joinProposalInsertMessageDTO.getApplicantId()))
+			.orElseThrow(NoSuchElementException::new);
+		Club club = clubRepository.findById(Long.parseLong(joinProposalInsertMessageDTO.getClubId()))
+			.orElseThrow(NoSuchElementException::new);
+		JoinProposal joinProposal=joinProposalMapper.convertInsertMessageDTOToEntity(joinProposalInsertMessageDTO);
+		joinProposal.setApplicant(user);
+		joinProposal.setProposalStatus(ProposalStatus.PENDING);
+		user.addToJoinProposals(joinProposal);
+		joinProposal.setClub(club);
+		club.addToJoinProposals(joinProposal);
+		joinProposalRepository.save(joinProposal);
+		userRepository.save(user);
+		clubRepository.save(club);	
 	}
 	
 	public void update(JoinProposalUpdateMessageDTO joinProposalUpdateMessageDTO) throws NoSuchElementException {
@@ -127,12 +114,28 @@ public class JoinProposalService {
 			.collect(Collectors.toSet()));
 	}
 	
-	public void approve(Long id) {
-		
+	public void approve(Long id) throws ProposalStatusException {
+		JoinProposal joinProposal=joinProposalRepository.findByIdWithCompleteInfos(id)
+			.orElseThrow(NoSuchElementException::new);
+		if(joinProposal.getProposalStatus()==ProposalStatus.PENDING) {
+			joinProposal.setProposalStatus(ProposalStatus.APPROVED);
+			joinProposalRepository.save(joinProposal);
+			playerService.insert(myUtil.buildPlayerInsertMessageDTOFromJoinProposal(joinProposal), 
+				joinProposal.getApplicant().getId());	
+		} else {
+			throw new ProposalStatusException("The proposal had already been evaluated");
+		}
 	}
 	
-	public void reject(Long id) {
-		
+	public void reject(Long id) throws ProposalStatusException {
+		JoinProposal joinProposal=joinProposalRepository.findByIdWithCompleteInfos(id)
+				.orElseThrow(NoSuchElementException::new);
+		if(joinProposal.getProposalStatus()==ProposalStatus.PENDING) {
+			joinProposal.setProposalStatus(ProposalStatus.REJECTED);
+			joinProposalRepository.save(joinProposal);
+		} else {
+			throw new ProposalStatusException("The proposal had already been evaluated");
+		}
 	}
 
 }

@@ -9,7 +9,7 @@ public class PlayerInsertMessageDTO extends UserInsertMessageDTO {
 	@Min(1)
 	@Max(7)
 	private String level;
-	
+		
 	private static final String role="player";
 	
 	@Positive

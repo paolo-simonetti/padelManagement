@@ -42,6 +42,14 @@ public class PlayerMapper extends AbstractMapper<Player, PlayerDTO, PlayerInsert
 			dto.setMailAddress(entity.getMailAddress());
 		}
 		
+		if (StringUtils.isNotBlank(entity.getUsername())) {
+			dto.setUsername(entity.getUsername());
+		}
+		
+		if (StringUtils.isNotBlank(entity.getPassword())) {
+			dto.setPassword(entity.getPassword());
+		}
+		
 		if(StringUtils.isNotBlank(entity.getMobile())) {
 			dto.setMobile(entity.getMobile());
 		}
@@ -98,6 +106,14 @@ public class PlayerMapper extends AbstractMapper<Player, PlayerDTO, PlayerInsert
 		if (StringUtils.isNotBlank(dto.getMailAddress())) {
 			entity.setMailAddress(dto.getMailAddress());
 		}
+		
+		if(StringUtils.isNotBlank(dto.getUsername())) {
+			entity.setUsername(dto.getUsername());
+		}
+		
+		if(StringUtils.isNotBlank(dto.getPassword())) {
+			entity.setPassword(dto.getPassword());
+		}
 
 		if (StringUtils.isNotBlank(dto.getMobile())) {
 			entity.setMobile(dto.getMobile());
@@ -142,6 +158,14 @@ public class PlayerMapper extends AbstractMapper<Player, PlayerDTO, PlayerInsert
 			entity.setMobile(insertMessageDTO.getMobile());
 		}
 		
+		if(StringUtils.isNotBlank(insertMessageDTO.getUsername())) {
+			entity.setUsername(insertMessageDTO.getUsername());
+		}
+		
+		if(StringUtils.isNotBlank(insertMessageDTO.getPassword())) {
+			entity.setPassword(insertMessageDTO.getPassword());
+		}
+		
 		if(StringUtils.isNotBlank(insertMessageDTO.getLevel())) {
 			entity.setLevel(Integer.parseInt(insertMessageDTO.getLevel()));
 		}
@@ -175,6 +199,14 @@ public class PlayerMapper extends AbstractMapper<Player, PlayerDTO, PlayerInsert
 		
 		if(StringUtils.isNotBlank(updateMessageDTO.getMailAddress())) {
 			entity.setMailAddress(updateMessageDTO.getMailAddress());
+		}
+		
+		if(StringUtils.isNotBlank(updateMessageDTO.getUsername())) {
+			entity.setUsername(updateMessageDTO.getUsername());
+		}
+		
+		if(StringUtils.isNotBlank(updateMessageDTO.getPassword())) {
+			entity.setPassword(updateMessageDTO.getPassword());
 		}
 		
 		if(StringUtils.isNotBlank(updateMessageDTO.getMobile())) {

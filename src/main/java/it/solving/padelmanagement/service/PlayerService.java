@@ -44,20 +44,17 @@ public class PlayerService {
 		return playerMapper.convertEntityToDTO(playerRepository.findAll().stream().collect(Collectors.toSet()));
 	}
 	
-	public void insert(PlayerInsertMessageDTO playerInsertMessageDTO) {
+	public void insert(PlayerInsertMessageDTO playerInsertMessageDTO, Long idUserToBeDeleted) {
 		Player player = playerMapper.convertInsertMessageDTOToEntity(playerInsertMessageDTO);
-		Club club = clubRepository.findById(Long.parseLong(playerInsertMessageDTO.getClubId())).orElse(null);
-		if (club!=null) {
-			// Rimuovo il player dalla tabella User
-			userService.delete(player.getId());
-			// Assegno il player al club e salvo tutto nel contesto di persistenza
-			player.setClub(club);
-			club.addToPlayers(player);
-			playerRepository.save(player);
-			clubRepository.save(club);
-		} else {
-			throw new NoSuchElementException();
-		}
+		Club club = clubRepository.findById(Long.parseLong(playerInsertMessageDTO.getClubId()))
+			.orElseThrow(NoSuchElementException::new);
+		// Rimuovo il player dalla tabella User
+		userService.delete(idUserToBeDeleted);
+		// Assegno il player al club e salvo tutto nel contesto di persistenza
+		player.setClub(club);
+		club.addToPlayers(player);
+		playerRepository.save(player);
+		clubRepository.save(club);
 	}
 	
 	public void update(PlayerUpdateMessageDTO playerUpdateMessageDTO) {
