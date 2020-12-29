@@ -9,6 +9,8 @@ import java.util.stream.Collectors;
 import org.hibernate.Hibernate;
 import org.hibernate.proxy.HibernateProxy;
 import org.springframework.stereotype.Component;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 
 import it.solving.padelmanagement.dto.message.createpadelmatch.InputVerifyAvailabilityMessageDTO;
 import it.solving.padelmanagement.dto.message.insert.ClubInsertMessageDTO;
@@ -202,6 +204,16 @@ public class MyUtil {
 		} else {
 			// l'orario di inizio della partita coincide con l'ora attuale --> mi basta confrontare i minuti
 			return (minuteStart-minuteNow<30);
+		}
+	}
+	
+	public String allErrorsToString(BindingResult bindingResult) {
+		if (bindingResult.hasErrors()) {
+			return bindingResult.getAllErrors().stream()
+					.map(obj->(FieldError) obj).map(fieldError->fieldError.getDefaultMessage()).reduce(
+							(message1,message2)->message1+"; \n\r "+message2).get();
+		} else {
+			return "";
 		}
 	}
 	

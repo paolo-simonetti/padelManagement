@@ -8,7 +8,10 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.databind.deser.DataFormatReaders.Match;
+
 import it.solving.padelmanagement.dto.MatchDTO;
+import it.solving.padelmanagement.dto.message.callforactions.InputUpdateMissingPlayersMessageDTO;
 import it.solving.padelmanagement.dto.message.createpadelmatch.InputValidateAndInsertInputMessageDTO;
 import it.solving.padelmanagement.dto.message.createpadelmatch.InputValidateAndUpdateInputMessageDTO;
 import it.solving.padelmanagement.exception.MatchPaymentException;
@@ -104,6 +107,12 @@ public class MatchService {
 		
 	}
 	
+	public void updateMissingPlayers(InputUpdateMissingPlayersMessageDTO inputMessage) {
+		PadelMatch match=matchRepository.findByIdWithCompleteInfo(Long.parseLong(inputMessage.getMatchId())).get();
+		match.setMissingPlayers(Integer.parseInt(inputMessage.getMissingPlayers()));
+		matchRepository.save(match);
+	}
+	
 	public void delete (Long id) {
 		if (matchRepository.findByIdWithCompleteInfo(id).isPresent()) {
 			PadelMatch match=matchRepository.findByIdWithCompleteInfo(id).get();
@@ -158,6 +167,21 @@ public class MatchService {
 			return null;
 		}
 		return matchMapper.convertEntityToDTO(matchRepository.findAllByDate(date).stream().collect(Collectors.toSet()));
+	}
+	
+	public Set<MatchDTO> findAllOthersCallForActions(Long idPlayer) {
+		if (!playerRepository.findById(idPlayer).isPresent()) {
+			throw new NoSuchElementException();
+		}
+		// Recupero tutti i match creati da altri giocatori nello stesso club del richiedente
+		Set<PadelMatch> matches=matchRepository.findAllOthersCallForActionsInTheSameClubAsThePlayersOne(idPlayer);
+		
+		// Li filtro per avere solo quelli a cui manchino giocatori, e il cui creatore abbia livello di gioco 
+		// inferiore rispetto al richiedente
+		matches=matches.stream().filter(match->match.getMissingPlayers()>0 && match.getCreator().getLevel() <=
+				playerRepository.findById(idPlayer).get().getLevel()).collect(Collectors.toSet());
+		
+		return matchMapper.convertEntityToDTO(matches);
 	}
 	
 	public void writeDownPayment(Long matchId) throws MatchPaymentException {
