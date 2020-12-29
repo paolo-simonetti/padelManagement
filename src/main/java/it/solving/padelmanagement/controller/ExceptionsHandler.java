@@ -11,9 +11,12 @@ import it.solving.padelmanagement.dto.ResultDTO;
 import it.solving.padelmanagement.exception.CourtBeReservedException;
 import it.solving.padelmanagement.exception.MatchInsertException;
 import it.solving.padelmanagement.exception.MatchPaymentException;
+import it.solving.padelmanagement.exception.MatchUpdateException;
+import it.solving.padelmanagement.exception.NonAdmissibleActionOnMatchNow;
 import it.solving.padelmanagement.exception.NonAdmissibleProposalException;
 import it.solving.padelmanagement.exception.ProposalStatusException;
 import it.solving.padelmanagement.exception.VerifyAvailabilityException;
+import it.solving.padelmanagement.exception.WrongCreatorException;
 
 
 @ControllerAdvice(basePackages = "it.solving.padelmanagement.controller")
@@ -52,6 +55,21 @@ public class ExceptionsHandler {
 	@ExceptionHandler(MatchInsertException.class) 
 	public ResponseEntity<ResultDTO> handleMatchInsertException (MatchInsertException e) {
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResultDTO(e.getMessage()));
+	}
+	
+	@ExceptionHandler(MatchUpdateException.class) 
+	public ResponseEntity<ResultDTO> handleMatchUpdateException (MatchUpdateException e) {
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResultDTO(e.getMessage()));
+	}
+	
+	@ExceptionHandler(WrongCreatorException.class) 
+	public ResponseEntity<ResultDTO> handleWrongCreatorException (WrongCreatorException e) {
+		return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResultDTO(e.getMessage()));
+	}
+
+	@ExceptionHandler(NonAdmissibleActionOnMatchNow.class) 
+	public ResponseEntity<ResultDTO> handleNonAdmissibleActionOnMatchNow (NonAdmissibleActionOnMatchNow e) {
+		return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResultDTO(e.getMessage()));
 	}
 	
 	@ExceptionHandler(Exception.class)

@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 
 import it.solving.padelmanagement.dto.MatchDTO;
 import it.solving.padelmanagement.dto.message.createpadelmatch.InputValidateAndInsertInputMessageDTO;
-import it.solving.padelmanagement.dto.message.update.MatchUpdateMessageDTO;
+import it.solving.padelmanagement.dto.message.createpadelmatch.InputValidateAndUpdateInputMessageDTO;
 import it.solving.padelmanagement.exception.MatchPaymentException;
 import it.solving.padelmanagement.exception.VerifyAvailabilityException;
 import it.solving.padelmanagement.mapper.MatchMapper;
@@ -71,51 +71,37 @@ public class MatchService {
 		matchRepository.save(match);
 	}
 	
-	public void update(MatchUpdateMessageDTO matchUpdateMessageDTO) {
-		PadelMatch match=matchMapper.convertUpdateMessageDTOToEntity(matchUpdateMessageDTO);
-		if (matchUpdateMessageDTO.getOtherPlayersIds()!=null && matchUpdateMessageDTO.getOtherPlayersIds().size()>0) {
-			Set<Player> otherPlayers=matchUpdateMessageDTO.getOtherPlayersIds().stream()
-					.map(stringId->playerRepository.findById(Long.parseLong(stringId)).orElse(null))
-					.collect(Collectors.toSet());
-			// Controllo che tutti gli id immessi fossero validi
-			if (otherPlayers==null || otherPlayers.size()<matchUpdateMessageDTO.getOtherPlayersIds().size()) {
-				throw new NoSuchElementException();
-			}
-			
-			match.setOtherPlayers(otherPlayers);
-			otherPlayers.stream().forEach(player-> {
-				player.addToMatchesJoined(match);
-				playerRepository.save(player);
-			});
-		}
+	public void update (InputValidateAndUpdateInputMessageDTO inputMessage) throws VerifyAvailabilityException {
+		PadelMatch match=matchMapper.convertInputValidateAndUpdateInputMessageDTOToPadelMatch(inputMessage);
 		
-		// Aggiorno il creatore
-		Player creator = playerRepository.findById(Long.parseLong(matchUpdateMessageDTO.getCreatorId())).orElse(null);
-		if (creator!=null) {
-			match.setCreator(creator);
-			creator.addToMatches(match);
-			playerRepository.save(creator);
-		} else {
-			throw new NoSuchElementException();
-		}
+		// rispetto all'insert, devo trasferire l'informazione sullo stato di pagamento della partita
+		match.setPayed(matchRepository.findById(match.getId()).get().isPayed());
 		
-		// Aggiorno gli slot
-		Set<Slot> slots=matchUpdateMessageDTO.getSlotsIds().stream().map(stringId->
-			Slot.convertIdToSlot(Integer.parseInt(stringId))).collect(Collectors.toSet());
-		match.setSlots(slots);
+		Set<Slot> slots=myUtil.convertInputVerifyAvailabilityMessageDTOToSlots(inputMessage
+				.getInputValidateAndInsertInputMessageDTO().getInputVerifyAvailabilityMessageDTO());
+		Player creator=playerRepository.findByIdWithAllMatches(Long.parseLong(
+				inputMessage.getInputValidateAndInsertInputMessageDTO().getInputVerifyAvailabilityMessageDTO()
+				.getPlayerId())).get();
+		matchRepository.save(match);
+		
+		match.setCreator(creator);
+		creator.addToMatches(match);
+		playerRepository.save(creator);
+		
+		Court court=courtRepository.findByIdWithMatches(Long.parseLong(inputMessage
+			.getInputValidateAndInsertInputMessageDTO().getCourtId())).get();
+		court.addToMatches(match);
+		match.setCourt(court);
+		match.setSlots(slots);	
+		courtRepository.save(court);
+		
 		slots.stream().forEach(slot->{
 			slot.addToMatches(match);
 			slotRepository.save(slot);
 		});
 		
-		// Aggiorno il campo
-		Court court=courtRepository.findById(Long.parseLong(matchUpdateMessageDTO.getCourtId())).get();
-		match.setCourt(court);
-		court.addToMatches(match);
-		courtRepository.save(court);
-		
-		// Aggiorno la partita nel contesto di persistenza
 		matchRepository.save(match);
+		
 	}
 	
 	public void delete (Long id) {

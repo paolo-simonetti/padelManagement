@@ -19,12 +19,16 @@ import org.springframework.web.bind.annotation.RestController;
 import it.solving.padelmanagement.dto.CourtDTO;
 import it.solving.padelmanagement.dto.ResultDTO;
 import it.solving.padelmanagement.dto.message.createpadelmatch.InputValidateAndInsertInputMessageDTO;
+import it.solving.padelmanagement.dto.message.createpadelmatch.InputValidateAndUpdateInputMessageDTO;
 import it.solving.padelmanagement.dto.message.createpadelmatch.InputVerifyAvailabilityMessageDTO;
 import it.solving.padelmanagement.exception.MatchInsertException;
+import it.solving.padelmanagement.exception.MatchUpdateException;
 import it.solving.padelmanagement.exception.VerifyAvailabilityException;
+import it.solving.padelmanagement.exception.WrongCreatorException;
 import it.solving.padelmanagement.service.CourtService;
 import it.solving.padelmanagement.service.MatchService;
 import it.solving.padelmanagement.validator.MatchInsertValidator;
+import it.solving.padelmanagement.validator.MatchUpdateValidator;
 import it.solving.padelmanagement.validator.VerifyAvailabilityValidator;
 
 //TODO: in tutto questo package, devo controllare che il player stia agendo sulle proprie robe
@@ -37,6 +41,9 @@ public class PadelMatchController {
 	
 	@Autowired
 	private MatchInsertValidator matchInsertValidator;
+	
+	@Autowired
+	private MatchUpdateValidator matchUpdateValidator;
 	
 	@Autowired
 	private CourtService courtService;
@@ -81,5 +88,32 @@ public class PadelMatchController {
 		}
 		matchService.insert(inputMessage);
 		return ResponseEntity.status(HttpStatus.OK).body(new ResultDTO("Match successfully inserted"));
+	}
+	
+	@PostMapping("update")
+	public ResponseEntity<ResultDTO> updatePadelMatch(@Valid @RequestBody InputValidateAndUpdateInputMessageDTO
+			inputMessage, BindingResult bindingResult) 
+				throws MatchInsertException, VerifyAvailabilityException, WrongCreatorException, MatchUpdateException {
+		
+		matchUpdateValidator.validate(inputMessage,bindingResult);
+		if (bindingResult.hasErrors()) {
+			
+			/* determino se tra gli errori c'è anche l'aver sbagliato creatore della partita o aver agito 
+			 su una partita troppo tardi */ 
+			boolean creatorIsRight=bindingResult.getAllErrors().stream()
+				.map(obj->(FieldError) obj).map(fieldError->fieldError.getCode())
+				.noneMatch(code->code.equals("invalidMatchChoice")||code.equals("matchCannotBeModifiedNow"));
+			if(!creatorIsRight) {
+				throw new WrongCreatorException("The player cannot act on this match!");
+			}
+			
+			// negli altri casi, lancio un'eccezione diversa
+			throw new MatchUpdateException(bindingResult.getAllErrors().stream()
+					.map(obj->(FieldError) obj).map(fieldError->fieldError.getDefaultMessage()).reduce(
+							(message1,message2)->message1+"; \n\r "+message2).get());
+		}
+		
+		matchService.update(inputMessage);
+		return ResponseEntity.status(HttpStatus.OK).body(new ResultDTO("Match successfully updated"));
 	}
 }

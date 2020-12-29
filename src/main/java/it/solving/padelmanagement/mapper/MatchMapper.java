@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 
 import it.solving.padelmanagement.dto.MatchDTO;
 import it.solving.padelmanagement.dto.message.createpadelmatch.InputValidateAndInsertInputMessageDTO;
+import it.solving.padelmanagement.dto.message.createpadelmatch.InputValidateAndUpdateInputMessageDTO;
 import it.solving.padelmanagement.dto.message.insert.MatchInsertMessageDTO;
 import it.solving.padelmanagement.dto.message.update.MatchUpdateMessageDTO;
 import it.solving.padelmanagement.exception.VerifyAvailabilityException;
@@ -143,6 +144,17 @@ public class MatchMapper extends AbstractMapper<PadelMatch, MatchDTO, MatchInser
 		match.setDate(LocalDate.parse(inputMessage.getInputVerifyAvailabilityMessageDTO().getDate()));
 		match.setPayed(false);
 		match.setMissingPlayers(Integer.parseInt(inputMessage.getMissingPlayers()));
+		return match;
+	}
+	
+	public PadelMatch convertInputValidateAndUpdateInputMessageDTOToPadelMatch(
+			InputValidateAndUpdateInputMessageDTO inputMessage) throws VerifyAvailabilityException {
+		PadelMatch match=new PadelMatch();
+		match.setId(Long.parseLong(inputMessage.getMatchId()));
+		match.setDate(LocalDate.parse(inputMessage.getInputValidateAndInsertInputMessageDTO()
+			.getInputVerifyAvailabilityMessageDTO().getDate()));
+		match.setMissingPlayers(Integer.parseInt(inputMessage.getInputValidateAndInsertInputMessageDTO()
+			.getMissingPlayers()));
 		return match;
 	}
 

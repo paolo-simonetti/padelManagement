@@ -17,4 +17,6 @@ public interface MatchRepository extends JpaRepository<PadelMatch, Long> {
 	
 	public Set<PadelMatch> findAllByDate(LocalDate date);
 	
+	@Query("from PadelMatch m left join fetch m.creator c left join fetch m.slots s where m.id=?1")
+	public Optional<PadelMatch> findByIdWithCreatorAndSlots(Long id);
 }

@@ -1,16 +1,15 @@
 package it.solving.padelmanagement.util;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.hibernate.Hibernate;
 import org.hibernate.proxy.HibernateProxy;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import it.solving.padelmanagement.dto.message.createpadelmatch.InputValidateAndInsertInputMessageDTO;
 import it.solving.padelmanagement.dto.message.createpadelmatch.InputVerifyAvailabilityMessageDTO;
 import it.solving.padelmanagement.dto.message.insert.ClubInsertMessageDTO;
 import it.solving.padelmanagement.dto.message.insert.PlayerInsertMessageDTO;
@@ -23,13 +22,10 @@ import it.solving.padelmanagement.model.NewClubProposal;
 import it.solving.padelmanagement.model.PadelMatch;
 import it.solving.padelmanagement.model.Slot;
 import it.solving.padelmanagement.model.User;
-import it.solving.padelmanagement.repository.SlotRepository;
 
 @Component
 public class MyUtil {
 
-	@Autowired
-	private SlotRepository slotRepository;
 	
 	public UserInsertMessageDTO getAdminFromNewClubProposal(NewClubProposal newClubProposal) {
 		UserInsertMessageDTO result=new UserInsertMessageDTO();
@@ -162,6 +158,51 @@ public class MyUtil {
 	                .getImplementation();
 	    }
 	    return entity;
+	}
+	
+	public boolean lessThanHalfAnHourLeft(PadelMatch match) {
+		// Recupero la data della partita
+		LocalDate date=match.getDate();
+		
+		// Trovo l'id minimo tra gli slots, che sicuramente non può essere maggiore dell'ultimo slot
+		Integer min=29;
+		for (Integer i:match.getSlots().stream().map(slot->slot.getId()).collect(Collectors.toSet())) {
+			if(i<=min) {
+				min=i;
+			}
+			
+		}
+		
+		// Dallo slot minimo, ricavo ora e minuto
+		Integer hourStart=Slot.convertIdToSlot(min).getHour();
+		Integer minuteStart=Slot.convertIdToSlot(min).getMinute();
+		
+		// Procedo con il confronto di data, ora e minuto
+		if (date.compareTo(LocalDate.now())>0) {
+			// la partita è in una data futura
+			return false;
+		} else if (date.compareTo(LocalDate.now())<0) {
+			// la partita è in una data passata
+			return true;
+		}
+		
+		// Se sono qui, la partita è oggi. Recupero ora e minuto attuali
+		Integer hourNow=LocalDateTime.now().getHour();
+		Integer minuteNow=LocalDateTime.now().getMinute();
+		if (hourStart<hourNow) {
+			// la partita è già iniziata
+			return true;
+		} else if (hourStart-hourNow>1) {
+			// manca più di un'ora alla partita
+			return false;
+		} else if (hourStart==hourNow+1) {
+			// ora potrebbero essere, per esempio, le 15.59 e la partita inizia alle 16.10 
+			// --> in questo caso, ai 10 minuti delle 16.10 sommo i 60 minuti derivanti dall'ora di differenza
+			return (minuteStart+60-minuteNow<=30);
+		} else {
+			// l'orario di inizio della partita coincide con l'ora attuale --> mi basta confrontare i minuti
+			return (minuteStart-minuteNow<30);
+		}
 	}
 	
 }
