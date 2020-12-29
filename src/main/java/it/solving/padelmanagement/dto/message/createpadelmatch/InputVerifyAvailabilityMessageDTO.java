@@ -4,6 +4,7 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 
 public class InputVerifyAvailabilityMessageDTO {
 	
@@ -17,7 +18,7 @@ public class InputVerifyAvailabilityMessageDTO {
 	@Max(20)
 	private String hour;
 	
-	@Positive
+	@PositiveOrZero
 	@Max(30)
 	private String minute;
 	
@@ -25,7 +26,7 @@ public class InputVerifyAvailabilityMessageDTO {
 	@Max(14)
 	private String durationHour;
 
-	@Positive
+	@PositiveOrZero
 	@Max(30)
 	private String durationMinute;
 

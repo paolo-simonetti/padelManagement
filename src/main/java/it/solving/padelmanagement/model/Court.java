@@ -2,6 +2,7 @@ package it.solving.padelmanagement.model;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -89,6 +90,18 @@ public class Court {
 		super();
 	}
 	
-	
+	public boolean areThereMatchesInTheSlots(Set<Slot> slots) {
+		Boolean result=false;
+		Set<Integer> slotsIds=slots.stream().map(slot->slot.getId()).collect(Collectors.toSet());
+		Set<PadelMatch> matches=this.getMatches();
+		for (PadelMatch match:matches) {
+			result=match.getSlots().stream().map(slot->slot.getId()).noneMatch(id->slotsIds.contains(id));
+			if (result) {
+				break;
+			}
+		}
+		
+		return result;
+	}
 	
 }

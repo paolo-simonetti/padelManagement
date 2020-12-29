@@ -2,6 +2,7 @@ package it.solving.padelmanagement.util;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Component;
 
@@ -11,6 +12,7 @@ import it.solving.padelmanagement.dto.message.insert.PlayerInsertMessageDTO;
 import it.solving.padelmanagement.dto.message.insert.UserInsertMessageDTO;
 import it.solving.padelmanagement.exception.VerifyAvailabilityException;
 import it.solving.padelmanagement.model.Club;
+import it.solving.padelmanagement.model.Court;
 import it.solving.padelmanagement.model.JoinProposal;
 import it.solving.padelmanagement.model.NewClubProposal;
 import it.solving.padelmanagement.model.Slot;
@@ -86,5 +88,54 @@ public class MyUtil {
 			}
 		}
 		return result;
+	}
+	
+	public boolean isTheCourtOptimalForTheRequiredSlots(Court court, Set<Slot> requiredSlots) {
+		// Trovo l'id minimo tra gli slots, che sicuramente non può essere maggiore dell'ultimo slot
+		int min=29;
+		// trovo anche l'id massimo, che sicuramente sarà superiore a 1
+		int max=1;
+		for (Integer i:requiredSlots.stream().map(slot->slot.getId()).collect(Collectors.toSet())) {
+			if(i<=min) {
+				min=i;
+			}
+			
+			if(i>=max) {
+				max=i;
+			}
+		}
+		/* Se l'id minimo trovato è <= 3, allora l'ottimizzazione consiste nel controllare solo i tre slot successivi
+		 * all'id massimo. */
+		if (min<=3) {
+			Set<Slot> slots=new HashSet<>();
+			if (max>=27) {
+				/* Caso patologico: il giocatore vuole prenotare per praticamente tutta la giornata
+				 * --> il campo risultante dalla ricerca base va già benissimo */
+				return true;
+			} else {
+				// Recupero i tre id successivi e verifico se ci sono partite nel campo
+				for (int i=1; i<=3; i++) {
+					slots.add(Slot.convertIdToSlot(max+i));
+				}
+				return court.areThereMatchesInTheSlots(slots);	
+			}
+		}
+		
+		/* Se l'id minimo trovato è > 3, allora l'ottimizzazione consiste nel controllare i tre slot precedenti
+		 * all'id minimo, ed eventualmente anche i 3 successivi all'id massimo. */
+		Set<Slot> slots=new HashSet<>();
+		for (int i=1;i<=3;i++) {
+			slots.add(Slot.convertIdToSlot(min-i));
+		}
+		
+		if (max<27) {
+			// in questo caso, devo controllare anche i tre slot successivi a quello finale 
+			for (int i=1; i<=3; i++) {
+				slots.add(Slot.convertIdToSlot(max+i));
+			}
+		}
+		
+		return court.areThereMatchesInTheSlots(slots);
+		
 	}
 }

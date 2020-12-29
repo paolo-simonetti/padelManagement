@@ -144,10 +144,34 @@ public class CourtService {
 		Player player=playerRepository.findByIdWithClub(Long.parseLong(inputMessage.getPlayerId()))
 			.orElseThrow(NoSuchElementException::new);
 		Club club=player.getClub();
-		ClubManagementMessageDTO clubManagementMessageDTO = 
-			new ClubManagementMessageDTO(inputMessage.getDate(),club.getId().toString());
-		Set<CourtDTO> result=this.findAllWithMatchesAndTheirSlotsByDate(clubManagementMessageDTO);
-		// scrivere un metodo booleano in court che verifica che non ci siano sovrapposizioni tra match previsti nel court
+		
+		// Recupero i campi con le rispettive informazioni su partite e slot occupati
+		Set<Court> courts=courtRepository.findAllWithMatchesAndTheirSlotsByDate(
+				LocalDate.parse(inputMessage.getDate()), club.getId()).get();
+		
+		if (courts==null || courts.size()==0) {
+			throw new VerifyAvailabilityException("There are no active courts in the club!");
+		}
+		
+		// filtro i campi, eliminando quelli dismessi dall'admin e quelli occupati nell'orario richiesto
+		courts=courts.stream().filter(court->court.mayBeReserved()&&!court.areThereMatchesInTheSlots(requiredSlots))
+			.collect(Collectors.toSet());
+		
+		if (courts==null||courts.size()==0) {
+			// se sono qui, vuol dire che non ci sono campi disponibili
+			return null;
+		}
+		
+		// filtro i campi, eliminando quelli non ottimali
+		Set<Court> optimalCourts=courts.stream().filter(court->
+			myUtil.isTheCourtOptimalForTheRequiredSlots(court,requiredSlots)).collect(Collectors.toSet());
+		
+		if (optimalCourts==null||optimalCourts.size()==0) {
+			// se sono qui, vuol dire che non ci sono campi ottimi, quindi ritorno l'elenco di quelli trovati prima
+			return courtMapper.convertEntityToDTO(courts);
+		}
+		
+		return courtMapper.convertEntityToDTO(optimalCourts);
 	}
 	
 }

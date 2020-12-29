@@ -12,6 +12,7 @@ import it.solving.padelmanagement.exception.CourtBeReservedException;
 import it.solving.padelmanagement.exception.MatchPaymentException;
 import it.solving.padelmanagement.exception.NonAdmissibleProposalException;
 import it.solving.padelmanagement.exception.ProposalStatusException;
+import it.solving.padelmanagement.exception.VerifyAvailabilityException;
 
 
 @ControllerAdvice(basePackages = "it.solving.padelmanagement.controller")
@@ -40,6 +41,11 @@ public class ExceptionsHandler {
 	@ExceptionHandler(ProposalStatusException.class) 
 	public ResponseEntity<ResultDTO> handleProposalStatusException (ProposalStatusException e) {
 		return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResultDTO(e.getMessage()));
+	}
+	
+	@ExceptionHandler(VerifyAvailabilityException.class) 
+	public ResponseEntity<ResultDTO> handleVerifyAvailabilityException (VerifyAvailabilityException e) {
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResultDTO(e.getMessage()));
 	}
 	
 	@ExceptionHandler(Exception.class)
