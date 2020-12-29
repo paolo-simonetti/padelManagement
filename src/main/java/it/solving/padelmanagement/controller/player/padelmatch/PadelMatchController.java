@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import it.solving.padelmanagement.dto.CourtDTO;
 import it.solving.padelmanagement.dto.ResultDTO;
+import it.solving.padelmanagement.dto.message.createpadelmatch.InputDeleteMessageDTO;
 import it.solving.padelmanagement.dto.message.createpadelmatch.InputValidateAndInsertInputMessageDTO;
 import it.solving.padelmanagement.dto.message.createpadelmatch.InputValidateAndUpdateInputMessageDTO;
 import it.solving.padelmanagement.dto.message.createpadelmatch.InputVerifyAvailabilityMessageDTO;
@@ -27,6 +29,7 @@ import it.solving.padelmanagement.exception.VerifyAvailabilityException;
 import it.solving.padelmanagement.exception.WrongCreatorException;
 import it.solving.padelmanagement.service.CourtService;
 import it.solving.padelmanagement.service.MatchService;
+import it.solving.padelmanagement.validator.MatchDeleteValidator;
 import it.solving.padelmanagement.validator.MatchInsertValidator;
 import it.solving.padelmanagement.validator.MatchUpdateValidator;
 import it.solving.padelmanagement.validator.VerifyAvailabilityValidator;
@@ -44,6 +47,9 @@ public class PadelMatchController {
 	
 	@Autowired
 	private MatchUpdateValidator matchUpdateValidator;
+	
+	@Autowired
+	private MatchDeleteValidator matchDeleteValidator;
 	
 	@Autowired
 	private CourtService courtService;
@@ -115,5 +121,20 @@ public class PadelMatchController {
 		
 		matchService.update(inputMessage);
 		return ResponseEntity.status(HttpStatus.OK).body(new ResultDTO("Match successfully updated"));
+	}
+	
+	@DeleteMapping("delete")
+	public ResponseEntity<ResultDTO> deletePadelmatch(@Valid @RequestBody InputDeleteMessageDTO inputMessage,
+			BindingResult bindingResult) {
+		matchDeleteValidator.validate(inputMessage,bindingResult);
+		if (bindingResult.hasErrors()) {
+			return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResultDTO(
+					bindingResult.getAllErrors().stream()
+					.map(obj->(FieldError) obj).map(fieldError->fieldError.getDefaultMessage()).reduce(
+							(message1,message2)->message1+"; \n\r "+message2).get()));
+		}
+		matchService.delete(Long.parseLong(inputMessage.getMatchId()));
+		return ResponseEntity.status(HttpStatus.OK).body(new ResultDTO("The match was successuflly deleted"));
+		
 	}
 }
