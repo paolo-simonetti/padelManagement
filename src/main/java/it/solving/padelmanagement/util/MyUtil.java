@@ -1,11 +1,16 @@
 package it.solving.padelmanagement.util;
 
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.hibernate.Hibernate;
+import org.hibernate.proxy.HibernateProxy;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import it.solving.padelmanagement.dto.message.createpadelmatch.InputValidateAndInsertInputMessageDTO;
 import it.solving.padelmanagement.dto.message.createpadelmatch.InputVerifyAvailabilityMessageDTO;
 import it.solving.padelmanagement.dto.message.insert.ClubInsertMessageDTO;
 import it.solving.padelmanagement.dto.message.insert.PlayerInsertMessageDTO;
@@ -15,12 +20,17 @@ import it.solving.padelmanagement.model.Club;
 import it.solving.padelmanagement.model.Court;
 import it.solving.padelmanagement.model.JoinProposal;
 import it.solving.padelmanagement.model.NewClubProposal;
+import it.solving.padelmanagement.model.PadelMatch;
 import it.solving.padelmanagement.model.Slot;
 import it.solving.padelmanagement.model.User;
+import it.solving.padelmanagement.repository.SlotRepository;
 
 @Component
 public class MyUtil {
 
+	@Autowired
+	private SlotRepository slotRepository;
+	
 	public UserInsertMessageDTO getAdminFromNewClubProposal(NewClubProposal newClubProposal) {
 		UserInsertMessageDTO result=new UserInsertMessageDTO();
 		result.setName(newClubProposal.getCreator().getName());
@@ -138,4 +148,20 @@ public class MyUtil {
 		return court.areThereMatchesInTheSlots(slots);
 		
 	}
+	
+	@SuppressWarnings("unchecked")
+	public static <T> T initializeAndUnproxy(T entity) {
+	    if (entity == null) {
+	        throw new 
+	           NullPointerException("Entity passed for initialization is null");
+	    }
+
+	    Hibernate.initialize(entity);
+	    if (entity instanceof HibernateProxy) {
+	        entity = (T) ((HibernateProxy) entity).getHibernateLazyInitializer()
+	                .getImplementation();
+	    }
+	    return entity;
+	}
+	
 }

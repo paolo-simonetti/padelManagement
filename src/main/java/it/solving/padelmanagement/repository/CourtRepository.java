@@ -20,4 +20,7 @@ public interface CourtRepository extends JpaRepository<Court, Long> {
 	
 	@Query("from Court c left join fetch c.matches m where c.id=?1")
 	public Optional<Court> findByIdWithMatches(Long id);
+	
+	@Query("from Court c left join fetch c.club cl where c.id=?1")
+	public Optional<Court> findByIdWithClub(Long id);
 }

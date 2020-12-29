@@ -1,5 +1,6 @@
 package it.solving.padelmanagement.service;
 
+import java.time.LocalDate;
 import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -8,9 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import it.solving.padelmanagement.dto.MatchDTO;
-import it.solving.padelmanagement.dto.message.insert.MatchInsertMessageDTO;
+import it.solving.padelmanagement.dto.message.createpadelmatch.InputValidateAndInsertInputMessageDTO;
 import it.solving.padelmanagement.dto.message.update.MatchUpdateMessageDTO;
 import it.solving.padelmanagement.exception.MatchPaymentException;
+import it.solving.padelmanagement.exception.VerifyAvailabilityException;
 import it.solving.padelmanagement.mapper.MatchMapper;
 import it.solving.padelmanagement.model.Court;
 import it.solving.padelmanagement.model.PadelMatch;
@@ -20,6 +22,7 @@ import it.solving.padelmanagement.repository.CourtRepository;
 import it.solving.padelmanagement.repository.MatchRepository;
 import it.solving.padelmanagement.repository.PlayerRepository;
 import it.solving.padelmanagement.repository.SlotRepository;
+import it.solving.padelmanagement.util.MyUtil;
 
 @Service
 public class MatchService {
@@ -39,27 +42,33 @@ public class MatchService {
 	@Autowired
 	private SlotRepository slotRepository;
 	
-	public void insert(MatchInsertMessageDTO matchInsertMessageDTO) {
-		PadelMatch match=matchMapper.convertInsertMessageDTOToEntity(matchInsertMessageDTO);
-		Player creator=playerRepository.findById(Long.parseLong(matchInsertMessageDTO.getCreatorId())).get();
-		Set<Slot> slots=matchInsertMessageDTO.getSlotsIds().stream().map(stringId->
-			Slot.convertIdToSlot(Integer.parseInt(stringId))).collect(Collectors.toSet());
-		Court court=courtRepository.findById(Long.parseLong(matchInsertMessageDTO.getCourtId())).get();
-		if (slots!=null && slots.size()>=3 && creator!=null && court!=null) {
-			match.setCourt(court);
-			court.addToMatches(match);
-			match.setCreator(creator);
-			creator.addToMatches(match);
-			match.setSlots(slots);
-			slots.stream().forEach(slot-> {
-				slot.addToMatches(match);
-				slotRepository.save(slot);
-			});
-			
-			courtRepository.save(court);
-			matchRepository.save(match);
-			playerRepository.save(creator);
-		}
+	@Autowired
+	private MyUtil myUtil;
+	
+	public void insert(InputValidateAndInsertInputMessageDTO inputMessage) throws VerifyAvailabilityException {
+		PadelMatch match=matchMapper.convertInputValidateAndInsertInputMessageDTOToPadelMatch(inputMessage);
+		Set<Slot> slots=myUtil.convertInputVerifyAvailabilityMessageDTOToSlots(inputMessage
+				.getInputVerifyAvailabilityMessageDTO());
+		Player creator=playerRepository.findByIdWithAllMatches(Long.parseLong(
+				inputMessage.getInputVerifyAvailabilityMessageDTO().getPlayerId())).get();
+		matchRepository.save(match);
+		
+		match.setCreator(creator);
+		creator.addToMatches(match);
+		playerRepository.save(creator);
+		
+		Court court=courtRepository.findByIdWithMatches(Long.parseLong(inputMessage.getCourtId())).get();
+		court.addToMatches(match);
+		match.setCourt(court);
+		match.setSlots(slots);	
+		courtRepository.save(court);
+		
+		slots.stream().forEach(slot->{
+			slot.addToMatches(match);
+			slotRepository.save(slot);
+		});
+		
+		matchRepository.save(match);
 	}
 	
 	public void update(MatchUpdateMessageDTO matchUpdateMessageDTO) {
@@ -156,6 +165,13 @@ public class MatchService {
 	
 	public Set<MatchDTO> findAll() {
 		return matchMapper.convertEntityToDTO(matchRepository.findAll().stream().collect(Collectors.toSet()));
+	}
+	
+	public Set<MatchDTO> findAllByDate(LocalDate date) {
+		if(matchRepository.findAllByDate(date)==null || matchRepository.findAllByDate(date).size()==0) {
+			return null;
+		}
+		return matchMapper.convertEntityToDTO(matchRepository.findAllByDate(date).stream().collect(Collectors.toSet()));
 	}
 	
 	public void writeDownPayment(Long matchId) throws MatchPaymentException {

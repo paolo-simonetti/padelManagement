@@ -143,16 +143,16 @@ public class CourtService {
 		Set<Slot> requiredSlots=myUtil.convertInputVerifyAvailabilityMessageDTOToSlots(inputMessage);
 		Player player=playerRepository.findByIdWithClub(Long.parseLong(inputMessage.getPlayerId()))
 			.orElseThrow(NoSuchElementException::new);
-		Club club=player.getClub();
+		Club club=MyUtil.initializeAndUnproxy(player.getClub());
 		
 		// Recupero i campi con le rispettive informazioni su partite e slot occupati
-		Set<Court> courts=courtRepository.findAllWithMatchesAndTheirSlotsByDate(
-				LocalDate.parse(inputMessage.getDate()), club.getId()).get();
-		
-		if (courts==null || courts.size()==0) {
+		if(!courtRepository.findAllWithMatchesAndTheirSlotsByDate(
+				LocalDate.parse(inputMessage.getDate()), club.getId()).isPresent()) {
 			throw new VerifyAvailabilityException("There are no active courts in the club!");
 		}
-		
+		Set<Court> courts=courtRepository.findAllWithMatchesAndTheirSlotsByDate(
+				LocalDate.parse(inputMessage.getDate()), club.getId()).get();
+				
 		// filtro i campi, eliminando quelli dismessi dall'admin e quelli occupati nell'orario richiesto
 		courts=courts.stream().filter(court->court.mayBeReserved()&&!court.areThereMatchesInTheSlots(requiredSlots))
 			.collect(Collectors.toSet());

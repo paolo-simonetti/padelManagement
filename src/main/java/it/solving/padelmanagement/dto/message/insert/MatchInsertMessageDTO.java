@@ -16,9 +16,6 @@ public class MatchInsertMessageDTO {
 	@FutureOrPresent
 	private String date;
 	
-	@AssertFalse
-	private String payed;
-	
 	@Min(0)
 	@Max(3)
 	private String missingPlayers;
@@ -38,14 +35,6 @@ public class MatchInsertMessageDTO {
 
 	public void setDate(String date) {
 		this.date = date;
-	}
-
-	public String getPayed() {
-		return payed;
-	}
-
-	public void setPayed(String payed) {
-		this.payed = payed;
 	}
 
 	public String getMissingPlayers() {
@@ -88,11 +77,10 @@ public class MatchInsertMessageDTO {
 		this.slotsIds.remove(id);
 	}
 
-	public MatchInsertMessageDTO(@Future String date, @AssertFalse String payed, @Min(0) @Max(3) String missingPlayers,
+	public MatchInsertMessageDTO(@Future String date, @Min(0) @Max(3) String missingPlayers,
 			@Positive String creatorId, @Size(min = 3, max = 28) Set<String> slotsIds, @Positive String courtId) {
 		super();
 		this.date = date;
-		this.payed = payed;
 		this.missingPlayers = missingPlayers;
 		this.creatorId = creatorId;
 		this.slotsIds = slotsIds;

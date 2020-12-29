@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import it.solving.padelmanagement.dto.ResultDTO;
 import it.solving.padelmanagement.exception.CourtBeReservedException;
+import it.solving.padelmanagement.exception.MatchInsertException;
 import it.solving.padelmanagement.exception.MatchPaymentException;
 import it.solving.padelmanagement.exception.NonAdmissibleProposalException;
 import it.solving.padelmanagement.exception.ProposalStatusException;
@@ -45,6 +46,11 @@ public class ExceptionsHandler {
 	
 	@ExceptionHandler(VerifyAvailabilityException.class) 
 	public ResponseEntity<ResultDTO> handleVerifyAvailabilityException (VerifyAvailabilityException e) {
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResultDTO(e.getMessage()));
+	}
+	
+	@ExceptionHandler(MatchInsertException.class) 
+	public ResponseEntity<ResultDTO> handleMatchInsertException (MatchInsertException e) {
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResultDTO(e.getMessage()));
 	}
 	

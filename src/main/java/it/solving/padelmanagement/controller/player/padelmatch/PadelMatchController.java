@@ -1,5 +1,6 @@
 package it.solving.padelmanagement.controller.player.padelmatch;
 
+import java.time.LocalDate;
 import java.util.Set;
 
 import javax.validation.Valid;
@@ -10,15 +11,20 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import it.solving.padelmanagement.dto.CourtDTO;
 import it.solving.padelmanagement.dto.ResultDTO;
+import it.solving.padelmanagement.dto.message.createpadelmatch.InputValidateAndInsertInputMessageDTO;
 import it.solving.padelmanagement.dto.message.createpadelmatch.InputVerifyAvailabilityMessageDTO;
+import it.solving.padelmanagement.exception.MatchInsertException;
 import it.solving.padelmanagement.exception.VerifyAvailabilityException;
 import it.solving.padelmanagement.service.CourtService;
+import it.solving.padelmanagement.service.MatchService;
+import it.solving.padelmanagement.validator.MatchInsertValidator;
 import it.solving.padelmanagement.validator.VerifyAvailabilityValidator;
 
 //TODO: in tutto questo package, devo controllare che il player stia agendo sulle proprie robe
@@ -30,7 +36,13 @@ public class PadelMatchController {
 	private VerifyAvailabilityValidator verifyAvailabilityValidator;
 	
 	@Autowired
+	private MatchInsertValidator matchInsertValidator;
+	
+	@Autowired
 	private CourtService courtService;
+	
+	@Autowired
+	private MatchService matchService;
 	
 	@PostMapping("verifyavailability")
 	public ResponseEntity<Object> verifyAvailability(@Valid @RequestBody 
@@ -50,5 +62,24 @@ public class PadelMatchController {
 		return ResponseEntity.status(HttpStatus.OK).body(courts) ;
 	}
 	
+	@PostMapping("findallbydate") 
+	public ResponseEntity<Object> findAllMatchesByDate(@RequestBody LocalDate date) {
+		if (matchService.findAllByDate(date)==null) {
+			return ResponseEntity.status(HttpStatus.OK).body(new ResultDTO("No matches were found."));
+		}
+		return ResponseEntity.status(HttpStatus.OK).body(matchService.findAllByDate(date));
+	}
 	
+	@PutMapping("insert")
+	public ResponseEntity<ResultDTO> insertPadelMatch(@Valid @RequestBody InputValidateAndInsertInputMessageDTO
+			inputMessage, BindingResult bindingResult) throws MatchInsertException, VerifyAvailabilityException {
+		matchInsertValidator.validate(inputMessage,bindingResult);
+		if (bindingResult.hasErrors()) {
+			throw new MatchInsertException(bindingResult.getAllErrors().stream()
+					.map(obj->(FieldError) obj).map(fieldError->fieldError.getDefaultMessage()).reduce(
+							(message1,message2)->message1+"; \n\r "+message2).get());
+		}
+		matchService.insert(inputMessage);
+		return ResponseEntity.status(HttpStatus.OK).body(new ResultDTO("Match successfully inserted"));
+	}
 }

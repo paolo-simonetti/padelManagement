@@ -7,13 +7,15 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 import it.solving.padelmanagement.dto.MatchDTO;
+import it.solving.padelmanagement.dto.message.createpadelmatch.InputValidateAndInsertInputMessageDTO;
 import it.solving.padelmanagement.dto.message.insert.MatchInsertMessageDTO;
 import it.solving.padelmanagement.dto.message.update.MatchUpdateMessageDTO;
+import it.solving.padelmanagement.exception.VerifyAvailabilityException;
 import it.solving.padelmanagement.model.PadelMatch;
 
 @Component
 public class MatchMapper extends AbstractMapper<PadelMatch, MatchDTO, MatchInsertMessageDTO, MatchUpdateMessageDTO> {
-
+	
 	@Override
 	public MatchDTO convertEntityToDTO(PadelMatch entity) {
 		if(entity==null) {
@@ -98,9 +100,7 @@ public class MatchMapper extends AbstractMapper<PadelMatch, MatchDTO, MatchInser
 			entity.setDate(LocalDate.parse(insertMessageDTO.getDate()));
 		}
 		
-		if(StringUtils.isNotBlank(insertMessageDTO.getPayed())) {
-			entity.setPayed(Boolean.parseBoolean(insertMessageDTO.getPayed()));
-		}
+		entity.setPayed(false);
 		
 		if(StringUtils.isNotBlank(insertMessageDTO.getMissingPlayers())) {
 			entity.setMissingPlayers(Integer.parseInt(insertMessageDTO.getMissingPlayers()));
@@ -135,6 +135,15 @@ public class MatchMapper extends AbstractMapper<PadelMatch, MatchDTO, MatchInser
 		}
 		
 		return entity;
+	}
+
+	public PadelMatch convertInputValidateAndInsertInputMessageDTOToPadelMatch(
+			InputValidateAndInsertInputMessageDTO inputMessage) throws VerifyAvailabilityException {
+		PadelMatch match=new PadelMatch();
+		match.setDate(LocalDate.parse(inputMessage.getInputVerifyAvailabilityMessageDTO().getDate()));
+		match.setPayed(false);
+		match.setMissingPlayers(Integer.parseInt(inputMessage.getMissingPlayers()));
+		return match;
 	}
 
 }
