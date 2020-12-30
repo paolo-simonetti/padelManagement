@@ -1,5 +1,7 @@
 package it.solving.padelmanagement.controller.player.member;
 
+import java.util.Set;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import it.solving.padelmanagement.dto.NoticeDTO;
 import it.solving.padelmanagement.dto.PlayerDTO;
 import it.solving.padelmanagement.dto.ResultDTO;
 import it.solving.padelmanagement.dto.message.member.InputUpdateMemberMessageDTO;
@@ -59,4 +62,8 @@ public class MemberController {
 		return ResponseEntity.status(HttpStatus.OK).body(new ResultDTO("The player has successfully abandoned the club"));
 	}
 	
+	@GetMapping("getnotices")
+	public ResponseEntity<Set<NoticeDTO>> getClubNotices(@RequestParam Long playerId) {
+		return ResponseEntity.status(HttpStatus.OK).body(playerService.getClubNotices(playerId));
+	}
 }

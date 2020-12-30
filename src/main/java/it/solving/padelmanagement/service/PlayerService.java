@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import it.solving.padelmanagement.dto.NoticeDTO;
 import it.solving.padelmanagement.dto.PlayerDTO;
 import it.solving.padelmanagement.dto.message.callforactions.InputCancelParticipationMessageDTO;
 import it.solving.padelmanagement.dto.message.callforactions.InputJoinCallForActionMessageDTO;
@@ -15,12 +16,14 @@ import it.solving.padelmanagement.dto.message.insert.PlayerInsertMessageDTO;
 import it.solving.padelmanagement.dto.message.member.InputUpdateMemberMessageDTO;
 import it.solving.padelmanagement.dto.message.update.PlayerUpdateMessageDTO;
 import it.solving.padelmanagement.exception.AbandonClubException;
+import it.solving.padelmanagement.mapper.NoticeMapper;
 import it.solving.padelmanagement.mapper.PlayerMapper;
 import it.solving.padelmanagement.model.Club;
 import it.solving.padelmanagement.model.PadelMatch;
 import it.solving.padelmanagement.model.Player;
 import it.solving.padelmanagement.repository.ClubRepository;
 import it.solving.padelmanagement.repository.MatchRepository;
+import it.solving.padelmanagement.repository.NoticeRepository;
 import it.solving.padelmanagement.repository.PlayerRepository;
 
 @Service
@@ -40,6 +43,12 @@ public class PlayerService {
 	
 	@Autowired
 	private MatchRepository matchRepository;
+	
+	@Autowired
+	private NoticeRepository noticeRepository;
+	
+	@Autowired
+	private NoticeMapper noticeMapper;
 	
 	public PlayerDTO findById(Long id) {
 		return playerMapper.convertEntityToDTO(playerRepository.findById(id).get());
@@ -199,6 +208,10 @@ public class PlayerService {
 		player.setClub(null);
 		playerRepository.save(player);
 		playerRepository.delete(player);
+	}
+	
+	public Set<NoticeDTO> getClubNotices(Long playerId) {
+		return noticeMapper.convertEntityToDTO(noticeRepository.findAllByClubPlayerId(playerId));
 	}
 	
 }
