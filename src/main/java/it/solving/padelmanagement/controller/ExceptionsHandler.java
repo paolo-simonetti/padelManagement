@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import it.solving.padelmanagement.dto.ResultDTO;
+import it.solving.padelmanagement.exception.AbandonClubException;
 import it.solving.padelmanagement.exception.CourtBeReservedException;
 import it.solving.padelmanagement.exception.MatchInsertException;
 import it.solving.padelmanagement.exception.MatchPaymentException;
@@ -69,6 +70,11 @@ public class ExceptionsHandler {
 
 	@ExceptionHandler(NonAdmissibleActionOnMatchNow.class) 
 	public ResponseEntity<ResultDTO> handleNonAdmissibleActionOnMatchNow (NonAdmissibleActionOnMatchNow e) {
+		return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResultDTO(e.getMessage()));
+	}
+	
+	@ExceptionHandler(AbandonClubException.class) 
+	public ResponseEntity<ResultDTO> handleAbandonClubException (AbandonClubException e) {
 		return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResultDTO(e.getMessage()));
 	}
 	

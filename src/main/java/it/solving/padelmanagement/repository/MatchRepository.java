@@ -17,6 +17,9 @@ public interface MatchRepository extends JpaRepository<PadelMatch, Long> {
 	
 	public Set<PadelMatch> findAllByDate(LocalDate date);
 	
+	@Query("from PadelMatch m left join fetch m.creator c where m.id=?1")
+	public Optional<PadelMatch> findByIdWithCreator(Long id);
+	
 	@Query("from PadelMatch m left join fetch m.creator c left join fetch m.slots s where m.id=?1")
 	public Optional<PadelMatch> findByIdWithCreatorAndSlots(Long id);
 	
@@ -30,4 +33,7 @@ public interface MatchRepository extends JpaRepository<PadelMatch, Long> {
 	
 	@Query("from PadelMatch m left join fetch m.otherPlayers o where m.id=?1")
 	public Optional<PadelMatch> findByIdWithOtherPlayers(Long id);
+	
+	@Query("from PadelMatch m left join fetch m.court co left join fetch co.club cl where m.id=?1")
+	public Optional<PadelMatch> findByIdWithCourtAndClub(Long id);
 }

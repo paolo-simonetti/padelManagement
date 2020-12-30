@@ -13,6 +13,7 @@ import it.solving.padelmanagement.model.PadelMatch;
 import it.solving.padelmanagement.model.Player;
 import it.solving.padelmanagement.repository.MatchRepository;
 import it.solving.padelmanagement.repository.PlayerRepository;
+import it.solving.padelmanagement.service.PlayerService;
 import it.solving.padelmanagement.util.MyUtil;
 
 @Component
@@ -23,6 +24,9 @@ public class InputJoinCallForActionValidator implements Validator {
 	
 	@Autowired
 	private MatchRepository matchRepository;
+	
+	@Autowired
+	private PlayerService playerService;
 	
 	@Autowired
 	private MyUtil myUtil;
@@ -60,6 +64,16 @@ public class InputJoinCallForActionValidator implements Validator {
 		// Controllo che il player non sia già impegnato a quell'ora
 		if (myUtil.thePlayerIsPlayingSomewhereElseAtThatTime(player,match)) {
 			errors.rejectValue("playerId","playerIsBusy", "The player has another match on that date in that time!");
+		}
+		
+		// Controllo che la partita si svolga nello stesso club a cui è iscritto il giocatore
+		if (!playerService.theMatchIsHeldInTheSameClub(player.getId(),match.getId())) {
+			errors.rejectValue("playerId","matchInAnotherClub", "The match is held in a different club from the one the player is member of!");
+		}
+		
+		// Controllo che il player abbia pagato tutte le partite che ha creato
+		if(!playerService.thePlayerHasPayedForEveryMatch(player.getId())) {
+			errors.rejectValue("playerId","expectedPayment","The player created some matches for which he has not payed yet");
 		}
 	}
 

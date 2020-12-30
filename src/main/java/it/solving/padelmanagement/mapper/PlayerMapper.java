@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 
 import it.solving.padelmanagement.dto.PlayerDTO;
 import it.solving.padelmanagement.dto.message.insert.PlayerInsertMessageDTO;
+import it.solving.padelmanagement.dto.message.member.InputUpdateMemberMessageDTO;
 import it.solving.padelmanagement.dto.message.update.PlayerUpdateMessageDTO;
 import it.solving.padelmanagement.model.Player;
 
@@ -215,6 +216,47 @@ public class PlayerMapper extends AbstractMapper<Player, PlayerDTO, PlayerInsert
 		
 		if(StringUtils.isNotBlank(updateMessageDTO.getLevel())) {
 			entity.setLevel(Integer.parseInt(updateMessageDTO.getLevel()));
+		}
+		
+		return entity;
+	}
+	
+	public Player convertInputUpdateMemberMessageDTOToPlayer(InputUpdateMemberMessageDTO inputMessage) {
+		Player entity=new Player();
+		if(StringUtils.isNotBlank(inputMessage.getId())) {
+			entity.setId(Long.parseLong(inputMessage.getId()));
+		}
+		
+		if(StringUtils.isNotBlank(inputMessage.getName())) {
+			entity.setName(inputMessage.getName());
+		}
+		
+		if(StringUtils.isNotBlank(inputMessage.getSurname())) {
+			entity.setSurname(inputMessage.getSurname());
+		}
+		
+		if(StringUtils.isNotBlank(inputMessage.getDateOfBirth())) {
+			entity.setDateOfBirth(LocalDate.parse(inputMessage.getDateOfBirth()));
+		}
+		
+		if(StringUtils.isNotBlank(inputMessage.getMailAddress())) {
+			entity.setMailAddress(inputMessage.getMailAddress());
+		}
+		
+		if(StringUtils.isNotBlank(inputMessage.getUsername())) {
+			entity.setUsername(inputMessage.getUsername());
+		}
+		
+		if(StringUtils.isNotBlank(inputMessage.getPassword())) {
+			entity.setPassword(inputMessage.getPassword());
+		}
+		
+		if(StringUtils.isNotBlank(inputMessage.getMobile())) {
+			entity.setMobile(inputMessage.getMobile());
+		}
+		
+		if(StringUtils.isNotBlank(inputMessage.getUserLevel())) {
+			entity.setLevel(Integer.parseInt(inputMessage.getUserLevel()));
 		}
 		
 		return entity;

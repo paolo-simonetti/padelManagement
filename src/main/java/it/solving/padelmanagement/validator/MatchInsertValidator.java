@@ -20,11 +20,15 @@ import it.solving.padelmanagement.model.Player;
 import it.solving.padelmanagement.model.Slot;
 import it.solving.padelmanagement.repository.CourtRepository;
 import it.solving.padelmanagement.repository.PlayerRepository;
+import it.solving.padelmanagement.service.PlayerService;
 import it.solving.padelmanagement.util.MyUtil;
 
 @Component
 public class MatchInsertValidator implements Validator {
 
+	@Autowired
+	private PlayerService playerService;
+	
 	@Autowired
 	private PlayerRepository playerRepository;
 	
@@ -84,6 +88,11 @@ public class MatchInsertValidator implements Validator {
 				errors.rejectValue("inputVerifyAvailabilityMessageDTO","ubiquityGift","The player is "
 						+ "already busy with another match in those hours");
 			}
+		}
+		
+		// Controllo che il player abbia pagato tutte le partite che ha creato
+		if(!playerService.thePlayerHasPayedForEveryMatch(player.getId())) {
+			errors.rejectValue("playerId","expectedPayment","The player created some matches for which he has not payed yet");
 		}
 		
 		

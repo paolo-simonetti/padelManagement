@@ -1,5 +1,6 @@
 package it.solving.padelmanagement.service;
 
+import java.time.LocalDate;
 import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -8,9 +9,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import it.solving.padelmanagement.dto.PlayerDTO;
+import it.solving.padelmanagement.dto.message.callforactions.InputCancelParticipationMessageDTO;
 import it.solving.padelmanagement.dto.message.callforactions.InputJoinCallForActionMessageDTO;
 import it.solving.padelmanagement.dto.message.insert.PlayerInsertMessageDTO;
+import it.solving.padelmanagement.dto.message.member.InputUpdateMemberMessageDTO;
 import it.solving.padelmanagement.dto.message.update.PlayerUpdateMessageDTO;
+import it.solving.padelmanagement.exception.AbandonClubException;
 import it.solving.padelmanagement.mapper.PlayerMapper;
 import it.solving.padelmanagement.model.Club;
 import it.solving.padelmanagement.model.PadelMatch;
@@ -39,6 +43,11 @@ public class PlayerService {
 	
 	public PlayerDTO findById(Long id) {
 		return playerMapper.convertEntityToDTO(playerRepository.findById(id).get());
+	}
+	
+	public PlayerDTO findByIdWithClub(Long id) {
+		return playerMapper.convertEntityToDTO(playerRepository.findByIdWithClub(id)
+			.orElseThrow(NoSuchElementException::new));
 	}
 	
 	public Set<PlayerDTO> findAll() {
@@ -92,6 +101,19 @@ public class PlayerService {
 		
 	}
 	
+	public void updatePersonalData(InputUpdateMemberMessageDTO inputMessage) {
+		Player newPlayer=playerMapper.convertInputUpdateMemberMessageDTOToPlayer(inputMessage);
+		// Recupero le informazioni sul club e sulle partite
+		Player oldPlayer=playerRepository.findByIdWithAllMatchesAndClub(newPlayer.getId()).get();
+		// Trascrivo i match creati
+		newPlayer.setMatches(oldPlayer.getMatches());
+		// Trascrivo le call for actions a cui partecipa
+		newPlayer.setMatchesJoined(oldPlayer.getMatchesJoined());
+		// Trascrivo il club di appartenenza
+		newPlayer.setClub(oldPlayer.getClub());
+		playerRepository.save(newPlayer);
+	}
+	
 	public void delete (Long id) {
 		if (playerRepository.findById(id).isPresent()) {
 			Player player = playerRepository.findByIdWithAllMatches(id).get();
@@ -134,6 +156,49 @@ public class PlayerService {
 		} else {
 			return "The player has successfully joined in the call-for-action";
 		}
+	}
+	
+	public void cancelParticipation(InputCancelParticipationMessageDTO inputMessage) {
+		Player player = playerRepository.findByIdWithMatchesJoined(Long.parseLong(inputMessage.getPlayerId())).get();
+		PadelMatch match=matchRepository.findByIdWithOtherPlayers(Long.parseLong(inputMessage.getMatchId())).get();
+		player.removeFromMatchesJoined(match);
+		match.removeFromOtherPlayers(player);
+		playerRepository.save(player);
+		matchRepository.save(match);
+	}
+	
+	public boolean theMatchIsHeldInTheSameClub(Long idPlayer,Long idMatch) {
+		Player player=playerRepository.findByIdWithClub(idPlayer).orElseThrow(NoSuchElementException::new);
+		PadelMatch match=matchRepository.findByIdWithCourtAndClub(idMatch).orElseThrow(NoSuchElementException::new);
+		return player.getClub().getId()==match.getCourt().getClub().getId();
+	}
+	
+	public boolean thePlayerHasPayedForEveryMatch(Long idPlayer) {
+		Player player=playerRepository.findByIdWithMatchesCreated(idPlayer).orElseThrow(NoSuchElementException::new);
+		return player.getMatches().stream().noneMatch(match->!match.isPayed());
+	}
+	
+	public void abandonClub(Long id) throws AbandonClubException {
+		// controllo che il giocatore abbia pagato tutti i match creati, prima di svignarsela
+		if (!thePlayerHasPayedForEveryMatch(id)) {
+			throw new AbandonClubException("The player has to pay for all the matches he created, before leaving the club!");
+		}
+		
+		// Controllo che il giocatore non abbia call-for-actions né partite fissate per il futuro
+		Player player = playerRepository.findByIdWithAllMatchesAndClub(id).orElseThrow(NoSuchElementException::new);
+		if (player.getMatches()!=null && player.getMatches().size()>0 && player.getMatches().stream()
+				.filter(match->match.getDate().compareTo(LocalDate.now())>=0).findFirst().orElse(null)==null) {
+			throw new AbandonClubException("The player has created at least one match to play today or in the future");
+		}
+		if (player.getMatchesJoined()!=null && player.getMatchesJoined().size()>0 && player.getMatchesJoined().stream()
+				.filter(match->match.getDate().compareTo(LocalDate.now())>=0).findFirst().orElse(null)==null) {
+			throw new AbandonClubException("The player has created at least one call-for-action to play today or in the future");
+		}
+		
+		// mi occupo delle operazioni di business
+		player.setClub(null);
+		playerRepository.save(player);
+		playerRepository.delete(player);
 	}
 	
 }

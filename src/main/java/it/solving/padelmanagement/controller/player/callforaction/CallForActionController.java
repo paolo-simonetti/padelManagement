@@ -18,11 +18,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import it.solving.padelmanagement.dto.MatchDTO;
 import it.solving.padelmanagement.dto.ResultDTO;
+import it.solving.padelmanagement.dto.message.callforactions.InputCancelParticipationMessageDTO;
 import it.solving.padelmanagement.dto.message.callforactions.InputJoinCallForActionMessageDTO;
 import it.solving.padelmanagement.dto.message.callforactions.InputUpdateMissingPlayersMessageDTO;
 import it.solving.padelmanagement.service.MatchService;
 import it.solving.padelmanagement.service.PlayerService;
 import it.solving.padelmanagement.util.MyUtil;
+import it.solving.padelmanagement.validator.InputCancelParticipationValidator;
 import it.solving.padelmanagement.validator.InputJoinCallForActionValidator;
 import it.solving.padelmanagement.validator.InputUpdateMissingPlayersValidator;
 
@@ -39,6 +41,9 @@ public class CallForActionController {
 	
 	@Autowired
 	private InputJoinCallForActionValidator inputJoinCallForActionValidator;
+	
+	@Autowired
+	private InputCancelParticipationValidator inputCancelParticipationValidator;
 	
 	@Autowired
 	private PlayerService playerService;
@@ -79,5 +84,17 @@ public class CallForActionController {
 			
 		String message=playerService.joinCallForAction(inputMessage);
 		return ResponseEntity.status(HttpStatus.OK).body(new ResultDTO(message));
+	}
+	
+	@PostMapping("cancelparticipation")
+	public ResponseEntity<ResultDTO> cancelParticipation(@Valid @RequestBody InputCancelParticipationMessageDTO 
+			inputMessage, BindingResult bindingResult) {
+		inputCancelParticipationValidator.validate(inputMessage,bindingResult);
+		if(bindingResult.hasErrors()) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+					new ResultDTO(myUtil.allErrorsToString(bindingResult)));
+		}
+		playerService.cancelParticipation(inputMessage);
+		return ResponseEntity.status(HttpStatus.OK).body(new ResultDTO("The participation was successfully cancelled."));
 	}
 }
