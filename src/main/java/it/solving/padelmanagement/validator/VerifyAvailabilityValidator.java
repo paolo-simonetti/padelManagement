@@ -3,6 +3,7 @@ package it.solving.padelmanagement.validator;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.NoSuchElementException;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -11,6 +12,7 @@ import org.springframework.validation.Validator;
 
 import it.solving.padelmanagement.dto.message.createpadelmatch.InputVerifyAvailabilityMessageDTO;
 import it.solving.padelmanagement.exception.VerifyAvailabilityException;
+import it.solving.padelmanagement.model.Court;
 import it.solving.padelmanagement.repository.PlayerRepository;
 import it.solving.padelmanagement.util.MyUtil;
 
@@ -67,7 +69,13 @@ public class VerifyAvailabilityValidator implements Validator {
 		} catch (VerifyAvailabilityException e) {
 			errors.rejectValue("durationHour", "invalidDurationOrStart", e.getMessage());
 		}
-
+		
+		// Controllo che ci siano campi attivi nel club 
+		Set<Court> activeCourts=playerRepository.findByIdWithClubAndItsActiveCourts(Long.parseLong(
+				inputMessage.getPlayerId())).get().getClub().getCourts();
+		if(activeCourts==null || activeCourts.size()==0) {
+			errors.rejectValue("playerId","noActiveCourts","There are no active courts in the club the player is member of");
+		}
 	}
 
 }

@@ -1,11 +1,15 @@
 package it.solving.padelmanagement.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 public class CourtDTO {
 
+	@JsonIgnore
 	private String id;
 	
 	private String name;
 	
+	@JsonIgnore
 	private String clubId;
 	
 	private String mayBeReserved;

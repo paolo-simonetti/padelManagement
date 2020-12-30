@@ -1,7 +1,10 @@
 package it.solving.padelmanagement.dto;
 
-public class AdminDTO extends UserDTO {
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
+public class AdminDTO extends UserDTO {
+	
+	@JsonIgnore
 	private String clubId;
 
 	public String getClubId() {

@@ -2,8 +2,11 @@ package it.solving.padelmanagement.dto;
 
 import java.sql.Blob;
 
-public class NewClubProposalDTO {
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
+public class NewClubProposalDTO {
+	
+	@JsonIgnore
 	private String id;
 	
 	private String name;
@@ -14,6 +17,7 @@ public class NewClubProposalDTO {
 	
 	private Blob logo;
 	
+	@JsonIgnore
 	private String creatorId;
 
 	public String getId() {

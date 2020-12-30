@@ -4,8 +4,11 @@ import java.sql.Blob;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 public class ClubDTO {
 	
+	@JsonIgnore
 	private String id;
 	
 	private String name;
@@ -16,12 +19,16 @@ public class ClubDTO {
 	
 	private Set<String> courtsIds=new HashSet<>();
 	
+	@JsonIgnore
 	private String adminId;
 	
+	@JsonIgnore
 	private Set<String> noticesIds=new HashSet<>();
 	
+	@JsonIgnore
 	private Set<String> joinProposalsIds=new HashSet<>();
-
+	
+	@JsonIgnore
 	private Set<String> playersIds=new HashSet<>();
 
 	public String getId() {

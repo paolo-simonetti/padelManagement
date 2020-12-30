@@ -3,8 +3,11 @@ package it.solving.padelmanagement.dto;
 import java.util.HashSet;
 import java.util.Set;
 
-public class MatchDTO {
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
+public class MatchDTO {
+	
+	@JsonIgnore
 	private String id;
 	
 	private String date;
@@ -13,12 +16,16 @@ public class MatchDTO {
 	
 	private String missingPlayers;
 	
+	@JsonIgnore
 	private Set<String> otherPlayersIds=new HashSet<>();
 
+	@JsonIgnore
 	private String creatorId;
-
+	
+	@JsonIgnore
 	private Set<String> slotsIds=new HashSet<>();
-
+	
+	@JsonIgnore
 	private String courtId;
 
 	public String getId() {

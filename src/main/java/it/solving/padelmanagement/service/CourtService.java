@@ -134,7 +134,7 @@ public class CourtService {
 	
 	public Set<CourtDTO> findAllWithMatchesAndTheirSlotsByDate(ClubManagementMessageDTO inputMessage) {
 		return courtMapper.convertEntityToDTO(courtRepository.findAllWithMatchesAndTheirSlotsByDate(
-				LocalDate.parse(inputMessage.getDate()), Long.parseLong(inputMessage.getClubId())).get()
+				LocalDate.parse(inputMessage.getDate()), Long.parseLong(inputMessage.getClubId()))
 				.stream().filter(court->court.mayBeReserved()).collect(Collectors.toSet()));
 	}
 	
@@ -146,12 +146,13 @@ public class CourtService {
 		Club club=MyUtil.initializeAndUnproxy(player.getClub());
 		
 		// Recupero i campi con le rispettive informazioni su partite e slot occupati
-		if(!courtRepository.findAllWithMatchesAndTheirSlotsByDate(
-				LocalDate.parse(inputMessage.getDate()), club.getId()).isPresent()) {
-			throw new VerifyAvailabilityException("There are no active courts in the club!");
-		}
 		Set<Court> courts=courtRepository.findAllWithMatchesAndTheirSlotsByDate(
-				LocalDate.parse(inputMessage.getDate()), club.getId()).get();
+				LocalDate.parse(inputMessage.getDate()), club.getId());
+		if(courts==null ||courts.size()==0) {
+			// Se sono qui, vuol dire che, in quella data, non ci sono campi occupati --> restituisco l'intera lista
+			// dei campi presenti nel circolo
+			return courtMapper.convertEntityToDTO(clubRepository.findByIdWithCourts(club.getId()).get().getCourts());
+		}
 				
 		// filtro i campi, eliminando quelli dismessi dall'admin e quelli occupati nell'orario richiesto
 		courts=courts.stream().filter(court->court.mayBeReserved()&&!court.areThereMatchesInTheSlots(requiredSlots))

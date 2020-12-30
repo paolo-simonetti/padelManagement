@@ -1,15 +1,20 @@
 package it.solving.padelmanagement.dto;
 
-public class JoinProposalDTO {
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
+public class JoinProposalDTO {
+	
+	@JsonIgnore
 	private String id;
 	
 	private String userLevel;
 	
 	private String proposalStatus;
 	
+	@JsonIgnore
 	private String applicantId;
 	
+	@JsonIgnore
 	private String clubId;
 
 	public String getId() {

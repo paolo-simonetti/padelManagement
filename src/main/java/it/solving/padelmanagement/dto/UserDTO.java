@@ -4,8 +4,11 @@ import java.sql.Blob;
 import java.util.HashSet;
 import java.util.Set;
 
-public class UserDTO {
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
+public class UserDTO {
+	
+	@JsonIgnore
 	protected String id;
 	
 	protected String name;
@@ -18,6 +21,7 @@ public class UserDTO {
 	
 	protected String username;
 	
+	@JsonIgnore
 	protected String password;
 		
 	private String role;

@@ -87,14 +87,29 @@ public class MatchInsertValidator implements Validator {
 			if(slotsInWhichThePlayerIsBusy.contains(s)) {
 				errors.rejectValue("inputVerifyAvailabilityMessageDTO","ubiquityGift","The player is "
 						+ "already busy with another match in those hours");
+				break;
 			}
 		}
 		
 		// Controllo che il player abbia pagato tutte le partite che ha creato
 		if(!playerService.thePlayerHasPayedForEveryMatch(player.getId())) {
-			errors.rejectValue("playerId","expectedPayment","The player created some matches for which he has not payed yet");
+			errors.rejectValue("inputVerifyAvailabilityMessageDTO","expectedPayment","The player created some matches for which he has not payed yet");
 		}
 		
+		// Controllo che il campo sia libero nell'orario richiesto dal giocatore
+		Court courtWithSlotsInWhichItsBusy=courtRepository.findByIdWithMatchesAndTheirSlotsByDate(
+			dateOfTheMatch, court.getId()).get();
+		Set<Slot> slotsInWhiChTheCourtIsBusy=new HashSet<>();
+		if (court.getMatches()!=null && court.getMatches().size()>0) {
+			court.getMatches().stream().forEach(m->slotsInWhiChTheCourtIsBusy.addAll(m.getSlots()));
+		}
+		for (Slot s:slotsOfTheMatch) {
+			if(slotsInWhiChTheCourtIsBusy.contains(s)) {
+				errors.rejectValue("inputVerifyAvailabilityMessageDTO","courtAlreadyTaken","The court is "
+						+ "already reserved to another match for at least part of the time the player needs");
+				break;
+			}
+		}
 		
 	}
 

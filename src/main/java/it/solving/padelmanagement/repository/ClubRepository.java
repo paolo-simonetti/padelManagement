@@ -12,4 +12,7 @@ public interface ClubRepository extends JpaRepository<Club, Long> {
 	@Query("from Club c left join fetch c.admin a where c.id=?1")
 	Optional<Club> findByIdWithAdmin(Long id);
 	
+	@Query("from Club c left join fetch c.courts co where c.id=?1")
+	Optional<Club> findByIdWithCourts(Long id);
+	
 }

@@ -1,13 +1,17 @@
 package it.solving.padelmanagement.dto;
 
-public class NoticeDTO {
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
+public class NoticeDTO {
+	
+	@JsonIgnore
 	private String id;
 	
 	private String message;
 	
 	private String creationDate;
 	
+	@JsonIgnore
 	private String clubId;
 
 	public String getId() {

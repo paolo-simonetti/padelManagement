@@ -16,6 +16,9 @@ public interface PlayerRepository extends JpaRepository<Player, Long> {
 	@Query("from Player p join fetch p.club c where p.id=?1")
 	public Optional<Player> findByIdWithClub(Long id);
 	
+	@Query("from Player p join fetch p.club cl left join fetch cl.courts co where p.id=?1 and co.mayBeReserved=true")
+	public Optional<Player> findByIdWithClubAndItsActiveCourts(Long id);
+	
 	@Query("from Player p left join fetch p.matches mc left join fetch p.matchesJoined mj left join fetch "
 			+ "mc.slots mcS left join fetch mj.slots mjS where p.id=?1")
 	public Optional<Player> findByIdWithAllMatchesAndTheirSlots(Long id);

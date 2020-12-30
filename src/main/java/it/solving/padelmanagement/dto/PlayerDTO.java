@@ -3,16 +3,22 @@ package it.solving.padelmanagement.dto;
 import java.util.HashSet;
 import java.util.Set;
 
-public class PlayerDTO extends UserDTO {
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
+public class PlayerDTO extends UserDTO {
+	
+	@JsonIgnore
 	private String level;
 	
 	private static final String role="player";
 	
+	@JsonIgnore
 	private Set<String> matchesIds=new HashSet<>();
 	
+	@JsonIgnore
 	private Set<String> matchesJoinedIds=new HashSet<>();
 	
+	@JsonIgnore
 	private String clubId;
 
 	public String getLevel() {

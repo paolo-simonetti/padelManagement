@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import it.solving.padelmanagement.dto.CourtDTO;
 import it.solving.padelmanagement.dto.ResultDTO;
 import it.solving.padelmanagement.dto.message.createpadelmatch.InputDeleteMessageDTO;
+import it.solving.padelmanagement.dto.message.createpadelmatch.InputFindAllMatchesByDateMessageDTO;
 import it.solving.padelmanagement.dto.message.createpadelmatch.InputValidateAndInsertInputMessageDTO;
 import it.solving.padelmanagement.dto.message.createpadelmatch.InputValidateAndUpdateInputMessageDTO;
 import it.solving.padelmanagement.dto.message.createpadelmatch.InputVerifyAvailabilityMessageDTO;
@@ -77,11 +78,11 @@ public class PadelMatchController {
 	}
 	
 	@GetMapping("findallbydate") 
-	public ResponseEntity<Object> findAllMatchesByDate(@RequestBody LocalDate date) {
-		if (matchService.findAllByDate(date)==null) {
+	public ResponseEntity<Object> findAllMatchesByDate(@RequestBody InputFindAllMatchesByDateMessageDTO inputMessage) {
+		if (matchService.findAllByDate(LocalDate.parse(inputMessage.getDate()))==null) {
 			return ResponseEntity.status(HttpStatus.OK).body(new ResultDTO("No matches were found."));
 		}
-		return ResponseEntity.status(HttpStatus.OK).body(matchService.findAllByDate(date));
+		return ResponseEntity.status(HttpStatus.OK).body(matchService.findAllByDate(LocalDate.parse(inputMessage.getDate())));
 	}
 	
 	@PostMapping("insert")

@@ -2,7 +2,6 @@ package it.solving.padelmanagement.model;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -91,17 +90,40 @@ public class Court {
 	}
 	
 	public boolean areThereMatchesInTheSlots(Set<Slot> slots) {
-		Boolean result=false;
-		Set<Integer> slotsIds=slots.stream().map(slot->slot.getId()).collect(Collectors.toSet());
 		Set<PadelMatch> matches=this.getMatches();
 		for (PadelMatch match:matches) {
-			result=match.getSlots().stream().map(slot->slot.getId()).noneMatch(id->slotsIds.contains(id));
-			if (result) {
-				break;
+			Slot slotIntersection=match.getSlots().stream().filter(s->slots.contains(s)).findFirst().orElse(null);
+			if (slotIntersection!=null) {
+				return true;
 			}
 		}
 		
+		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Court other = (Court) obj;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		return true;
 	}
 	
 }
