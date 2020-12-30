@@ -26,13 +26,13 @@ public class InputJoinCallForActionMessageDTO {
 		this.matchId = matchId;
 	}
 
-	public InputJoinCallForAction(@Positive String playerId, @Positive String matchId) {
+	public InputJoinCallForActionMessageDTO(@Positive String playerId, @Positive String matchId) {
 		super();
 		this.playerId = playerId;
 		this.matchId = matchId;
 	}
 
-	public InputJoinCallForAction() {
+	public InputJoinCallForActionMessageDTO() {
 		super();
 	}
 	

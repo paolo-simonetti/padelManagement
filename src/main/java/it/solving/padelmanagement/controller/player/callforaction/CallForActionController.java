@@ -77,7 +77,7 @@ public class CallForActionController {
 					myUtil.allErrorsToString(bindingResult)));
 		}
 			
-		playerService.joinCallForAction(inputMessage);
-		return ResponseEntity.status(HttpStatus.OK).body(new ResultDTO("The player has successfully joined in the call-for-action"));
+		String message=playerService.joinCallForAction(inputMessage);
+		return ResponseEntity.status(HttpStatus.OK).body(new ResultDTO(message));
 	}
 }

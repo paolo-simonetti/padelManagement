@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import it.solving.padelmanagement.dto.PlayerDTO;
+import it.solving.padelmanagement.dto.message.callforactions.InputJoinCallForActionMessageDTO;
 import it.solving.padelmanagement.dto.message.insert.PlayerInsertMessageDTO;
 import it.solving.padelmanagement.dto.message.update.PlayerUpdateMessageDTO;
 import it.solving.padelmanagement.mapper.PlayerMapper;
@@ -119,5 +120,20 @@ public class PlayerService {
 			throw new NoSuchElementException();
 		}
 	} 
+	
+	public String joinCallForAction(InputJoinCallForActionMessageDTO inputMessage) {
+		PadelMatch match=matchRepository.findByIdWithOtherPlayers(Long.parseLong(inputMessage.getMatchId())).get();
+		Player player=playerRepository.findByIdWithMatchesJoined(Long.parseLong(inputMessage.getPlayerId())).get();
+		player.addToMatchesJoined(match);
+		match.addToOtherPlayers(player);
+		match.decrementMissingPlayers();
+		matchRepository.save(match);
+		playerRepository.save(player);
+		if (match.getMissingPlayers()==0) {
+			return "The call-for-action was successful: the goal of 4 players was reached!";
+		} else {
+			return "The player has successfully joined in the call-for-action";
+		}
+	}
 	
 }

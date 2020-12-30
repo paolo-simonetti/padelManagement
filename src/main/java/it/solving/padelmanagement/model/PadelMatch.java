@@ -120,6 +120,10 @@ public class PadelMatch {
 			this.slots.remove(slot);
 		}
 	}
+	
+	public void decrementMissingPlayers() {
+		this.missingPlayers--;
+	}
 
 	public PadelMatch(Long id, LocalDate date, Boolean payed, Integer missingPlayers) {
 		super();
