@@ -8,8 +8,6 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.fasterxml.jackson.databind.deser.DataFormatReaders.Match;
-
 import it.solving.padelmanagement.dto.MatchDTO;
 import it.solving.padelmanagement.dto.message.callforactions.InputUpdateMissingPlayersMessageDTO;
 import it.solving.padelmanagement.dto.message.createpadelmatch.InputValidateAndInsertInputMessageDTO;
@@ -147,6 +145,7 @@ public class MatchService {
 			courtRepository.save(court);
 			
 			matchRepository.save(match);
+			matchRepository.delete(match);
 		}
 	}
 	

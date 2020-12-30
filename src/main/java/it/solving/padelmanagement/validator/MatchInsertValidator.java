@@ -57,9 +57,9 @@ public class MatchInsertValidator implements Validator {
 		Court court=courtRepository.findByIdWithClub(Long.parseLong(inputMessage.getCourtId())).orElseThrow(
 			NoSuchElementException::new);
 		// Controllo che il campo sia nel circolo a cui è iscritto il player
-		Club courtsClub=court.getClub();
-		Club playersClub=playerRepository.findByIdWithClub(Long.parseLong(inputMessage
-				.getInputVerifyAvailabilityMessageDTO().getPlayerId())).get().getClub();
+		Club courtsClub=MyUtil.initializeAndUnproxy(court.getClub());
+		Club playersClub=MyUtil.initializeAndUnproxy(playerRepository.findByIdWithClub(Long.parseLong(inputMessage
+				.getInputVerifyAvailabilityMessageDTO().getPlayerId())).get().getClub()) ;
 		if (courtsClub.getId()!=playersClub.getId()) {
 			errors.rejectValue("inputVerifyAvailabilityMessageDTO","courtInAnotherClub","The selected court is"
 					+ " not in the club the player has joined in");

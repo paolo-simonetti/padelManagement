@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -72,10 +73,10 @@ public class PadelMatchController {
 				new ResultDTO("There are no available courts for the required time and date :("));
 		}
 		
-		return ResponseEntity.status(HttpStatus.OK).body(courts) ;
+		return ResponseEntity.status(HttpStatus.OK).body(courts);
 	}
 	
-	@PostMapping("findallbydate") 
+	@GetMapping("findallbydate") 
 	public ResponseEntity<Object> findAllMatchesByDate(@RequestBody LocalDate date) {
 		if (matchService.findAllByDate(date)==null) {
 			return ResponseEntity.status(HttpStatus.OK).body(new ResultDTO("No matches were found."));
@@ -83,7 +84,7 @@ public class PadelMatchController {
 		return ResponseEntity.status(HttpStatus.OK).body(matchService.findAllByDate(date));
 	}
 	
-	@PutMapping("insert")
+	@PostMapping("insert")
 	public ResponseEntity<ResultDTO> insertPadelMatch(@Valid @RequestBody InputValidateAndInsertInputMessageDTO
 			inputMessage, BindingResult bindingResult) throws MatchInsertException, VerifyAvailabilityException {
 		matchInsertValidator.validate(inputMessage,bindingResult);
@@ -96,7 +97,7 @@ public class PadelMatchController {
 		return ResponseEntity.status(HttpStatus.OK).body(new ResultDTO("Match successfully inserted"));
 	}
 	
-	@PostMapping("update")
+	@PutMapping("update")
 	public ResponseEntity<ResultDTO> updatePadelMatch(@Valid @RequestBody InputValidateAndUpdateInputMessageDTO
 			inputMessage, BindingResult bindingResult) 
 				throws MatchInsertException, VerifyAvailabilityException, WrongCreatorException, MatchUpdateException {

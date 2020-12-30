@@ -102,7 +102,6 @@ public class Slot {
 	private static final Slot VENTI_E_TRENTA=new Slot(26,20,30);
 	private static final Slot VENTUNO=new Slot(27,21,0);
 	private static final Slot VENTUNO_E_TRENTA=new Slot(28,21,30);
-	private static final Slot VENTIDUE=new Slot(29,22,0);
 
 	public static Map<Integer, Slot> idToSlotConversion = new HashMap<>();
 	
@@ -135,7 +134,6 @@ public class Slot {
 		idToSlotConversion.put(26,VENTI_E_TRENTA);
 		idToSlotConversion.put(27,VENTUNO);
 		idToSlotConversion.put(28,VENTUNO_E_TRENTA);
-		idToSlotConversion.put(29,VENTIDUE);
 	}
 	
 	public static Slot convertIdToSlot(Integer id) {
@@ -266,13 +264,6 @@ public class Slot {
 					return VENTUNO;
 				} else if(minute==30) {
 					return VENTUNO_E_TRENTA;
-				} else {
-					return null;
-				}
-				
-			case 22:
-				if(minute==0) {
-					return VENTIDUE;
 				} else {
 					return null;
 				}

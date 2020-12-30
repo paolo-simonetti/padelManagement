@@ -101,7 +101,7 @@ public class MyUtil {
 	
 	public boolean isTheCourtOptimalForTheRequiredSlots(Court court, Set<Slot> requiredSlots) {
 		// Trovo l'id minimo tra gli slots, che sicuramente non può essere maggiore dell'ultimo slot
-		int min=29;
+		int min=28;
 		// trovo anche l'id massimo, che sicuramente sarà superiore a 1
 		int max=1;
 		for (Integer i:requiredSlots.stream().map(slot->slot.getId()).collect(Collectors.toSet())) {
@@ -117,7 +117,7 @@ public class MyUtil {
 		 * all'id massimo. */
 		if (min<=3) {
 			Set<Slot> slots=new HashSet<>();
-			if (max>=27) {
+			if (max>=26) {
 				/* Caso patologico: il giocatore vuole prenotare per praticamente tutta la giornata
 				 * --> il campo risultante dalla ricerca base va già benissimo */
 				return true;
@@ -137,7 +137,7 @@ public class MyUtil {
 			slots.add(Slot.convertIdToSlot(min-i));
 		}
 		
-		if (max<27) {
+		if (max<26) {
 			// in questo caso, devo controllare anche i tre slot successivi a quello finale 
 			for (int i=1; i<=3; i++) {
 				slots.add(Slot.convertIdToSlot(max+i));
@@ -168,7 +168,7 @@ public class MyUtil {
 		LocalDate date=match.getDate();
 		
 		// Trovo l'id minimo tra gli slots, che sicuramente non può essere maggiore dell'ultimo slot
-		Integer min=29;
+		Integer min=28;
 		for (Integer i:match.getSlots().stream().map(slot->slot.getId()).collect(Collectors.toSet())) {
 			if(i<=min) {
 				min=i;

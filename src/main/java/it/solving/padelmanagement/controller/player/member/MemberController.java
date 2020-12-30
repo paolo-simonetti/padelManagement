@@ -8,7 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -43,7 +43,7 @@ public class MemberController {
 		return ResponseEntity.status(HttpStatus.OK).body(playerDTO);
 	}
 	
-	@PostMapping("update")
+	@PutMapping("update")
 	public ResponseEntity<ResultDTO> updateMember(@RequestBody InputUpdateMemberMessageDTO inputMessage, 
 		BindingResult bindingResult) {
 		inputUpdateMemberValidator.validate(inputMessage,bindingResult);
@@ -66,4 +66,5 @@ public class MemberController {
 	public ResponseEntity<Set<NoticeDTO>> getClubNotices(@RequestParam Long playerId) {
 		return ResponseEntity.status(HttpStatus.OK).body(playerService.getClubNotices(playerId));
 	}
+	
 }
