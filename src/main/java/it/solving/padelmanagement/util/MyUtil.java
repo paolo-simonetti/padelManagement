@@ -22,6 +22,7 @@ import it.solving.padelmanagement.model.Court;
 import it.solving.padelmanagement.model.JoinProposal;
 import it.solving.padelmanagement.model.NewClubProposal;
 import it.solving.padelmanagement.model.PadelMatch;
+import it.solving.padelmanagement.model.Player;
 import it.solving.padelmanagement.model.Slot;
 import it.solving.padelmanagement.model.User;
 
@@ -215,6 +216,27 @@ public class MyUtil {
 		} else {
 			return "";
 		}
+	}
+	
+	public Boolean thePlayerIsPlayingSomewhereElseAtThatTime(Player player, PadelMatch match) {
+		Set<Slot> matchSlots=match.getSlots();
+		Set<Slot> slotsInWhichPlayerIsBusy=new HashSet<>();
+		if (player.getMatches()!=null && player.getMatches().size()>0) {
+			player.getMatches().stream().filter(m->m.getDate().compareTo(match.getDate())==0 && m.getId()!=match.getId())
+			.forEach(m->slotsInWhichPlayerIsBusy.addAll(m.getSlots()));			
+		}
+		
+		if (player.getMatchesJoined()!=null && player.getMatchesJoined().size()>0) {
+			player.getMatchesJoined().stream().filter(m->m.getDate().compareTo(match.getDate())==0 && m.getId()!=match.getId())
+				.forEach(m->slotsInWhichPlayerIsBusy.addAll(m.getSlots()));
+			for (Slot s:matchSlots) {
+				if (slotsInWhichPlayerIsBusy.contains(s)) {
+					return true;
+				}
+			}
+		}
+
+		return false;
 	}
 	
 }
