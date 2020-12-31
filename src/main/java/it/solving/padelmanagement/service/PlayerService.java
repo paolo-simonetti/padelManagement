@@ -213,6 +213,9 @@ public class PlayerService {
 	}
 	
 	public Set<NoticeDTO> getClubNotices(Long playerId) {
+		if (!playerRepository.findById(playerId).isPresent()) {
+			throw new NoSuchElementException("One of the requested elements does not exist in the persistence context");
+		}
 		return noticeMapper.convertEntityToDTO(noticeRepository.findAllByClubPlayerId(playerId));
 	}
 	

@@ -62,7 +62,7 @@ public class GuestController {
 		}
 		
 		joinProposalService.insert(joinProposalInsertMessageDTO);
-		return ResponseEntity.status(HttpStatus.OK).body(new ResultDTO("The proposal will be evaluated by the superAdmin"));
+		return ResponseEntity.status(HttpStatus.OK).body(new ResultDTO("The proposal will be evaluated by the Admin of the club"));
 	}
 	
 	@PostMapping("insertNewClubProposal")
