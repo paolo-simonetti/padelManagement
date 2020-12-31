@@ -73,7 +73,8 @@ public class MatchService {
 	
 	public void update (InputValidateAndUpdateInputMessageDTO inputMessage) throws VerifyAvailabilityException {
 		PadelMatch match=matchMapper.convertInputValidateAndUpdateInputMessageDTOToPadelMatch(inputMessage);
-		
+		// Nell'update non passo il numero di giocatori mancanti, quindi lo recupero dal db qui
+		match.setMissingPlayers(matchRepository.findById(match.getId()).get().getMissingPlayers());
 		// rispetto all'insert, devo trasferire l'informazione sullo stato di pagamento della partita
 		match.setPayed(matchRepository.findById(match.getId()).get().isPayed());
 		

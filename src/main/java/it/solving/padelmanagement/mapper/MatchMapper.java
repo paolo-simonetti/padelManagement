@@ -152,7 +152,6 @@ public class MatchMapper extends AbstractMapper<PadelMatch, MatchDTO, MatchInser
 		PadelMatch match=new PadelMatch();
 		match.setId(Long.parseLong(inputMessage.getMatchId()));
 		match.setDate(LocalDate.parse(inputMessage.getDate()));
-		match.setMissingPlayers(Integer.parseInt(inputMessage.getMissingPlayers()));
 		return match;
 	}
 
