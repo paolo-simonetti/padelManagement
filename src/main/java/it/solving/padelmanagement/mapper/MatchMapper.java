@@ -141,7 +141,7 @@ public class MatchMapper extends AbstractMapper<PadelMatch, MatchDTO, MatchInser
 	public PadelMatch convertInputValidateAndInsertInputMessageDTOToPadelMatch(
 			InputValidateAndInsertInputMessageDTO inputMessage) throws VerifyAvailabilityException {
 		PadelMatch match=new PadelMatch();
-		match.setDate(LocalDate.parse(inputMessage.getInputVerifyAvailabilityMessageDTO().getDate()));
+		match.setDate(LocalDate.parse(inputMessage.getDate()));
 		match.setPayed(false);
 		match.setMissingPlayers(Integer.parseInt(inputMessage.getMissingPlayers()));
 		return match;
@@ -151,10 +151,8 @@ public class MatchMapper extends AbstractMapper<PadelMatch, MatchDTO, MatchInser
 			InputValidateAndUpdateInputMessageDTO inputMessage) throws VerifyAvailabilityException {
 		PadelMatch match=new PadelMatch();
 		match.setId(Long.parseLong(inputMessage.getMatchId()));
-		match.setDate(LocalDate.parse(inputMessage.getInputValidateAndInsertInputMessageDTO()
-			.getInputVerifyAvailabilityMessageDTO().getDate()));
-		match.setMissingPlayers(Integer.parseInt(inputMessage.getInputValidateAndInsertInputMessageDTO()
-			.getMissingPlayers()));
+		match.setDate(LocalDate.parse(inputMessage.getDate()));
+		match.setMissingPlayers(Integer.parseInt(inputMessage.getMissingPlayers()));
 		return match;
 	}
 

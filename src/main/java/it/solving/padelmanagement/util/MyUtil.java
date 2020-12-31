@@ -66,7 +66,7 @@ public class MyUtil {
 		return insertMessageDTO;
 	}
 	
-	public Set<Slot> convertInputVerifyAvailabilityMessageDTOToSlots(InputVerifyAvailabilityMessageDTO inputMessage) 
+	public <T extends InputVerifyAvailabilityMessageDTO> Set<Slot> convertInputVerifyAvailabilityMessageDTOToSlots(T  inputMessage) 
 		throws VerifyAvailabilityException {
 		Set<Slot> result =new HashSet<>();
 		

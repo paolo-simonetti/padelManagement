@@ -51,7 +51,7 @@ public class MatchInsertValidator implements Validator {
 		InputValidateAndInsertInputMessageDTO inputMessage=(InputValidateAndInsertInputMessageDTO) target;
 
 		// Ripeto i controlli effettuati in verifica disponibilità (esistenza player e validità slots)
-		verifyAvailabilityValidator.validate(inputMessage.getInputVerifyAvailabilityMessageDTO(),errors);
+		verifyAvailabilityValidator.validate(inputMessage,errors);
 		
 		// Controllo che il campo esista
 		Court court=courtRepository.findByIdWithClub(Long.parseLong(inputMessage.getCourtId())).orElseThrow(
@@ -59,18 +59,18 @@ public class MatchInsertValidator implements Validator {
 		// Controllo che il campo sia nel circolo a cui è iscritto il player
 		Club courtsClub=MyUtil.initializeAndUnproxy(court.getClub());
 		Club playersClub=MyUtil.initializeAndUnproxy(playerRepository.findByIdWithClub(Long.parseLong(inputMessage
-				.getInputVerifyAvailabilityMessageDTO().getPlayerId())).get().getClub()) ;
+				.getPlayerId())).get().getClub()) ;
 		if (courtsClub.getId()!=playersClub.getId()) {
-			errors.rejectValue("inputVerifyAvailabilityMessageDTO","courtInAnotherClub","The selected court is"
+			errors.rejectValue("courtId","courtInAnotherClub","The selected court is"
 					+ " not in the club the player has joined in");
 		}
 		
 		/* Controllo che il creatore non abbia altre partite previste per gli stessi slot della partita che 
 		 * sta provando a inserire */
 		Player player=playerRepository.findByIdWithAllMatches(Long.parseLong(inputMessage
-				.getInputVerifyAvailabilityMessageDTO().getPlayerId())).get();
+				.getPlayerId())).get();
 		Set<Slot> slotsInWhichThePlayerIsBusy=new HashSet<>();
-		LocalDate dateOfTheMatch=LocalDate.parse(inputMessage.getInputVerifyAvailabilityMessageDTO().getDate());
+		LocalDate dateOfTheMatch=LocalDate.parse(inputMessage.getDate());
 		for (PadelMatch m:player.getMatches().stream().filter(
 			match->match.getDate().compareTo(dateOfTheMatch)==0).collect(Collectors.toSet())) {
 			// la natura di hashset previene la possibilità di duplicati in slotsInWhichThePlayerIsBusy 
@@ -78,14 +78,13 @@ public class MatchInsertValidator implements Validator {
 		}
 		Set<Slot> slotsOfTheMatch=new HashSet<>();
 		try {
-			slotsOfTheMatch=myUtil.convertInputVerifyAvailabilityMessageDTOToSlots(inputMessage
-				.getInputVerifyAvailabilityMessageDTO());
+			slotsOfTheMatch=myUtil.convertInputVerifyAvailabilityMessageDTOToSlots(inputMessage);
 		} catch (VerifyAvailabilityException e) {
-			errors.rejectValue("inputVerifyAvailabilityMessageDTO","invalidSlots",e.getMessage());
+			errors.rejectValue("durationHour","invalidSlots",e.getMessage());
 		}
 		for (Slot s:slotsOfTheMatch) {
 			if(slotsInWhichThePlayerIsBusy.contains(s)) {
-				errors.rejectValue("inputVerifyAvailabilityMessageDTO","ubiquityGift","The player is "
+				errors.rejectValue("durationHour","ubiquityGift","The player is "
 						+ "already busy with another match in those hours");
 				break;
 			}
@@ -93,22 +92,27 @@ public class MatchInsertValidator implements Validator {
 		
 		// Controllo che il player abbia pagato tutte le partite che ha creato
 		if(!playerService.thePlayerHasPayedForEveryMatch(player.getId())) {
-			errors.rejectValue("inputVerifyAvailabilityMessageDTO","expectedPayment","The player created some matches for which he has not payed yet");
+			errors.rejectValue("playerId","expectedPayment","The player created some matches for which he has not payed yet");
 		}
 		
 		// Controllo che il campo sia libero nell'orario richiesto dal giocatore
-		Court courtWithSlotsInWhichItsBusy=courtRepository.findByIdWithMatchesAndTheirSlotsByDate(
-			dateOfTheMatch, court.getId()).get();
-		Set<Slot> slotsInWhiChTheCourtIsBusy=new HashSet<>();
-		if (court.getMatches()!=null && court.getMatches().size()>0) {
-			court.getMatches().stream().forEach(m->slotsInWhiChTheCourtIsBusy.addAll(m.getSlots()));
-		}
-		for (Slot s:slotsOfTheMatch) {
-			if(slotsInWhiChTheCourtIsBusy.contains(s)) {
-				errors.rejectValue("inputVerifyAvailabilityMessageDTO","courtAlreadyTaken","The court is "
-						+ "already reserved to another match for at least part of the time the player needs");
-				break;
-			}
+		if (courtRepository.findByIdWithMatchesAndTheirSlotsByDate(
+				dateOfTheMatch, court.getId()).isPresent()) {
+			// Se sono qui dentro, vuol dire che nel campo verranno giocate delle partite quel giorno
+			Court courtWithSlotsInWhichItsBusy=courtRepository.findByIdWithMatchesAndTheirSlotsByDate(
+					dateOfTheMatch, court.getId()).get();
+				Set<Slot> slotsInWhiChTheCourtIsBusy=new HashSet<>();
+				if (courtWithSlotsInWhichItsBusy.getMatches()!=null && courtWithSlotsInWhichItsBusy.getMatches().size()>0) {
+					courtWithSlotsInWhichItsBusy.getMatches().stream().forEach(m->slotsInWhiChTheCourtIsBusy.addAll(m.getSlots()));
+				}
+				for (Slot s:slotsOfTheMatch) {
+					if(slotsInWhiChTheCourtIsBusy.contains(s)) {
+						errors.rejectValue("courtId","courtAlreadyTaken","The court is "
+								+ "already reserved to another match for at least part of the time the player needs");
+						break;
+					}
+				}
+			
 		}
 		
 	}

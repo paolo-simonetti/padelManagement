@@ -48,10 +48,9 @@ public class MatchService {
 	
 	public void insert(InputValidateAndInsertInputMessageDTO inputMessage) throws VerifyAvailabilityException {
 		PadelMatch match=matchMapper.convertInputValidateAndInsertInputMessageDTOToPadelMatch(inputMessage);
-		Set<Slot> slots=myUtil.convertInputVerifyAvailabilityMessageDTOToSlots(inputMessage
-				.getInputVerifyAvailabilityMessageDTO());
+		Set<Slot> slots=myUtil.convertInputVerifyAvailabilityMessageDTOToSlots(inputMessage);
 		Player creator=playerRepository.findByIdWithAllMatches(Long.parseLong(
-				inputMessage.getInputVerifyAvailabilityMessageDTO().getPlayerId())).get();
+				inputMessage.getPlayerId())).get();
 		matchRepository.save(match);
 		
 		match.setCreator(creator);
@@ -78,19 +77,16 @@ public class MatchService {
 		// rispetto all'insert, devo trasferire l'informazione sullo stato di pagamento della partita
 		match.setPayed(matchRepository.findById(match.getId()).get().isPayed());
 		
-		Set<Slot> slots=myUtil.convertInputVerifyAvailabilityMessageDTOToSlots(inputMessage
-				.getInputValidateAndInsertInputMessageDTO().getInputVerifyAvailabilityMessageDTO());
+		Set<Slot> slots=myUtil.convertInputVerifyAvailabilityMessageDTOToSlots(inputMessage);
 		Player creator=playerRepository.findByIdWithAllMatches(Long.parseLong(
-				inputMessage.getInputValidateAndInsertInputMessageDTO().getInputVerifyAvailabilityMessageDTO()
-				.getPlayerId())).get();
+				inputMessage.getPlayerId())).get();
 		matchRepository.save(match);
 		
 		match.setCreator(creator);
 		creator.addToMatches(match);
 		playerRepository.save(creator);
 		
-		Court court=courtRepository.findByIdWithMatches(Long.parseLong(inputMessage
-			.getInputValidateAndInsertInputMessageDTO().getCourtId())).get();
+		Court court=courtRepository.findByIdWithMatches(Long.parseLong(inputMessage.getCourtId())).get();
 		court.addToMatches(match);
 		match.setCourt(court);
 		match.setSlots(slots);	

@@ -9,26 +9,26 @@ import javax.validation.constraints.PositiveOrZero;
 public class InputVerifyAvailabilityMessageDTO {
 	
 	@Positive
-	private String playerId;
+	protected String playerId;
 	
 	@NotBlank
-	private String date;
+	protected String date;
 	
 	@Min(8)
 	@Max(20)
-	private String hour;
+	protected String hour;
 	
 	@PositiveOrZero
 	@Max(30)
-	private String minute;
+	protected String minute;
 	
 	@Min(1)
 	@Max(14)
-	private String durationHour;
+	protected String durationHour;
 
 	@PositiveOrZero
 	@Max(30)
-	private String durationMinute;
+	protected String durationMinute;
 
 	public String getPlayerId() {
 		return playerId;

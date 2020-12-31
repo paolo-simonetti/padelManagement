@@ -39,13 +39,15 @@ public class MatchUpdateValidator implements Validator {
 	@Override
 	public void validate(Object target, Errors errors) {
 		InputValidateAndUpdateInputMessageDTO inputMessage=(InputValidateAndUpdateInputMessageDTO) target;
+		// Ripeto la validazione già fatta per l'insert
+		matchInsertValidator.validate(inputMessage,errors);
+
 		// verifico che il match esista
 		PadelMatch match=matchRepository.findByIdWithCreatorAndOtherPlayersAndSlots(Long.parseLong(
 				inputMessage.getMatchId())).orElseThrow(NoSuchElementException::new);		
 		// verifico che il match sia stato creato dall'id del player indicato come creatore
 		Long idMatchCreator=match.getCreator().getId();
-		if (idMatchCreator!=Long.parseLong(inputMessage.getInputValidateAndInsertInputMessageDTO()
-			.getInputVerifyAvailabilityMessageDTO().getPlayerId())) {
+		if (idMatchCreator!=Long.parseLong(inputMessage.getPlayerId())) {
 			errors.rejectValue("matchId","invalidMatchChoice","The match was not created by this player!");
 		}
 		
@@ -69,7 +71,7 @@ public class MatchUpdateValidator implements Validator {
 			playerRepository.findByIdWithAllMatchesAndTheirSlots(p.getId()).get()).collect(Collectors.toSet());
 			for (Player player:otherPlayersWithAllSlotsInWhichTheyAreBusy) {
 				if (myUtil.thePlayerIsPlayingSomewhereElseAtThatTime(player,match)) {
-					errors.rejectValue("inputValidateAndInsertInputMessageDTO","creatorAlreadyBusy","One of the other players is already busy at that time!");
+					errors.rejectValue("durationHour","otherPlayersAlreadyBusy","One of the other players is already busy at that time!");
 				}			
 			}
 			
@@ -77,10 +79,8 @@ public class MatchUpdateValidator implements Validator {
 		
 		// 4
 		if (myUtil.thePlayerIsPlayingSomewhereElseAtThatTime(creatorWithAllSlotsInWhichTheyAreBusy,match)) {
-			errors.rejectValue("inputValidateAndInsertInputMessageDTO","creatorAlreadyBusy","The creator is already busy at that time!");
+			errors.rejectValue("durationHour","creatorAlreadyBusy","The creator is already busy at that time!");
 		}
-		
-		matchInsertValidator.validate(inputMessage,errors);
 	}
 
 }

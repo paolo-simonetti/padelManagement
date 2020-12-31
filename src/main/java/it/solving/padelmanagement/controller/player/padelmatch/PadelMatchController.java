@@ -102,7 +102,6 @@ public class PadelMatchController {
 	public ResponseEntity<ResultDTO> updatePadelMatch(@Valid @RequestBody InputValidateAndUpdateInputMessageDTO
 			inputMessage, BindingResult bindingResult) 
 				throws MatchInsertException, VerifyAvailabilityException, WrongCreatorException, MatchUpdateException {
-		
 		matchUpdateValidator.validate(inputMessage,bindingResult);
 		if (bindingResult.hasErrors()) {
 			
