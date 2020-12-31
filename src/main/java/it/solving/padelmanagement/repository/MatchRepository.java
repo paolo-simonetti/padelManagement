@@ -12,7 +12,7 @@ import it.solving.padelmanagement.model.PadelMatch;
 public interface MatchRepository extends JpaRepository<PadelMatch, Long> {
 
 	@Query("from PadelMatch m left join fetch m.otherPlayers p left join fetch m.creator cr left join fetch m.slots s "
-			+ "left join fetch m.court ct where m.id=?1")
+			+ "left join fetch m.court ct left join fetch ct.club cl where m.id=?1")
 	public Optional<PadelMatch> findByIdWithCompleteInfo(Long id);
 	
 	public Set<PadelMatch> findAllByDate(LocalDate date);
@@ -33,6 +33,10 @@ public interface MatchRepository extends JpaRepository<PadelMatch, Long> {
 	
 	@Query("from PadelMatch m left join fetch m.otherPlayers o where m.id=?1")
 	public Optional<PadelMatch> findByIdWithOtherPlayers(Long id);
+	
+	@Query("from PadelMatch m left join fetch m.otherPlayers o left join fetch m.creator c left join fetch m.court co "
+			+ "left join fetch co.club cl where m.id=?1")
+	public Optional<PadelMatch> findByIdWithOtherPlayersAndCreatorAndCourtAndClub(Long id);
 	
 	@Query("from PadelMatch m left join fetch m.court co left join fetch co.club cl where m.id=?1")
 	public Optional<PadelMatch> findByIdWithCourtAndClub(Long id);

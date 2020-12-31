@@ -238,5 +238,61 @@ public class MyUtil {
 
 		return false;
 	}
+
+	public String getHourStartFromSlots(Set<Slot> slots) {
+		// Trovo l'id minimo tra gli slots, che sicuramente non può essere maggiore dell'ultimo slot
+		Integer min=28;
+		for (Integer i:slots.stream().map(slot->slot.getId()).collect(Collectors.toSet())) {
+			if(i<=min) {
+				min=i;
+			}
+					
+		}
+				
+		// Dallo slot minimo, ricavo l'ora
+		return Slot.convertIdToSlot(min).getHour().toString();
+	}
+
+	public String getMinuteStartFromSlots(Set<Slot> slots) {
+		// Trovo l'id minimo tra gli slots, che sicuramente non può essere maggiore dell'ultimo slot
+		Integer min=28;
+		for (Integer i:slots.stream().map(slot->slot.getId()).collect(Collectors.toSet())) {
+			if(i<=min) {
+				min=i;
+			}
+					
+		}
+				
+		// Dallo slot minimo, ricavo il minuto
+		return Slot.convertIdToSlot(min).getMinute().toString();
+	}
+
+	public String getHourEndFromSlots(Set<Slot> slots) {
+		// Trovo l'id massimo tra gli slots, che sicuramente non può essere minore del primo slot
+		Integer max=1;
+		for (Integer i:slots.stream().map(slot->slot.getId()).collect(Collectors.toSet())) {
+			if(i>=max) {
+				max=i;
+			}
+					
+		}
+				
+		// Dallo slot massimo, ricavo l'ora
+		return Slot.convertIdToSlot(max).getHour().toString();
+	}
+
+	public String getMinuteEndFromSlots(Set<Slot> slots) {
+		// Trovo l'id massimo tra gli slots, che sicuramente non può essere minore del primo slot
+		Integer max=1;
+		for (Integer i:slots.stream().map(slot->slot.getId()).collect(Collectors.toSet())) {
+			if(i>=max) {
+				max=i;
+			}
+					
+		}
+				
+		// Dallo slot massimo, ricavo il minuto
+		return Slot.convertIdToSlot(max).getMinute().toString();
+	}
 	
 }

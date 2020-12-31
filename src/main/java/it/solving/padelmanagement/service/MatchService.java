@@ -12,6 +12,7 @@ import it.solving.padelmanagement.dto.MatchDTO;
 import it.solving.padelmanagement.dto.message.callforactions.InputUpdateMissingPlayersMessageDTO;
 import it.solving.padelmanagement.dto.message.createpadelmatch.InputValidateAndInsertInputMessageDTO;
 import it.solving.padelmanagement.dto.message.createpadelmatch.InputValidateAndUpdateInputMessageDTO;
+import it.solving.padelmanagement.exception.EmailException;
 import it.solving.padelmanagement.exception.MatchPaymentException;
 import it.solving.padelmanagement.exception.VerifyAvailabilityException;
 import it.solving.padelmanagement.mapper.MatchMapper;
@@ -28,6 +29,9 @@ import it.solving.padelmanagement.util.MyUtil;
 @Service
 public class MatchService {
 
+	@Autowired
+	private EmailService emailService;
+	
 	@Autowired
 	private MatchRepository matchRepository;
 	
@@ -46,7 +50,7 @@ public class MatchService {
 	@Autowired
 	private MyUtil myUtil;
 	
-	public void insert(InputValidateAndInsertInputMessageDTO inputMessage) throws VerifyAvailabilityException {
+	public void insert(InputValidateAndInsertInputMessageDTO inputMessage) throws VerifyAvailabilityException, EmailException {
 		PadelMatch match=matchMapper.convertInputValidateAndInsertInputMessageDTOToPadelMatch(inputMessage);
 		Set<Slot> slots=myUtil.convertInputVerifyAvailabilityMessageDTOToSlots(inputMessage);
 		Player creator=playerRepository.findByIdWithAllMatches(Long.parseLong(
@@ -57,7 +61,7 @@ public class MatchService {
 		creator.addToMatches(match);
 		playerRepository.save(creator);
 		
-		Court court=courtRepository.findByIdWithMatches(Long.parseLong(inputMessage.getCourtId())).get();
+		Court court=courtRepository.findByIdWithMatchesAndClub(Long.parseLong(inputMessage.getCourtId())).get();
 		court.addToMatches(match);
 		match.setCourt(court);
 		match.setSlots(slots);	
@@ -69,6 +73,10 @@ public class MatchService {
 		});
 		
 		matchRepository.save(match);
+		
+		if (match.getMissingPlayers()==0) {
+			emailService.sendMatchSummary(creator.getMailAddress(),match,court.getClub());
+		}
 	}
 	
 	public void update (InputValidateAndUpdateInputMessageDTO inputMessage) throws VerifyAvailabilityException {
@@ -102,10 +110,13 @@ public class MatchService {
 		
 	}
 	
-	public void updateMissingPlayers(InputUpdateMissingPlayersMessageDTO inputMessage) {
+	public void updateMissingPlayers(InputUpdateMissingPlayersMessageDTO inputMessage) throws EmailException {
 		PadelMatch match=matchRepository.findByIdWithCompleteInfo(Long.parseLong(inputMessage.getMatchId())).get();
 		match.setMissingPlayers(Integer.parseInt(inputMessage.getMissingPlayers()));
 		matchRepository.save(match);
+		if (match.getMissingPlayers()==0) {
+			emailService.sendMatchSummary(match.getCreator().getMailAddress(),match,match.getCourt().getClub());
+		}
 	}
 	
 	public void delete (Long id) {

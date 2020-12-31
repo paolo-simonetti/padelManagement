@@ -15,10 +15,12 @@ import it.solving.padelmanagement.dto.NewClubProposalDTO;
 import it.solving.padelmanagement.dto.ResultDTO;
 import it.solving.padelmanagement.dto.message.insert.ClubInsertMessageDTO;
 import it.solving.padelmanagement.dto.message.insert.UserInsertMessageDTO;
+import it.solving.padelmanagement.exception.EmailException;
 import it.solving.padelmanagement.model.NewClubProposal;
 import it.solving.padelmanagement.model.ProposalStatus;
 import it.solving.padelmanagement.repository.NewClubProposalRepository;
 import it.solving.padelmanagement.service.AdminService;
+import it.solving.padelmanagement.service.EmailService;
 import it.solving.padelmanagement.service.NewClubProposalService;
 import it.solving.padelmanagement.util.MyUtil;
 
@@ -36,6 +38,9 @@ public class SuperAdminController {
 	private AdminService adminService;
 	
 	@Autowired
+	private EmailService emailService;
+	
+	@Autowired
 	private MyUtil myUtil;
 	
 	@GetMapping("findAllPendingNewClubProposals")
@@ -46,14 +51,14 @@ public class SuperAdminController {
 	}
 	
 	@GetMapping("approveNewClubProposal")
-	public ResponseEntity<ResultDTO> approveNewClubProposal(@RequestParam Long newClubProposalId) {
+	public ResponseEntity<ResultDTO> approveNewClubProposal(@RequestParam Long newClubProposalId) throws EmailException {
 		NewClubProposal newClubProposal=newClubProposalService.findByIdWithCreator(newClubProposalId);
 		if (newClubProposal!=null && newClubProposal.getProposalStatus()==ProposalStatus.PENDING) {
 			newClubProposal.setProposalStatus(ProposalStatus.APPROVED);
 			UserInsertMessageDTO admin=myUtil.getAdminFromNewClubProposal(newClubProposal);
 			ClubInsertMessageDTO club=myUtil.getClubFromNewClubProposal(newClubProposal);
 			adminService.insert(admin,club, newClubProposal.getCreator().getId());
-			// TODO: mandare una mail al creator per notificare l'approvazione
+			emailService.sendApprovedNewClubProposalNotification(newClubProposal.getCreator().getMailAddress());
 			return ResponseEntity.status(HttpStatus.OK)
 					.body(new ResultDTO("An email was sent to the applicant to notify the approval"));
 		} else {
@@ -63,12 +68,12 @@ public class SuperAdminController {
 	}
 	
 	@GetMapping("rejectNewClubProposal")
-	public ResponseEntity<ResultDTO> rejectNewClubProposal(@RequestParam Long newClubProposalId) {
+	public ResponseEntity<ResultDTO> rejectNewClubProposal(@RequestParam Long newClubProposalId) throws EmailException {
 		NewClubProposal newClubProposal=newClubProposalService.findByIdWithCreator(newClubProposalId);
 		if(newClubProposal!=null && newClubProposal.getProposalStatus()==ProposalStatus.PENDING) {
 			newClubProposal.setProposalStatus(ProposalStatus.REJECTED);
 			newClubProposalRepository.save(newClubProposal);
-			// TODO: mandare una mail all'applicant per notificare il rifiuto
+			emailService.sendRejectedNewClubProposalNotification(newClubProposal.getCreator().getMailAddress());
 			return ResponseEntity.status(HttpStatus.OK)
 					.body(new ResultDTO("An email was sent to the applicant to notify the rejection"));
 		} else {

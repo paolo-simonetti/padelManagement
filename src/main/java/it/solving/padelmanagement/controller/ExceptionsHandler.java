@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import it.solving.padelmanagement.dto.ResultDTO;
 import it.solving.padelmanagement.exception.AbandonClubException;
 import it.solving.padelmanagement.exception.CourtBeReservedException;
+import it.solving.padelmanagement.exception.EmailException;
 import it.solving.padelmanagement.exception.MatchInsertException;
 import it.solving.padelmanagement.exception.MatchPaymentException;
 import it.solving.padelmanagement.exception.MatchUpdateException;
@@ -76,6 +77,11 @@ public class ExceptionsHandler {
 	@ExceptionHandler(AbandonClubException.class) 
 	public ResponseEntity<ResultDTO> handleAbandonClubException (AbandonClubException e) {
 		return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResultDTO(e.getMessage()));
+	}
+	
+	@ExceptionHandler(EmailException.class) 
+	public ResponseEntity<ResultDTO> handleEmailException (EmailException e) {
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResultDTO(e.getMessage()));
 	}
 	
 	@ExceptionHandler(Exception.class)

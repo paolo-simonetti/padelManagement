@@ -12,7 +12,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import it.solving.padelmanagement.dto.JoinProposalDTO;
 import it.solving.padelmanagement.dto.ResultDTO;
+import it.solving.padelmanagement.exception.EmailException;
 import it.solving.padelmanagement.exception.ProposalStatusException;
+import it.solving.padelmanagement.service.EmailService;
 import it.solving.padelmanagement.service.JoinProposalService;
 
 //TODO: in tutte questo package, devo controllare che l'admin stia agendo su roba riguardante il proprio circolo
@@ -29,13 +31,13 @@ public class JoinProposalController {
 	}
 	
 	@GetMapping("approve")
-	public ResponseEntity<ResultDTO> approveJoinProposal(@RequestParam Long id) throws ProposalStatusException {
+	public ResponseEntity<ResultDTO> approveJoinProposal(@RequestParam Long id) throws ProposalStatusException, EmailException {
 		joinProposalService.approve(id);
 		return ResponseEntity.status(HttpStatus.OK).body(new ResultDTO("An email was sent to the applicant to notify the approval"));
 	}
 	
 	@GetMapping("reject")
-	public ResponseEntity<ResultDTO> rejectJoinProposal(@RequestParam Long id) throws ProposalStatusException {
+	public ResponseEntity<ResultDTO> rejectJoinProposal(@RequestParam Long id) throws ProposalStatusException, EmailException {
 		joinProposalService.reject(id);
 		return ResponseEntity.status(HttpStatus.OK).body(new ResultDTO("An email was sent to the applicant to notify the rejection"));
 	}

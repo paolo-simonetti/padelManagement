@@ -104,8 +104,7 @@ public class UserService {
 	}
 	
 	public boolean isSuperAdminPresent() {
-		Role superAdminRole=Role.ROLE_SUPER_ADMIN;
-		return userRepository.findAllByRole(superAdminRole).isPresent();
+		return userRepository.findAllByRole(Role.ROLE_SUPER_ADMIN).stream().findFirst().orElse(null)!=null;
 	}
 	
 	public boolean hasAnotherPendingProposal(Long id) {

@@ -21,4 +21,5 @@ public interface JoinProposalRepository extends JpaRepository<JoinProposal, Long
 	
 	@Query("from JoinProposal j left join fetch j.applicant a left join fetch j.club c where c.id=?1")
 	public Set<JoinProposal> findAllPendingWithApplicantByClub (Long clubId);
+	
 }

@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import it.solving.padelmanagement.dto.JoinProposalDTO;
 import it.solving.padelmanagement.dto.message.insert.JoinProposalInsertMessageDTO;
 import it.solving.padelmanagement.dto.message.update.JoinProposalUpdateMessageDTO;
+import it.solving.padelmanagement.exception.EmailException;
 import it.solving.padelmanagement.exception.NonAdmissibleProposalException;
 import it.solving.padelmanagement.exception.ProposalStatusException;
 import it.solving.padelmanagement.mapper.JoinProposalMapper;
@@ -30,6 +31,9 @@ public class JoinProposalService {
 	
 	@Autowired
 	private PlayerService playerService;
+	
+	@Autowired
+	private EmailService emailService;
 	
 	@Autowired
 	private JoinProposalMapper joinProposalMapper;
@@ -114,25 +118,29 @@ public class JoinProposalService {
 			.collect(Collectors.toSet()));
 	}
 	
-	public void approve(Long id) throws ProposalStatusException {
+	public void approve(Long id) throws ProposalStatusException, EmailException {
 		JoinProposal joinProposal=joinProposalRepository.findByIdWithCompleteInfos(id)
 			.orElseThrow(NoSuchElementException::new);
 		if(joinProposal.getProposalStatus()==ProposalStatus.PENDING) {
 			joinProposal.setProposalStatus(ProposalStatus.APPROVED);
 			joinProposalRepository.save(joinProposal);
 			playerService.insert(myUtil.buildPlayerInsertMessageDTOFromJoinProposal(joinProposal), 
-				joinProposal.getApplicant().getId());	
+				joinProposal.getApplicant().getId());
+			emailService.sendApprovedJoinProposalNotification(joinProposal.getApplicant().getMailAddress(),
+					joinProposal.getClub());
 		} else {
 			throw new ProposalStatusException("The proposal had already been evaluated");
 		}
 	}
 	
-	public void reject(Long id) throws ProposalStatusException {
+	public void reject(Long id) throws ProposalStatusException, EmailException {
 		JoinProposal joinProposal=joinProposalRepository.findByIdWithCompleteInfos(id)
 				.orElseThrow(NoSuchElementException::new);
 		if(joinProposal.getProposalStatus()==ProposalStatus.PENDING) {
 			joinProposal.setProposalStatus(ProposalStatus.REJECTED);
 			joinProposalRepository.save(joinProposal);
+			emailService.sendRejectedJoinProposalNotification(joinProposal.getApplicant().getMailAddress(),
+					joinProposal.getClub());
 		} else {
 			throw new ProposalStatusException("The proposal had already been evaluated");
 		}

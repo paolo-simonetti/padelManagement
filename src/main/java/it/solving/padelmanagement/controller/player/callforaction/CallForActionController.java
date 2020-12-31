@@ -21,6 +21,7 @@ import it.solving.padelmanagement.dto.ResultDTO;
 import it.solving.padelmanagement.dto.message.callforactions.InputCancelParticipationMessageDTO;
 import it.solving.padelmanagement.dto.message.callforactions.InputJoinCallForActionMessageDTO;
 import it.solving.padelmanagement.dto.message.callforactions.InputUpdateMissingPlayersMessageDTO;
+import it.solving.padelmanagement.exception.EmailException;
 import it.solving.padelmanagement.exception.NonAdmissibleActionOnMatchNow;
 import it.solving.padelmanagement.service.MatchService;
 import it.solving.padelmanagement.service.PlayerService;
@@ -54,7 +55,7 @@ public class CallForActionController {
 	
 	@PutMapping("updateMissingPlayers")
 	public ResponseEntity<ResultDTO> updateMissingPlayers(@Valid @RequestBody InputUpdateMissingPlayersMessageDTO
-			inputMessage, BindingResult bindingResult) {
+			inputMessage, BindingResult bindingResult) throws EmailException {
 		inputUpdateMissingPlayersValidator.validate(inputMessage,bindingResult);
 		if (bindingResult.hasErrors()) {
 			return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResultDTO(
@@ -76,7 +77,7 @@ public class CallForActionController {
 	
 	@PostMapping("join")
 	public ResponseEntity<ResultDTO> joinInCallForAction(@Valid @RequestBody InputJoinCallForActionMessageDTO 
-			inputMessage, BindingResult bindingResult) {
+			inputMessage, BindingResult bindingResult) throws EmailException {
 		inputJoinCallForActionValidator.validate(inputMessage,bindingResult);
 		if (bindingResult.hasErrors()) {
 			return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResultDTO(

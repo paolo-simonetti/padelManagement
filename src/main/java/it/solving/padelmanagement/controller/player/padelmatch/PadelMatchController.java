@@ -25,6 +25,7 @@ import it.solving.padelmanagement.dto.message.createpadelmatch.InputFindAllMatch
 import it.solving.padelmanagement.dto.message.createpadelmatch.InputValidateAndInsertInputMessageDTO;
 import it.solving.padelmanagement.dto.message.createpadelmatch.InputValidateAndUpdateInputMessageDTO;
 import it.solving.padelmanagement.dto.message.createpadelmatch.InputVerifyAvailabilityMessageDTO;
+import it.solving.padelmanagement.exception.EmailException;
 import it.solving.padelmanagement.exception.MatchInsertException;
 import it.solving.padelmanagement.exception.MatchUpdateException;
 import it.solving.padelmanagement.exception.VerifyAvailabilityException;
@@ -87,7 +88,7 @@ public class PadelMatchController {
 	
 	@PostMapping("insert")
 	public ResponseEntity<ResultDTO> insertPadelMatch(@Valid @RequestBody InputValidateAndInsertInputMessageDTO
-			inputMessage, BindingResult bindingResult) throws MatchInsertException, VerifyAvailabilityException {
+			inputMessage, BindingResult bindingResult) throws MatchInsertException, VerifyAvailabilityException, EmailException {
 		matchInsertValidator.validate(inputMessage,bindingResult);
 		if (bindingResult.hasErrors()) {
 			throw new MatchInsertException(bindingResult.getAllErrors().stream()

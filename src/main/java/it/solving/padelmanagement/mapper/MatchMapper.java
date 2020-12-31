@@ -4,18 +4,24 @@ import java.time.LocalDate;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import it.solving.padelmanagement.dto.MatchDTO;
 import it.solving.padelmanagement.dto.message.createpadelmatch.InputValidateAndInsertInputMessageDTO;
 import it.solving.padelmanagement.dto.message.createpadelmatch.InputValidateAndUpdateInputMessageDTO;
+import it.solving.padelmanagement.dto.message.createpadelmatch.OutputMatchMailMessageDTO;
 import it.solving.padelmanagement.dto.message.insert.MatchInsertMessageDTO;
 import it.solving.padelmanagement.dto.message.update.MatchUpdateMessageDTO;
 import it.solving.padelmanagement.exception.VerifyAvailabilityException;
 import it.solving.padelmanagement.model.PadelMatch;
+import it.solving.padelmanagement.util.MyUtil;
 
 @Component
 public class MatchMapper extends AbstractMapper<PadelMatch, MatchDTO, MatchInsertMessageDTO, MatchUpdateMessageDTO> {
+	
+	@Autowired
+	private MyUtil myUtil;
 	
 	@Override
 	public MatchDTO convertEntityToDTO(PadelMatch entity) {
@@ -153,6 +159,43 @@ public class MatchMapper extends AbstractMapper<PadelMatch, MatchDTO, MatchInser
 		match.setId(Long.parseLong(inputMessage.getMatchId()));
 		match.setDate(LocalDate.parse(inputMessage.getDate()));
 		return match;
+	}
+	
+	public OutputMatchMailMessageDTO convertEntityToOutputMatchMailMessageDTO(PadelMatch entity) {
+		OutputMatchMailMessageDTO message = new OutputMatchMailMessageDTO();
+		
+		if(entity.getDate()!=null) {
+			message.setDate(entity.getDate().toString());			
+		}
+		
+		if(entity.isPayed()!=null) {
+			message.setPayed(entity.isPayed().toString());
+		}
+		
+		if(entity.getMissingPlayers()!=null) {
+			message.setMissingPlayers(entity.getMissingPlayers().toString());
+		}
+		
+		if(entity.getOtherPlayers()!=null && entity.getOtherPlayers().size()>0) {
+			message.setOtherPlayersUsername(entity.getOtherPlayers().stream()
+					.map(player->player.getUsername()).collect(Collectors.toSet()));
+		} 
+		
+		if(entity.getCreator()!=null) {
+			message.setUsernameCreator(entity.getCreator().getUsername());
+		}
+		
+		if(entity.getCourt()!=null) {
+			message.setCourtName(entity.getCourt().getName());
+		}
+		
+		if (entity.getSlots()!=null && entity.getSlots().size()>0) {
+			message.setHourStart(myUtil.getHourStartFromSlots(entity.getSlots()));
+			message.setMinuteStart(myUtil.getMinuteStartFromSlots(entity.getSlots()));
+			message.setHourEnd(myUtil.getHourEndFromSlots(entity.getSlots()));
+			message.setMinuteEnd(myUtil.getMinuteEndFromSlots(entity.getSlots()));			
+		}
+		return message;
 	}
 
 }

@@ -16,6 +16,7 @@ import it.solving.padelmanagement.dto.message.insert.PlayerInsertMessageDTO;
 import it.solving.padelmanagement.dto.message.member.InputUpdateMemberMessageDTO;
 import it.solving.padelmanagement.dto.message.update.PlayerUpdateMessageDTO;
 import it.solving.padelmanagement.exception.AbandonClubException;
+import it.solving.padelmanagement.exception.EmailException;
 import it.solving.padelmanagement.exception.NonAdmissibleActionOnMatchNow;
 import it.solving.padelmanagement.mapper.NoticeMapper;
 import it.solving.padelmanagement.mapper.PlayerMapper;
@@ -38,6 +39,9 @@ public class PlayerService {
 	
 	@Autowired
 	private ClubRepository clubRepository;
+	
+	@Autowired
+	private EmailService emailService;
 	
 	@Autowired
 	private UserService userService;
@@ -153,8 +157,8 @@ public class PlayerService {
 		}
 	} 
 	
-	public String joinCallForAction(InputJoinCallForActionMessageDTO inputMessage) {
-		PadelMatch match=matchRepository.findByIdWithOtherPlayers(Long.parseLong(inputMessage.getMatchId())).get();
+	public String joinCallForAction(InputJoinCallForActionMessageDTO inputMessage) throws EmailException {
+		PadelMatch match=matchRepository.findByIdWithOtherPlayersAndCreatorAndCourtAndClub(Long.parseLong(inputMessage.getMatchId())).get();
 		Player player=playerRepository.findByIdWithMatchesJoined(Long.parseLong(inputMessage.getPlayerId())).get();
 		player.addToMatchesJoined(match);
 		match.addToOtherPlayers(player);
@@ -162,6 +166,7 @@ public class PlayerService {
 		matchRepository.save(match);
 		playerRepository.save(player);
 		if (match.getMissingPlayers()==0) {
+			emailService.sendMatchSummary(match.getCreator().getMailAddress(),match,match.getCourt().getClub());
 			return "The call-for-action was successful: the goal of 4 players was reached!";
 		} else {
 			return "The player has successfully joined in the call-for-action";

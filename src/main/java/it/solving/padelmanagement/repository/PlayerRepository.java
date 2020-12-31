@@ -37,4 +37,7 @@ public interface PlayerRepository extends JpaRepository<Player, Long> {
 			+ "where p.id=?1")
 	public Optional<Player> findByIdWithAllMatchesAndClub(Long id);
 	
+	@Query("from Player p where p.mailAddress=?1")
+	public Optional<Player> findByMailAddress(String address);
+	
 }
