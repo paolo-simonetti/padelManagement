@@ -16,6 +16,7 @@ import it.solving.padelmanagement.dto.message.insert.PlayerInsertMessageDTO;
 import it.solving.padelmanagement.dto.message.member.InputUpdateMemberMessageDTO;
 import it.solving.padelmanagement.dto.message.update.PlayerUpdateMessageDTO;
 import it.solving.padelmanagement.exception.AbandonClubException;
+import it.solving.padelmanagement.exception.NonAdmissibleActionOnMatchNow;
 import it.solving.padelmanagement.mapper.NoticeMapper;
 import it.solving.padelmanagement.mapper.PlayerMapper;
 import it.solving.padelmanagement.model.Club;
@@ -167,11 +168,12 @@ public class PlayerService {
 		}
 	}
 	
-	public void cancelParticipation(InputCancelParticipationMessageDTO inputMessage) {
+	public void cancelParticipation(InputCancelParticipationMessageDTO inputMessage) throws NonAdmissibleActionOnMatchNow {
 		Player player = playerRepository.findByIdWithMatchesJoined(Long.parseLong(inputMessage.getPlayerId())).get();
 		PadelMatch match=matchRepository.findByIdWithOtherPlayers(Long.parseLong(inputMessage.getMatchId())).get();
 		player.removeFromMatchesJoined(match);
 		match.removeFromOtherPlayers(player);
+		match.incrementMissingPlayers();
 		playerRepository.save(player);
 		matchRepository.save(match);
 	}

@@ -21,6 +21,7 @@ import it.solving.padelmanagement.dto.ResultDTO;
 import it.solving.padelmanagement.dto.message.callforactions.InputCancelParticipationMessageDTO;
 import it.solving.padelmanagement.dto.message.callforactions.InputJoinCallForActionMessageDTO;
 import it.solving.padelmanagement.dto.message.callforactions.InputUpdateMissingPlayersMessageDTO;
+import it.solving.padelmanagement.exception.NonAdmissibleActionOnMatchNow;
 import it.solving.padelmanagement.service.MatchService;
 import it.solving.padelmanagement.service.PlayerService;
 import it.solving.padelmanagement.util.MyUtil;
@@ -88,7 +89,7 @@ public class CallForActionController {
 	
 	@PostMapping("cancelparticipation")
 	public ResponseEntity<ResultDTO> cancelParticipation(@Valid @RequestBody InputCancelParticipationMessageDTO 
-			inputMessage, BindingResult bindingResult) {
+			inputMessage, BindingResult bindingResult) throws NonAdmissibleActionOnMatchNow {
 		inputCancelParticipationValidator.validate(inputMessage,bindingResult);
 		if(bindingResult.hasErrors()) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(

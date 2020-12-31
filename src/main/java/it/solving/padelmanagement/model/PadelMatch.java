@@ -12,6 +12,8 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 
+import it.solving.padelmanagement.exception.NonAdmissibleActionOnMatchNow;
+
 @Entity
 public class PadelMatch {
 	
@@ -123,6 +125,14 @@ public class PadelMatch {
 	
 	public void decrementMissingPlayers() {
 		this.missingPlayers--;
+	}
+	
+	public void incrementMissingPlayers() throws NonAdmissibleActionOnMatchNow {
+		if(missingPlayers==3) {
+			throw new NonAdmissibleActionOnMatchNow("The number of missing players cannot exceed 3");
+		} else {
+			this.missingPlayers++;
+		}
 	}
 
 	public PadelMatch(Long id, LocalDate date, Boolean payed, Integer missingPlayers) {

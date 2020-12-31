@@ -65,6 +65,11 @@ public class MatchInsertValidator implements Validator {
 					+ " not in the club the player has joined in");
 		}
 		
+		// Controllo che il campo non sia dismesso  
+		if (!court.mayBeReserved()) {
+			errors.rejectValue("courtId","courtCannotBeReserved", "The selected court cannot be reserved by an admin decision");
+		}
+		
 		/* Controllo che il creatore non abbia altre partite previste per gli stessi slot della partita che 
 		 * sta provando a inserire */
 		Player player=playerRepository.findByIdWithAllMatches(Long.parseLong(inputMessage

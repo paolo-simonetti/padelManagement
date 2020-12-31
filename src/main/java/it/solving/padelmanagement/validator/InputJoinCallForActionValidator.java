@@ -75,6 +75,11 @@ public class InputJoinCallForActionValidator implements Validator {
 		if(!playerService.thePlayerHasPayedForEveryMatch(player.getId())) {
 			errors.rejectValue("playerId","expectedPayment","The player created some matches for which he has not payed yet");
 		}
+		
+		// Controllo che il player abbia livello >= di quello del creatore
+		if(player.getLevel()<match.getCreator().getLevel()) {
+			errors.rejectValue("matchId","tooWeak","The creator level is higher than the player's level");
+		}
 	}
 
 }
