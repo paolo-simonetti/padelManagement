@@ -1,8 +1,9 @@
 package it.solving.padelmanagement.dto;
 
-import java.sql.Blob;
 import java.util.HashSet;
 import java.util.Set;
+
+import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -28,7 +29,9 @@ public class UserDTO {
 	
 	protected String mobile;
 	
-	protected Blob proPicFile;
+	protected String proPicName;
+	
+	protected MultipartFile proPic;
 	
 	private Set<String> newClubProposalsIds=new HashSet<>();
 	
@@ -106,12 +109,20 @@ public class UserDTO {
 		this.mobile = mobile;
 	}
 
-	public Blob getProPicFile() {
-		return proPicFile;
+	public MultipartFile getProPic() {
+		return proPic;
 	}
 
-	public void setProPicFile(Blob proPicFile) {
-		this.proPicFile = proPicFile;
+	public void setProPic(MultipartFile proPic) {
+		this.proPic = proPic;
+	}
+
+	public String getProPicName() {
+		return proPicName;
+	}
+
+	public void setProPicName(String proPicName) {
+		this.proPicName = proPicName;
 	}
 
 	public Set<String> getNewClubProposalsIds() {
@@ -150,17 +161,24 @@ public class UserDTO {
 			this.joinProposalsIds.remove(id);			
 		}
 	}
-
-	public UserDTO(String id, String name, String surname, String dateOfBirth, String mailAddress, String role,
-			String mobile) {
+	
+	public UserDTO(String id, String name, String surname, String dateOfBirth, String mailAddress, String username,
+			String password, String role, String mobile, String proPicName, MultipartFile proPic,
+			Set<String> newClubProposalsIds, Set<String> joinProposalsIds) {
 		super();
 		this.id = id;
 		this.name = name;
 		this.surname = surname;
 		this.dateOfBirth = dateOfBirth;
 		this.mailAddress = mailAddress;
-		this.role=role;
+		this.username = username;
+		this.password = password;
+		this.role = role;
 		this.mobile = mobile;
+		this.proPicName = proPicName;
+		this.proPic = proPic;
+		this.newClubProposalsIds = newClubProposalsIds;
+		this.joinProposalsIds = joinProposalsIds;
 	}
 
 	public UserDTO() {

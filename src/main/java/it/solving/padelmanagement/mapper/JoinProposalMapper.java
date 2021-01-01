@@ -79,8 +79,8 @@ public class JoinProposalMapper extends
 			entity.setUserLevel(Integer.parseInt(insertMessageDTO.getUserLevel()));
 		}
 		
-		if(StringUtils.isNotBlank(insertMessageDTO.getProposalStatus())) {
-			entity.setProposalStatus(ProposalStatus.conversionProposalStatus.get(insertMessageDTO.getProposalStatus()));
+		if(StringUtils.isNotBlank(JoinProposalInsertMessageDTO.getProposalStatus())) {
+			entity.setProposalStatus(ProposalStatus.conversionProposalStatus.get(JoinProposalInsertMessageDTO.getProposalStatus()));
 		}
 		
 		return entity;

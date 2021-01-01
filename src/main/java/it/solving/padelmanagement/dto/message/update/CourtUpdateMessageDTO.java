@@ -5,11 +5,8 @@ import javax.validation.constraints.Positive;
 
 public class CourtUpdateMessageDTO {
 
-	@NotBlank
-	@Positive
 	private String id;
 	
-	@NotBlank
 	private String name;
 	
 	public String getId() {

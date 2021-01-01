@@ -1,6 +1,6 @@
 package it.solving.padelmanagement.dto;
 
-import java.sql.Blob;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -15,7 +15,9 @@ public class NewClubProposalDTO {
 	
 	private String proposalStatus;
 	
-	private Blob logo;
+	private String logoName;
+	
+	private MultipartFile logo;
 	
 	@JsonIgnore
 	private String creatorId;
@@ -52,12 +54,20 @@ public class NewClubProposalDTO {
 		this.proposalStatus = proposalStatus;
 	}
 
-	public Blob getLogo() {
+	public MultipartFile getLogo() {
 		return logo;
 	}
 
-	public void setLogo(Blob logo) {
+	public void setLogo(MultipartFile logo) {
 		this.logo = logo;
+	}
+
+	public String getLogoName() {
+		return logoName;
+	}
+
+	public void setLogoName(String logoName) {
+		this.logoName = logoName;
 	}
 
 	public String getCreatorId() {
@@ -68,13 +78,14 @@ public class NewClubProposalDTO {
 		this.creatorId = creatorId;
 	}
 
-	public NewClubProposalDTO(String id, String name, String city, String proposalStatus, Blob logo,
-			String creatorId) {
+	public NewClubProposalDTO(String id, String name, String city, String proposalStatus, String logoName,
+			MultipartFile logo, String creatorId) {
 		super();
 		this.id = id;
 		this.name = name;
 		this.city = city;
 		this.proposalStatus = proposalStatus;
+		this.logoName = logoName;
 		this.logo = logo;
 		this.creatorId = creatorId;
 	}

@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import it.solving.padelmanagement.dto.NewClubProposalDTO;
 import it.solving.padelmanagement.dto.message.insert.NewClubProposalInsertMessageDTO;
 import it.solving.padelmanagement.dto.message.update.NewClubProposalUpdateMessageDTO;
+import it.solving.padelmanagement.model.Image;
 import it.solving.padelmanagement.model.NewClubProposal;
 import it.solving.padelmanagement.model.ProposalStatus;
 
@@ -38,7 +39,8 @@ public class NewClubProposalMapper extends
 		}
 		
 		if(entity.getLogo()!=null) {
-			dto.setLogo(entity.getLogo());
+			dto.setLogo(entity.getLogo().getImage());
+			dto.setLogoName(entity.getLogo().getName());
 		}
 		
 		if(entity.getCreator()!=null) {
@@ -73,9 +75,17 @@ public class NewClubProposalMapper extends
 			entity.setCity(dto.getCity());
 		}
 		
+		Image logo=new Image();
+		
 		if(dto.getLogo()!=null) {
-			entity.setLogo(dto.getLogo());
+			logo.setImage(dto.getLogo());
 		}
+		
+		if(StringUtils.isNotBlank(dto.getLogoName())) {
+			logo.setName(dto.getLogoName());
+		}
+		
+		entity.setLogo(logo);
 		
 		return entity;
 	}
@@ -99,9 +109,18 @@ public class NewClubProposalMapper extends
 			entity.setCity(insertMessageDTO.getCity());
 		}
 		
+		Image logo=new Image();
+		
 		if(insertMessageDTO.getLogo()!=null) {
-			entity.setLogo(insertMessageDTO.getLogo());
+			logo.setImage(insertMessageDTO.getLogo());
 		}
+		
+		if(StringUtils.isNotBlank(insertMessageDTO.getLogoName())) {
+			logo.setName(insertMessageDTO.getLogoName());
+		}
+		
+		entity.setLogo(logo);
+		
 		
 		return entity;	
 	}
@@ -130,9 +149,17 @@ public class NewClubProposalMapper extends
 			entity.setCity(updateMessageDTO.getCity());
 		}
 		
+		Image logo=new Image();
+		
 		if(updateMessageDTO.getLogo()!=null) {
-			entity.setLogo(updateMessageDTO.getLogo());
+			logo.setImage(updateMessageDTO.getLogo());
 		}
+		
+		if(StringUtils.isNotBlank(updateMessageDTO.getLogoName())) {
+			logo.setName(updateMessageDTO.getLogoName());
+		}
+		
+		entity.setLogo(logo);
 		
 		return entity;
 	}

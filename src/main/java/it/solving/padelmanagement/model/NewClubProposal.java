@@ -1,7 +1,6 @@
 package it.solving.padelmanagement.model;
 
-import java.sql.Blob;
-
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -9,8 +8,8 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 
 @Entity
 public class NewClubProposal {
@@ -26,8 +25,8 @@ public class NewClubProposal {
 	@Enumerated(EnumType.STRING)
 	private ProposalStatus proposalStatus;
 	
-	@Lob
-	private Blob logo;
+	@OneToOne(fetch=FetchType.LAZY, cascade=CascadeType.REMOVE)
+	private Image logo;
 	
 	@ManyToOne(fetch=FetchType.LAZY)
 	private User creator;
@@ -56,11 +55,11 @@ public class NewClubProposal {
 		this.city = city;
 	}
 
-	public Blob getLogo() {
+	public Image getLogo() {
 		return logo;
 	}
 
-	public void setLogo(Blob logo) {
+	public void setLogo(Image logo) {
 		this.logo = logo;
 	}
 
@@ -79,8 +78,8 @@ public class NewClubProposal {
 	public void setProposalStatus(ProposalStatus proposalStatus) {
 		this.proposalStatus = proposalStatus;
 	}
-
-	public NewClubProposal(Long id, String name, String city, Blob logo, ProposalStatus proposalStatus) {
+	
+	public NewClubProposal(Long id, String name, String city, Image logo, ProposalStatus proposalStatus) {
 		super();
 		this.id = id;
 		this.name = name;

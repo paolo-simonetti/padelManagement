@@ -1,5 +1,6 @@
 package it.solving.padelmanagement.controller.guest;
 
+import java.io.IOException;
 import java.util.Set;
 
 import javax.validation.Valid;
@@ -10,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -65,10 +67,10 @@ public class GuestController {
 		return ResponseEntity.status(HttpStatus.OK).body(new ResultDTO("The proposal will be evaluated by the Admin of the club"));
 	}
 	
-	@PostMapping("insertNewClubProposal")
-	public ResponseEntity<ResultDTO> insertNewClubProposal(@Valid @RequestBody 
+	@PostMapping(path="insertNewClubProposal", consumes="multipart/form-data;charset=UTF-8")
+	public ResponseEntity<ResultDTO> insertNewClubProposal(@Valid @ModelAttribute 
 			NewClubProposalInsertMessageDTO newClubProposalInsertMessageDTO, BindingResult bindingResult) 
-					throws NonAdmissibleProposalException {
+					throws NonAdmissibleProposalException, IOException {
 		newClubProposalsValidator.validate(newClubProposalInsertMessageDTO, bindingResult);
 		if (bindingResult.hasErrors()) {
 			return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResultDTO("Encountered errors in the creator field"));

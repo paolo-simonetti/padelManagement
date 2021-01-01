@@ -1,6 +1,5 @@
 package it.solving.padelmanagement.model;
 
-import java.sql.Blob;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
@@ -15,8 +14,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
-import javax.persistence.Lob;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 
 @Entity
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
@@ -43,8 +42,8 @@ public class User {
 	
 	protected String mobile;
 	
-	@Lob
-	protected Blob proPicFile;
+	@OneToOne(fetch=FetchType.LAZY, cascade=CascadeType.REMOVE)
+	protected Image proPicFile;
 		
 	@OneToMany(fetch=FetchType.LAZY, cascade=CascadeType.REMOVE)
 	private Set<NewClubProposal> newClubProposals=new HashSet<>();
@@ -139,11 +138,11 @@ public class User {
 		this.mobile = mobile;
 	}
 
-	public Blob getProPicFile() {
+	public Image getProPicFile() {
 		return proPicFile;
 	}
 
-	public void setProPicFile(Blob proPicFile) {
+	public void setProPicFile(Image proPicFile) {
 		this.proPicFile = proPicFile;
 	}
 
@@ -187,7 +186,7 @@ public class User {
 
 	
 	public User(Long id, String name, String surname, LocalDate dateOfBirth, String mailAddress, String mobile,
-			Role role, Blob proPicFile) {
+			Role role, Image proPicFile) {
 		super();
 		this.id = id;
 		this.name = name;

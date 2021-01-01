@@ -3,7 +3,10 @@ package it.solving.padelmanagement.dto.message.member;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Past;
+
+import org.springframework.web.multipart.MultipartFile;
 
 public class InputUpdateMemberMessageDTO {
 
@@ -39,6 +42,12 @@ public class InputUpdateMemberMessageDTO {
 	@Max(7)
 	private String userLevel;
 
+	@NotBlank
+	private String proPicName;
+	
+	@NotNull
+	private MultipartFile proPic;
+	
 	public String getId() {
 		return id;
 	}
@@ -115,9 +124,26 @@ public class InputUpdateMemberMessageDTO {
 		this.userLevel = userLevel;
 	}
 	
+	public MultipartFile getProPic() {
+		return proPic;
+	}
+
+	public void setProPic(MultipartFile proPic) {
+		this.proPic = proPic;
+	}
+	
+	public String getProPicName() {
+		return proPicName;
+	}
+
+	public void setProPicName(String proPicName) {
+		this.proPicName = proPicName;
+	}
+	
 	public InputUpdateMemberMessageDTO(@NotBlank String id, @NotBlank String name, @NotBlank String surname,
 			@NotBlank @Past String dateOfBirth, @NotBlank String username, @NotBlank @Min(6) String password,
-			@NotBlank String mailAddress, @NotBlank String mobile, @Min(1) @Max(7) String userLevel) {
+			@NotBlank String mailAddress, @NotBlank String mobile, @Min(1) @Max(7) String userLevel,
+			@NotBlank String proPicName, @NotNull MultipartFile proPic) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -128,6 +154,8 @@ public class InputUpdateMemberMessageDTO {
 		this.mailAddress = mailAddress;
 		this.mobile = mobile;
 		this.userLevel = userLevel;
+		this.proPicName = proPicName;
+		this.proPic = proPic;
 	}
 
 	public InputUpdateMemberMessageDTO() {

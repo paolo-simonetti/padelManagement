@@ -8,6 +8,8 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Past;
 
+import org.springframework.web.multipart.MultipartFile;
+
 public class PlayerUpdateMessageDTO extends UserUpdateMessageDTO {
 	
 	@Min(1)
@@ -70,11 +72,15 @@ public class PlayerUpdateMessageDTO extends UserUpdateMessageDTO {
 	}
 
 	public PlayerUpdateMessageDTO(@NotBlank String id, @NotBlank String name, @NotBlank String surname,
-			@NotBlank @Past String dateOfBirth, @NotBlank String mailAddress, @NotBlank String mobile,
-			@Min(1) @Max(7) String level, Set<String> matchesIds) {
-		super(id, name, surname, dateOfBirth, mailAddress, mobile);
+			@NotBlank @Past String dateOfBirth, @NotBlank String username, @NotBlank @Min(6) String password,
+			@NotBlank String mailAddress, @NotBlank String mobile, String proPicName, MultipartFile proPic,
+			Set<String> newClubProposalsIds, Set<String> joinProposalsIds, @Min(1) @Max(7) String level,
+			Set<String> matchesIds, Set<String> matchesJoinedIds) {
+		super(id, name, surname, dateOfBirth, username, password, mailAddress, mobile, proPicName, proPic,
+				newClubProposalsIds, joinProposalsIds);
 		this.level = level;
 		this.matchesIds = matchesIds;
+		this.matchesJoinedIds = matchesJoinedIds;
 	}
 
 	public PlayerUpdateMessageDTO() {

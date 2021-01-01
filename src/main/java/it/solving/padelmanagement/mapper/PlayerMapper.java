@@ -10,6 +10,7 @@ import it.solving.padelmanagement.dto.PlayerDTO;
 import it.solving.padelmanagement.dto.message.insert.PlayerInsertMessageDTO;
 import it.solving.padelmanagement.dto.message.member.InputUpdateMemberMessageDTO;
 import it.solving.padelmanagement.dto.message.update.PlayerUpdateMessageDTO;
+import it.solving.padelmanagement.model.Image;
 import it.solving.padelmanagement.model.Player;
 
 @Component
@@ -56,7 +57,8 @@ public class PlayerMapper extends AbstractMapper<Player, PlayerDTO, PlayerInsert
 		}
 		
 		if(entity.getProPicFile()!=null) {
-			dto.setProPicFile(entity.getProPicFile());
+			dto.setProPic(entity.getProPicFile().getImage());
+			dto.setProPicName(entity.getProPicFile().getName());
 		}
 		
 		if (entity.getLevel()!=null) {
@@ -120,9 +122,17 @@ public class PlayerMapper extends AbstractMapper<Player, PlayerDTO, PlayerInsert
 			entity.setMobile(dto.getMobile());
 		}
 		
-		if (dto.getProPicFile()!=null) {
-			entity.setProPicFile(dto.getProPicFile());
+		Image proPic=new Image();
+		
+		if (dto.getProPic()!=null) {
+			proPic.setImage(dto.getProPic());
 		}
+		
+		if (StringUtils.isNotBlank(dto.getProPicName())) {
+			proPic.setName(dto.getProPicName());
+		}
+		
+		entity.setProPicFile(proPic);
 		
 		if (StringUtils.isNotBlank(dto.getLevel())) {
 			entity.setLevel(Integer.parseInt(dto.getLevel()));
@@ -171,6 +181,18 @@ public class PlayerMapper extends AbstractMapper<Player, PlayerDTO, PlayerInsert
 			entity.setLevel(Integer.parseInt(insertMessageDTO.getLevel()));
 		}
 		
+		Image proPic=new Image();
+		
+		if (insertMessageDTO.getProPic()!=null) {
+			proPic.setImage(insertMessageDTO.getProPic());
+		}
+		
+		if (StringUtils.isNotBlank(insertMessageDTO.getProPicName())) {
+			proPic.setName(insertMessageDTO.getProPicName());
+		}
+		
+		entity.setProPicFile(proPic);
+		
 		return entity;
 	}
 
@@ -218,6 +240,18 @@ public class PlayerMapper extends AbstractMapper<Player, PlayerDTO, PlayerInsert
 			entity.setLevel(Integer.parseInt(updateMessageDTO.getLevel()));
 		}
 		
+		Image proPic=new Image();
+		
+		if (updateMessageDTO.getProPic()!=null) {
+			proPic.setImage(updateMessageDTO.getProPic());
+		}
+		
+		if (StringUtils.isNotBlank(updateMessageDTO.getProPicName())) {
+			proPic.setName(updateMessageDTO.getProPicName());
+		}
+		
+		entity.setProPicFile(proPic);
+		
 		return entity;
 	}
 	
@@ -258,6 +292,18 @@ public class PlayerMapper extends AbstractMapper<Player, PlayerDTO, PlayerInsert
 		if(StringUtils.isNotBlank(inputMessage.getUserLevel())) {
 			entity.setLevel(Integer.parseInt(inputMessage.getUserLevel()));
 		}
+		
+		Image proPic=new Image();
+		
+		if (inputMessage.getProPic()!=null) {
+			proPic.setImage(inputMessage.getProPic());
+		}
+		
+		if (StringUtils.isNotBlank(inputMessage.getProPicName())) {
+			proPic.setName(inputMessage.getProPicName());
+		}
+		
+		entity.setProPicFile(proPic);
 		
 		return entity;
 	}

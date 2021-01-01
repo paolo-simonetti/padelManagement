@@ -9,6 +9,7 @@ import it.solving.padelmanagement.dto.ClubDTO;
 import it.solving.padelmanagement.dto.message.insert.ClubInsertMessageDTO;
 import it.solving.padelmanagement.dto.message.update.ClubUpdateMessageDTO;
 import it.solving.padelmanagement.model.Club;
+import it.solving.padelmanagement.model.Image;
 
 @Component
 public class ClubMapper extends AbstractMapper<Club, ClubDTO, ClubInsertMessageDTO, ClubUpdateMessageDTO> {
@@ -34,7 +35,8 @@ public class ClubMapper extends AbstractMapper<Club, ClubDTO, ClubInsertMessageD
 		}
 		
 		if(entity.getLogo()!=null) {
-			dto.setLogo(entity.getLogo());
+			dto.setLogo(entity.getLogo().getImage());
+			dto.setLogoName(entity.getLogo().getName());
 		}
 		
 		if(entity.getCourts()!=null && entity.getCourts().size()>0) {
@@ -80,9 +82,17 @@ public class ClubMapper extends AbstractMapper<Club, ClubDTO, ClubInsertMessageD
 			entity.setCity(dto.getCity());
 		}
 		
+		Image logo=new Image();
+		
 		if(dto.getLogo()!=null) {
-			entity.setLogo(dto.getLogo());
+			logo.setImage(dto.getLogo());
 		}
+		
+		if(StringUtils.isNotBlank(dto.getLogoName())) {
+			logo.setName(dto.getLogoName());
+		}
+		
+		entity.setLogo(logo);
 				
 		return entity;
 	}
@@ -103,9 +113,17 @@ public class ClubMapper extends AbstractMapper<Club, ClubDTO, ClubInsertMessageD
 			entity.setCity(insertMessageDTO.getCity());
 		}
 		
+		Image logo=new Image();
+		
 		if(insertMessageDTO.getLogo()!=null) {
-			entity.setLogo(insertMessageDTO.getLogo());
+			logo.setImage(insertMessageDTO.getLogo());
 		}
+		
+		if(StringUtils.isNotBlank(insertMessageDTO.getLogoName())) {
+			logo.setName(insertMessageDTO.getLogoName());
+		}
+		
+		entity.setLogo(logo);
 		
 		return entity;
 	}
@@ -130,9 +148,17 @@ public class ClubMapper extends AbstractMapper<Club, ClubDTO, ClubInsertMessageD
 			entity.setCity(updateMessageDTO.getCity());
 		}
 		
+		Image logo=new Image();
+		
 		if(updateMessageDTO.getLogo()!=null) {
-			entity.setLogo(updateMessageDTO.getLogo());
+			logo.setImage(updateMessageDTO.getLogo());
 		}
+		
+		if(StringUtils.isNotBlank(updateMessageDTO.getLogoName())) {
+			logo.setName(updateMessageDTO.getLogoName());
+		}
+		
+		entity.setLogo(logo);
 				
 		return entity;
 	}

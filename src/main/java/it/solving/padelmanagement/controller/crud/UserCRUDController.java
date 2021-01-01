@@ -1,5 +1,7 @@
 package it.solving.padelmanagement.controller.crud;
 
+import java.io.IOException;
+
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,8 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -39,8 +41,8 @@ public class UserCRUDController {
 		}
 	}
 	
-	@PostMapping("insert")
-	public ResponseEntity<ResultDTO> insert(@Valid @RequestBody UserInsertMessageDTO userInsertMessageDTO, BindingResult bindingResult) {
+	@PostMapping(path="insert",consumes="multipart/form-data;charset=UTF-8")
+	public ResponseEntity<ResultDTO> insert(@Valid @ModelAttribute UserInsertMessageDTO userInsertMessageDTO, BindingResult bindingResult) throws IOException {
 		signUpValidator.validate(userInsertMessageDTO,bindingResult);
 		if (bindingResult.hasErrors()) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResultDTO("User already exists"));

@@ -1,8 +1,9 @@
 package it.solving.padelmanagement.dto;
 
-import java.sql.Blob;
 import java.util.HashSet;
 import java.util.Set;
+
+import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -15,7 +16,9 @@ public class ClubDTO {
 	
 	private String city;
 	
-	private Blob logo;
+	private MultipartFile logo;
+	
+	private String logoName;
 	
 	private Set<String> courtsIds=new HashSet<>();
 	
@@ -55,12 +58,20 @@ public class ClubDTO {
 		this.city = city;
 	}
 	
-	public Blob getLogo() {
+	public MultipartFile getLogo() {
 		return logo;
 	}
 
-	public void setLogo(Blob logo) {
+	public void setLogo(MultipartFile logo) {
 		this.logo = logo;
+	}
+
+	public String getLogoName() {
+		return logoName;
+	}
+
+	public void setLogoName(String logoName) {
+		this.logoName = logoName;
 	}
 
 	public Set<String> getCourtsIds() {
@@ -143,12 +154,19 @@ public class ClubDTO {
 		}
 	}
 
-	public ClubDTO(String id, String name, String city, Blob logo) {
+	public ClubDTO(String id, String name, String city, MultipartFile logo, String logoName, Set<String> courtsIds,
+			String adminId, Set<String> noticesIds, Set<String> joinProposalsIds, Set<String> playersIds) {
 		super();
 		this.id = id;
 		this.name = name;
 		this.city = city;
 		this.logo = logo;
+		this.logoName = logoName;
+		this.courtsIds = courtsIds;
+		this.adminId = adminId;
+		this.noticesIds = noticesIds;
+		this.joinProposalsIds = joinProposalsIds;
+		this.playersIds = playersIds;
 	}
 
 	public ClubDTO() {

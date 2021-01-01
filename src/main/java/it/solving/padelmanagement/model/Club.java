@@ -1,6 +1,5 @@
 package it.solving.padelmanagement.model;
 
-import java.sql.Blob;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -10,7 +9,6 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
@@ -25,8 +23,8 @@ public class Club {
 	
 	private String city;
 	
-	@Lob
-	private Blob logo;
+	@OneToOne(fetch=FetchType.LAZY, cascade=CascadeType.REMOVE)
+	private Image logo;
 	
 	@OneToMany(mappedBy="club", cascade=CascadeType.REMOVE)
 	private Set<Court> courts=new HashSet<>();
@@ -67,11 +65,11 @@ public class Club {
 		this.city = city;
 	}
 
-	public Blob getLogo() {
+	public Image getLogo() {
 		return logo;
 	}
 
-	public void setLogo(Blob logo) {
+	public void setLogo(Image logo) {
 		this.logo = logo;
 	}
 
@@ -155,7 +153,7 @@ public class Club {
 		}
 	}
 	
-	public Club(Long id, String name, String city, Blob logo, Admin admin) {
+	public Club(Long id, String name, String city, Image logo, Admin admin) {
 		super();
 		this.id = id;
 		this.name = name;

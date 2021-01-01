@@ -1,9 +1,10 @@
 package it.solving.padelmanagement.dto.message.update;
 
-import java.sql.Blob;
-
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
+
+import org.springframework.web.multipart.MultipartFile;
 
 public class NewClubProposalUpdateMessageDTO {
 
@@ -19,7 +20,10 @@ public class NewClubProposalUpdateMessageDTO {
 	@NotBlank
 	private String proposalStatus;
 	
-	private Blob logo;
+	private String logoName;
+		
+	private MultipartFile logo;
+
 	
 	@Positive
 	private String creatorId;
@@ -55,12 +59,20 @@ public class NewClubProposalUpdateMessageDTO {
 	public void setProposalStatus(String proposalStatus) {
 		this.proposalStatus = proposalStatus;
 	}
-	
-	public Blob getLogo() {
+
+	public String getLogoName() {
+		return logoName;
+	}
+
+	public void setLogoName(String logoName) {
+		this.logoName = logoName;
+	}
+
+	public MultipartFile getLogo() {
 		return logo;
 	}
 
-	public void setLogo(Blob logo) {
+	public void setLogo(MultipartFile logo) {
 		this.logo = logo;
 	}
 
@@ -73,12 +85,14 @@ public class NewClubProposalUpdateMessageDTO {
 	}
 
 	public NewClubProposalUpdateMessageDTO(@Positive String id, @NotBlank String name, @NotBlank String city,
-			@NotBlank String proposalStatus, Blob logo, @Positive String creatorId) {
+			@NotBlank String proposalStatus, String logoName, MultipartFile logo,
+			@Positive String creatorId) {
 		super();
 		this.id = id;
 		this.name = name;
 		this.city = city;
 		this.proposalStatus = proposalStatus;
+		this.logoName = logoName;
 		this.logo = logo;
 		this.creatorId = creatorId;
 	}

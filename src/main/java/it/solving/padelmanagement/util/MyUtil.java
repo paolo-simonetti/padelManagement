@@ -39,6 +39,8 @@ public class MyUtil {
 		result.setMobile(newClubProposal.getCreator().getMobile());
 		result.setUsername(newClubProposal.getCreator().getUsername());
 		result.setPassword(newClubProposal.getCreator().getPassword());
+		result.setProPicName(newClubProposal.getLogo().getName());
+		result.setProPic(newClubProposal.getLogo().getImage());
 		return result;
 	}
 	
@@ -46,7 +48,8 @@ public class MyUtil {
 		ClubInsertMessageDTO result=new ClubInsertMessageDTO();
 		result.setName(newClubProposal.getName());
 		result.setCity(newClubProposal.getCity());
-		result.setLogo(newClubProposal.getLogo());
+		result.setLogo(newClubProposal.getLogo().getImage());
+		result.setLogoName(newClubProposal.getLogo().getName());
 		return result;
 	}
 	
@@ -63,6 +66,8 @@ public class MyUtil {
 		insertMessageDTO.setMobile(user.getMobile());
 		insertMessageDTO.setLevel(joinProposal.getUserLevel().toString());
 		insertMessageDTO.setClubId(club.getId().toString());
+		insertMessageDTO.setProPicName(user.getProPicFile().getName());
+		insertMessageDTO.setProPic(user.getProPicFile().getImage());
 		return insertMessageDTO;
 	}
 	

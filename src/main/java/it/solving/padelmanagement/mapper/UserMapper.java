@@ -1,5 +1,6 @@
 package it.solving.padelmanagement.mapper;
 
+import java.io.IOException;
 import java.time.LocalDate;
 
 import org.apache.commons.lang3.StringUtils;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Component;
 import it.solving.padelmanagement.dto.UserDTO;
 import it.solving.padelmanagement.dto.message.insert.UserInsertMessageDTO;
 import it.solving.padelmanagement.dto.message.update.UserUpdateMessageDTO;
+import it.solving.padelmanagement.model.Image;
 import it.solving.padelmanagement.model.Role;
 import it.solving.padelmanagement.model.User;
 
@@ -54,8 +56,12 @@ public class UserMapper extends AbstractMapper<User, UserDTO, UserInsertMessageD
 			dto.setMobile(entity.getMobile());
 		}
 		
-		if(entity.getProPicFile()!=null) {
-			dto.setProPicFile(entity.getProPicFile());
+		if(StringUtils.isNotBlank(entity.getProPicFile().getName())) {
+			dto.setProPicName(entity.getProPicFile().getName());
+		}
+		
+		if(!entity.getProPicFile().getImage().isEmpty()) {
+			dto.setProPic(entity.getProPicFile().getImage());
 		}
 		
 		if(entity.getRole()!=null) {
@@ -115,9 +121,21 @@ public class UserMapper extends AbstractMapper<User, UserDTO, UserInsertMessageD
 			entity.setMobile(dto.getMobile());
 		}
 		
-		if (dto.getProPicFile()!=null) {
-			entity.setProPicFile(dto.getProPicFile());
+		Image proPic=new Image();
+		
+		if (dto.getProPic()!=null) {
+			try {
+				proPic.setImage(dto.getProPic());
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
+		
+		if (StringUtils.isNotBlank(dto.getProPicName())) {
+			proPic.setName(dto.getProPicName());
+		}
+		
+		entity.setProPicFile(proPic);
 		
 		return entity;
 	}
@@ -160,6 +178,21 @@ public class UserMapper extends AbstractMapper<User, UserDTO, UserInsertMessageD
 		
 		entity.setRole(Role.ROLE_GUEST);
 
+		Image proPic=new Image();
+		
+		if (insertMessageDTO.getProPic()!=null) {
+			try {
+				proPic.setImage(insertMessageDTO.getProPic());
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		if (StringUtils.isNotBlank(insertMessageDTO.getProPicName())) {
+			proPic.setName(insertMessageDTO.getProPicName());
+		}
+		
+		entity.setProPicFile(proPic);
 
 		return entity;
 	}
@@ -203,6 +236,23 @@ public class UserMapper extends AbstractMapper<User, UserDTO, UserInsertMessageD
 		if(StringUtils.isNotBlank(updateMessageDTO.getMobile())) {
 			entity.setMobile(updateMessageDTO.getMobile());
 		}
+		
+		Image proPic=new Image();
+		
+		if (updateMessageDTO.getProPic()!=null) {
+			try {
+				proPic.setImage(updateMessageDTO.getProPic());
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		if (StringUtils.isNotBlank(updateMessageDTO.getProPicName())) {
+			proPic.setName(updateMessageDTO.getProPicName());
+		}
+		
+		entity.setProPicFile(proPic);
+		
 		
 		entity.setRole(Role.ROLE_GUEST);
 		

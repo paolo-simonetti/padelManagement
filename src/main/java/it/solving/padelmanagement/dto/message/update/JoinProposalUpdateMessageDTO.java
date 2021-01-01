@@ -14,7 +14,6 @@ public class JoinProposalUpdateMessageDTO {
 	@Max(7)
 	private String userLevel;
 	
-	// TODO: fare un validator per la conversione 
 	@NotBlank
 	private String proposalStatus;
 

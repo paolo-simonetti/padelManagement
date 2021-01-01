@@ -1,5 +1,6 @@
 package it.solving.padelmanagement.service;
 
+import java.io.IOException;
 import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -12,11 +13,13 @@ import it.solving.padelmanagement.dto.UserDTO;
 import it.solving.padelmanagement.dto.message.insert.UserInsertMessageDTO;
 import it.solving.padelmanagement.dto.message.update.UserUpdateMessageDTO;
 import it.solving.padelmanagement.mapper.UserMapper;
+import it.solving.padelmanagement.model.Image;
 import it.solving.padelmanagement.model.JoinProposal;
 import it.solving.padelmanagement.model.NewClubProposal;
 import it.solving.padelmanagement.model.ProposalStatus;
 import it.solving.padelmanagement.model.Role;
 import it.solving.padelmanagement.model.User;
+import it.solving.padelmanagement.repository.ImageRepository;
 import it.solving.padelmanagement.repository.JoinProposalRepository;
 import it.solving.padelmanagement.repository.NewClubProposalRepository;
 import it.solving.padelmanagement.repository.UserRepository;
@@ -36,6 +39,9 @@ public class UserService {
 	@Autowired
 	private JoinProposalRepository joinProposalRepository;
 	
+	@Autowired
+	private ImageRepository imageRepository;
+	
 	public void delete (Long id) {
 		if (userRepository.findById(id).isPresent()) {
 			userRepository.delete(userRepository.findById(id).get());
@@ -44,8 +50,15 @@ public class UserService {
 		}
 	}
 	
-	public void insert (UserInsertMessageDTO userInsertMessageDTO) {
-		userRepository.save(userMapper.convertInsertMessageDTOToEntity(userInsertMessageDTO));
+	public void insert (UserInsertMessageDTO userInsertMessageDTO) throws IOException {
+		Image image=new Image();
+		image.setName(userInsertMessageDTO.getProPicName());
+		image.setImage(userInsertMessageDTO.getProPic());
+		
+		imageRepository.save(image);
+		User user=userMapper.convertInsertMessageDTOToEntity(userInsertMessageDTO);
+		user.setProPicFile(image);
+		userRepository.save(user);
 	}
 	
 	public void update (UserUpdateMessageDTO userUpdateMessageDTO) {

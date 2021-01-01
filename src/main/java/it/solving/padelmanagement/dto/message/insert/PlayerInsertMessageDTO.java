@@ -2,7 +2,12 @@ package it.solving.padelmanagement.dto.message.insert;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
+import javax.validation.constraints.Size;
+
+import org.springframework.web.multipart.MultipartFile;
 
 public class PlayerInsertMessageDTO extends UserInsertMessageDTO {
 	
@@ -35,9 +40,11 @@ public class PlayerInsertMessageDTO extends UserInsertMessageDTO {
 		return role;
 	}
 
-	public PlayerInsertMessageDTO(String name, String surname, String dateOfBirth, String mailAddress, String mobile,
+	public PlayerInsertMessageDTO(@NotBlank String name, @NotBlank String surname, @NotBlank String dateOfBirth,
+			@NotBlank String mailAddress, @NotBlank String username, @NotBlank @Size(min = 6) String password,
+			@NotBlank String mobile, @NotBlank String proPicName, @NotNull MultipartFile proPic,
 			@Min(1) @Max(7) String level, @Positive String clubId) {
-		super(name, surname, dateOfBirth, mailAddress, mobile);
+		super(name, surname, dateOfBirth, mailAddress, username, password, mobile, proPicName, proPic);
 		this.level = level;
 		this.clubId = clubId;
 	}

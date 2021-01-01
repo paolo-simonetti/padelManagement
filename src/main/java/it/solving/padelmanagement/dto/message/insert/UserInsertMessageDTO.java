@@ -1,7 +1,10 @@
 package it.solving.padelmanagement.dto.message.insert;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+
+import org.springframework.web.multipart.MultipartFile;
 
 public class UserInsertMessageDTO {
 	
@@ -29,6 +32,13 @@ public class UserInsertMessageDTO {
 	@NotBlank
 	protected String mobile;
 
+	@NotBlank
+	protected String proPicName;
+	
+	@NotNull
+	protected MultipartFile proPic;
+	
+	
 	public String getName() {
 		return name;
 	}
@@ -89,19 +99,40 @@ public class UserInsertMessageDTO {
 		return role;
 	}
 
-	public UserInsertMessageDTO(String name, String surname, String dateOfBirth, String mailAddress, String mobile) {
+	public MultipartFile getProPic() {
+		return proPic;
+	}
+
+	public void setProPic(MultipartFile proPic) {
+		this.proPic = proPic;
+	}
+
+	public String getProPicName() {
+		return proPicName;
+	}
+
+	public void setProPicName(String proPicName) {
+		this.proPicName = proPicName;
+	}
+	
+	public UserInsertMessageDTO(@NotBlank String name, @NotBlank String surname, @NotBlank String dateOfBirth,
+			@NotBlank String mailAddress, @NotBlank String username, @NotBlank @Size(min = 6) String password,
+			@NotBlank String mobile, @NotBlank String proPicName, @NotNull MultipartFile proPic) {
 		super();
 		this.name = name;
 		this.surname = surname;
 		this.dateOfBirth = dateOfBirth;
 		this.mailAddress = mailAddress;
+		this.username = username;
+		this.password = password;
 		this.mobile = mobile;
+		this.proPicName = proPicName;
+		this.proPic = proPic;
 	}
 
 	public UserInsertMessageDTO() {
 		super();
 	}
-	
 	
 	
 }

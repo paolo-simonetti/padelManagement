@@ -1,9 +1,10 @@
 package it.solving.padelmanagement.dto.message.insert;
 
-import java.sql.Blob;
-
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
+
+import org.springframework.web.multipart.MultipartFile;
 
 public class NewClubProposalInsertMessageDTO {
 	
@@ -15,7 +16,11 @@ public class NewClubProposalInsertMessageDTO {
 	
 	private static final String proposalStatus="pending";
 	
-	private Blob logo;
+	@NotBlank
+	private String logoName;
+	
+	@NotNull
+	private MultipartFile logo;
 	
 	@Positive
 	private String creatorId;
@@ -40,11 +45,11 @@ public class NewClubProposalInsertMessageDTO {
 		return proposalStatus;
 	}
 
-	public Blob getLogo() {
+	public MultipartFile getLogo() {
 		return logo;
 	}
 
-	public void setLogo(Blob logo) {
+	public void setLogo(MultipartFile logo) {
 		this.logo = logo;
 	}
 
@@ -55,12 +60,21 @@ public class NewClubProposalInsertMessageDTO {
 	public void setCreatorId(String creatorId) {
 		this.creatorId = creatorId;
 	}
+	
+	public String getLogoName() {
+		return logoName;
+	}
 
-	public NewClubProposalInsertMessageDTO(@NotBlank String name, @NotBlank String city,
-			 Blob logo, @Positive String creatorId) {
+	public void setLogoName(String logoName) {
+		this.logoName = logoName;
+	}
+	
+	public NewClubProposalInsertMessageDTO(@NotBlank String name, @NotBlank String city, @NotBlank String logoName,
+			@NotNull MultipartFile logo, @Positive String creatorId) {
 		super();
 		this.name = name;
 		this.city = city;
+		this.logoName = logoName;
 		this.logo = logo;
 		this.creatorId = creatorId;
 	}

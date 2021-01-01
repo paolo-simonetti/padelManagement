@@ -1,27 +1,28 @@
 package it.solving.padelmanagement.dto.message.update;
 
-import java.sql.Blob;
 import java.util.HashSet;
 import java.util.Set;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
+import org.springframework.web.multipart.MultipartFile;
 
 public class ClubUpdateMessageDTO {
 	
-	@NotBlank
 	private String id;
 	
-	@NotBlank
 	private String name;
 	
-	@NotBlank
 	private String city;
 	
-	private Blob logo;
+	private String logoName;
+		
+	private MultipartFile logo;
+
 	
 	private Set<String> courtsIds=new HashSet<>();
 	
-	@NotBlank
 	private String adminId;
 		
 	private Set<String> noticesIds=new HashSet<>();
@@ -52,13 +53,21 @@ public class ClubUpdateMessageDTO {
 
 	public void setCity(String city) {
 		this.city = city;
+	}	
+
+	public String getLogoName() {
+		return logoName;
 	}
 
-	public Blob getLogo() {
+	public void setLogoName(String logoName) {
+		this.logoName = logoName;
+	}
+
+	public MultipartFile getLogo() {
 		return logo;
 	}
 
-	public void setLogo(Blob logo) {
+	public void setLogo(MultipartFile logo) {
 		this.logo = logo;
 	}
 
@@ -101,13 +110,21 @@ public class ClubUpdateMessageDTO {
 	public void setPlayersIds(Set<String> playersIds) {
 		this.playersIds = playersIds;
 	}
-
-	public ClubUpdateMessageDTO(@NotBlank String id, @NotBlank String name, @NotBlank String city, Blob logo) {
+	
+	public ClubUpdateMessageDTO(String id, String name, String city, String logoName, MultipartFile logo,
+			Set<String> courtsIds, String adminId, Set<String> noticesIds, Set<String> joinProposalsIds,
+			Set<String> playersIds) {
 		super();
 		this.id = id;
 		this.name = name;
 		this.city = city;
+		this.logoName = logoName;
 		this.logo = logo;
+		this.courtsIds = courtsIds;
+		this.adminId = adminId;
+		this.noticesIds = noticesIds;
+		this.joinProposalsIds = joinProposalsIds;
+		this.playersIds = playersIds;
 	}
 
 	public ClubUpdateMessageDTO() {

@@ -9,6 +9,7 @@ import it.solving.padelmanagement.dto.AdminDTO;
 import it.solving.padelmanagement.dto.message.insert.UserInsertMessageDTO;
 import it.solving.padelmanagement.dto.message.update.UserUpdateMessageDTO;
 import it.solving.padelmanagement.model.Admin;
+import it.solving.padelmanagement.model.Image;
 
 @Component
 public class AdminMapper extends AbstractMapper<Admin, AdminDTO, UserInsertMessageDTO,UserUpdateMessageDTO> {
@@ -50,6 +51,14 @@ public class AdminMapper extends AbstractMapper<Admin, AdminDTO, UserInsertMessa
 		
 		if(StringUtils.isNotBlank(entity.getMobile())) {
 			dto.setMobile(entity.getMobile());
+		}
+		
+		if(StringUtils.isNotBlank(entity.getProPicFile().getName())) {
+			dto.setProPicName(entity.getProPicFile().getName());
+		}
+		
+		if(!entity.getProPicFile().getImage().isEmpty()) {
+			dto.setProPic(entity.getProPicFile().getImage());
 		}
 		
 		if(entity.getClub()!=null) {
@@ -99,6 +108,18 @@ public class AdminMapper extends AbstractMapper<Admin, AdminDTO, UserInsertMessa
 			entity.setMobile(dto.getMobile());
 		}
 		
+		Image proPic=new Image();
+		
+		if (dto.getProPic()!=null) {
+			proPic.setImage(dto.getProPic());
+		}
+		
+		if (StringUtils.isNotBlank(dto.getProPicName())) {
+			proPic.setName(dto.getProPicName());
+		}
+		
+		entity.setProPicFile(proPic);
+		
 		return entity;
 	}
 
@@ -137,6 +158,18 @@ public class AdminMapper extends AbstractMapper<Admin, AdminDTO, UserInsertMessa
 		if(StringUtils.isNotBlank(insertMessageDTO.getMobile())) {
 			entity.setMobile(insertMessageDTO.getMobile());
 		}
+		
+		Image proPic=new Image();
+		
+		if (insertMessageDTO.getProPic()!=null) {
+			proPic.setImage(insertMessageDTO.getProPic());
+		}
+		
+		if (StringUtils.isNotBlank(insertMessageDTO.getProPicName())) {
+			proPic.setName(insertMessageDTO.getProPicName());
+		}
+		
+		entity.setProPicFile(proPic);
 		
 		return entity;
 	}
@@ -180,6 +213,18 @@ public class AdminMapper extends AbstractMapper<Admin, AdminDTO, UserInsertMessa
 		if(StringUtils.isNotBlank(updateMessageDTO.getMobile())) {
 			entity.setMobile(updateMessageDTO.getMobile());
 		}
+		
+		Image proPic=new Image();
+		
+		if (updateMessageDTO.getProPic()!=null) {
+			proPic.setImage(updateMessageDTO.getProPic());
+		}
+		
+		if (StringUtils.isNotBlank(updateMessageDTO.getProPicName())) {
+			proPic.setName(updateMessageDTO.getProPicName());
+		}
+		
+		entity.setProPicFile(proPic);
 		
 		return entity;
 	}

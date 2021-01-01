@@ -6,7 +6,10 @@ import java.util.Set;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Past;
+
+import org.springframework.web.multipart.MultipartFile;
 
 public class UserUpdateMessageDTO {
 
@@ -38,7 +41,10 @@ public class UserUpdateMessageDTO {
 	@NotBlank
 	protected String mobile;
 	
-	protected Blob proPicFile;
+	protected String proPicName;
+		
+	protected MultipartFile proPic;
+
 	
 	private Set<String> newClubProposalsIds=new HashSet<>();
 	
@@ -108,14 +114,6 @@ public class UserUpdateMessageDTO {
 		this.mobile = mobile;
 	}
 
-	public Blob getProPicFile() {
-		return proPicFile;
-	}
-
-	public void setProPicFile(Blob proPicFile) {
-		this.proPicFile = proPicFile;
-	}
-
 	public Set<String> getNewClubProposalsIds() {
 		return newClubProposalsIds;
 	}
@@ -134,6 +132,22 @@ public class UserUpdateMessageDTO {
 
 	public static String getRole() {
 		return role;
+	}
+
+	public String getProPicName() {
+		return proPicName;
+	}
+
+	public void setProPicName(String proPicName) {
+		this.proPicName = proPicName;
+	}
+
+	public MultipartFile getProPic() {
+		return proPic;
+	}
+
+	public void setLogo(MultipartFile proPic) {
+		this.proPic = proPic;
 	}
 
 	public void addToNewClubProposalsIds(String id) {
@@ -155,16 +169,24 @@ public class UserUpdateMessageDTO {
 			this.joinProposalsIds.remove(id);			
 		}
 	}
-
+	
 	public UserUpdateMessageDTO(@NotBlank String id, @NotBlank String name, @NotBlank String surname,
-			@NotBlank @Past String dateOfBirth, @NotBlank String mailAddress, @NotBlank String mobile) {
+			@NotBlank @Past String dateOfBirth, @NotBlank String username, @NotBlank @Min(6) String password,
+			@NotBlank String mailAddress, @NotBlank String mobile, String proPicName, MultipartFile proPic,
+			Set<String> newClubProposalsIds, Set<String> joinProposalsIds) {
 		super();
 		this.id = id;
 		this.name = name;
 		this.surname = surname;
 		this.dateOfBirth = dateOfBirth;
+		this.username = username;
+		this.password = password;
 		this.mailAddress = mailAddress;
 		this.mobile = mobile;
+		this.proPicName = proPicName;
+		this.proPic = proPic;
+		this.newClubProposalsIds = newClubProposalsIds;
+		this.joinProposalsIds = joinProposalsIds;
 	}
 
 	public UserUpdateMessageDTO() {
