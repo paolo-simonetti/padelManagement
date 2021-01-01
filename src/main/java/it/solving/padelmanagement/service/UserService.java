@@ -105,8 +105,8 @@ public class UserService {
 	}
 	
 	public UserDTO findById(Long id) {
-		if (userRepository.findById(id).isPresent()) {
-			return userMapper.convertEntityToDTO(userRepository.findById(id).get());			
+		if (userRepository.findByIdWithProPicFile(id).isPresent()) {
+			return userMapper.convertEntityToDTO(userRepository.findByIdWithProPicFile(id).get());			
 		} else {
 			throw new NoSuchElementException();
 		}

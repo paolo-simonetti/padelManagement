@@ -1,5 +1,7 @@
 package it.solving.padelmanagement.mapper;
 
+import java.io.IOException;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
@@ -78,7 +80,11 @@ public class NewClubProposalMapper extends
 		Image logo=new Image();
 		
 		if(dto.getLogo()!=null) {
-			logo.setImage(dto.getLogo());
+			try {
+				logo.setImage(dto.getLogo());
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 		
 		if(StringUtils.isNotBlank(dto.getLogoName())) {
@@ -112,7 +118,11 @@ public class NewClubProposalMapper extends
 		Image logo=new Image();
 		
 		if(insertMessageDTO.getLogo()!=null) {
-			logo.setImage(insertMessageDTO.getLogo());
+			try {
+				logo.setImage(insertMessageDTO.getLogo());
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 		
 		if(StringUtils.isNotBlank(insertMessageDTO.getLogoName())) {
@@ -152,7 +162,11 @@ public class NewClubProposalMapper extends
 		Image logo=new Image();
 		
 		if(updateMessageDTO.getLogo()!=null) {
-			logo.setImage(updateMessageDTO.getLogo());
+			try {
+				logo.setImage(updateMessageDTO.getLogo());
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 		
 		if(StringUtils.isNotBlank(updateMessageDTO.getLogoName())) {

@@ -1,5 +1,6 @@
 package it.solving.padelmanagement.mapper;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.stream.Collectors;
 
@@ -125,7 +126,11 @@ public class PlayerMapper extends AbstractMapper<Player, PlayerDTO, PlayerInsert
 		Image proPic=new Image();
 		
 		if (dto.getProPic()!=null) {
-			proPic.setImage(dto.getProPic());
+			try {
+				proPic.setImage(dto.getProPic());
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 		
 		if (StringUtils.isNotBlank(dto.getProPicName())) {
@@ -184,7 +189,11 @@ public class PlayerMapper extends AbstractMapper<Player, PlayerDTO, PlayerInsert
 		Image proPic=new Image();
 		
 		if (insertMessageDTO.getProPic()!=null) {
-			proPic.setImage(insertMessageDTO.getProPic());
+			try {
+				proPic.setImage(insertMessageDTO.getProPic());
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 		
 		if (StringUtils.isNotBlank(insertMessageDTO.getProPicName())) {
@@ -243,7 +252,11 @@ public class PlayerMapper extends AbstractMapper<Player, PlayerDTO, PlayerInsert
 		Image proPic=new Image();
 		
 		if (updateMessageDTO.getProPic()!=null) {
-			proPic.setImage(updateMessageDTO.getProPic());
+			try {
+				proPic.setImage(updateMessageDTO.getProPic());
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 		
 		if (StringUtils.isNotBlank(updateMessageDTO.getProPicName())) {
@@ -296,7 +309,11 @@ public class PlayerMapper extends AbstractMapper<Player, PlayerDTO, PlayerInsert
 		Image proPic=new Image();
 		
 		if (inputMessage.getProPic()!=null) {
-			proPic.setImage(inputMessage.getProPic());
+			try {
+				proPic.setImage(inputMessage.getProPic());
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 		
 		if (StringUtils.isNotBlank(inputMessage.getProPicName())) {

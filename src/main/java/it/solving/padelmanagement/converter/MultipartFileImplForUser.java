@@ -1,70 +1,70 @@
 package it.solving.padelmanagement.converter;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import it.solving.padelmanagement.model.Image;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class MultipartFileImplForUser implements MultipartFile {
+	
+	@JsonIgnore
+	private long imageSize;
+	
+	private byte[] image=new byte[100000];
+	
+	public byte[] getImage() {
+		return image;
+	}
 
-	private Image imageFile;
-	
-	private long changedBytes;
-	
-	private byte[] fileSize=new byte[100000];
-	
 	public MultipartFileImplForUser() {
 		super();
 	}
 	
-	public MultipartFileImplForUser(byte[] fileSize) {
-		this.setFileSize(fileSize);
+	public MultipartFileImplForUser(byte[] image) throws IOException {
+		this.setImage(image);
 	}
 	
 	public long getChangedBytes() {
-		return changedBytes;
+		return imageSize;
 	}
 
-	public void setChangedBytes(long changedBytes) {
-		this.changedBytes = changedBytes;
+	public void setChangedBytes(long imageSize) {
+		this.imageSize = imageSize;
 	}
 
-	public byte[] getFileSize() {
-		return fileSize;
+	
+	public void setImage(byte[] image) throws IOException {
+		this.writeImage(image);
 	}
 
-	public void setFileSize(byte[] fileSize) {
-		this.writeFileSize(fileSize);
-	}
 
-	public Image getImageFile() {
-		return imageFile;
-	}
-
-	public void setImageFile(Image imageFile) {
-		this.imageFile = imageFile;
-	}
-
-	public void writeFileSize(byte[] input) {
-		if (input!=null && input.length>0 && input.length<this.fileSize.length) {
+	public void writeImage(byte[] input) throws IOException {
+		if (input!=null && input.length>0 && input.length<=this.image.length) {
 			for (int i=0; i<input.length;i++) {
-				fileSize[i]=input[i];
+				image[i]=input[i];
 			}
-			changedBytes=input.length;
-		} 
+			imageSize=input.length;
+		} else if(input.length>this.image.length) {
+			throw new IOException("Image too large!");
+		}
 	}
 	
 	@Override
+	@JsonIgnore
 	public String getName() {
 		return "proPic";
 	}
 
 	@Override
+	@JsonIgnore
 	public String getOriginalFilename() {
-		return imageFile.getName();
+		return "stringaDaCambiare";
 	}
 
 	@Override
@@ -73,29 +73,33 @@ public class MultipartFileImplForUser implements MultipartFile {
 	}
 
 	@Override
+	@JsonIgnore
 	public boolean isEmpty() {
-		return imageFile.getImage()==null;
+		return imageSize==0L;
 	}
 
 	@Override
+	@JsonIgnore
 	public long getSize() {
-		return fileSize.length;
+		return image.length;
 	}
 
 	@Override
+	@JsonIgnore
 	public byte[] getBytes() throws IOException {
-		return fileSize;
+		return image;
 	}
 
 	@Override
 	public InputStream getInputStream() throws IOException {
-		return imageFile.getImage().getInputStream();
+		return new ByteArrayInputStream(image);
 	}
 
 	@Override
 	public void transferTo(File dest) throws IOException, IllegalStateException {
-		// TODO Auto-generated method stub
-
+		try (FileOutputStream fos = new FileOutputStream(dest.getAbsolutePath())) {
+			   fos.write(this.image);
+		}
 	}
 
 }

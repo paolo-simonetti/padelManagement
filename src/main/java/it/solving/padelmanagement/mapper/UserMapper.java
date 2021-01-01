@@ -12,6 +12,7 @@ import it.solving.padelmanagement.dto.message.update.UserUpdateMessageDTO;
 import it.solving.padelmanagement.model.Image;
 import it.solving.padelmanagement.model.Role;
 import it.solving.padelmanagement.model.User;
+import it.solving.padelmanagement.util.MyUtil;
 
 @Component
 public class UserMapper extends AbstractMapper<User, UserDTO, UserInsertMessageDTO, UserUpdateMessageDTO> {
@@ -56,12 +57,14 @@ public class UserMapper extends AbstractMapper<User, UserDTO, UserInsertMessageD
 			dto.setMobile(entity.getMobile());
 		}
 		
-		if(StringUtils.isNotBlank(entity.getProPicFile().getName())) {
+		Image proPic=MyUtil.initializeAndUnproxy(entity.getProPicFile());
+		
+		if(StringUtils.isNotBlank(proPic.getName())) {
 			dto.setProPicName(entity.getProPicFile().getName());
 		}
 		
-		if(!entity.getProPicFile().getImage().isEmpty()) {
-			dto.setProPic(entity.getProPicFile().getImage());
+		if(proPic.getImage()!=null && !proPic.getImage().isEmpty()) {
+			dto.setProPic(proPic.getImage());
 		}
 		
 		if(entity.getRole()!=null) {

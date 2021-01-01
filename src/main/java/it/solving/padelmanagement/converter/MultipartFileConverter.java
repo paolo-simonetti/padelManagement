@@ -26,7 +26,12 @@ public class MultipartFileConverter implements AttributeConverter<MultipartFile,
 	@Override
 	public MultipartFile convertToEntityAttribute(Blob dbData) {
 		try {
-			return new MultipartFileImplForUser(dbData.getBytes(1L,(int) dbData.length()));
+			try {
+				return new MultipartFileImplForUser(dbData.getBytes(1L,(int) dbData.length()));
+			} catch (IOException e) {
+				e.printStackTrace();
+				return null;
+			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return new MultipartFileImplForUser();

@@ -41,7 +41,7 @@ public class UserCRUDController {
 		}
 	}
 	
-	@PostMapping(path="insert",consumes="multipart/form-data;charset=UTF-8")
+	@PostMapping(path="insert",consumes="multipart/form-data;charset=UTF-8", produces="multipart/form-data;charset=UTF-8")
 	public ResponseEntity<ResultDTO> insert(@Valid @ModelAttribute UserInsertMessageDTO userInsertMessageDTO, BindingResult bindingResult) throws IOException {
 		signUpValidator.validate(userInsertMessageDTO,bindingResult);
 		if (bindingResult.hasErrors()) {
