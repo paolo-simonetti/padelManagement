@@ -10,6 +10,9 @@ import it.solving.padelmanagement.model.Player;
 
 public interface PlayerRepository extends JpaRepository<Player, Long> {
 
+	@Query("from Player p left join fetch p.proPicFile pr where p.username=?1")
+	public Optional<Player> findByUsernameWithProPicFile(String username);
+	
 	@Query("from Player p left join fetch p.matches mc left join fetch p.matchesJoined mj where p.id=?1")
 	public Optional<Player> findByIdWithAllMatches(Long id);
 	

@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import it.solving.padelmanagement.model.Role;
 import it.solving.padelmanagement.model.Slot;
@@ -26,6 +27,9 @@ public class PadelmanagementApplicationRunner implements ApplicationRunner {
 	@Autowired
 	private UserRepository userRepository;
 	
+	@Autowired
+	private PasswordEncoder passwordEncoder;
+	
 	@Override
 	public void run(ApplicationArguments args) throws Exception {
 		if (slotRepository.findAll()!=null && slotRepository.findAll().size()==0) {
@@ -40,7 +44,7 @@ public class PadelmanagementApplicationRunner implements ApplicationRunner {
 			superAdmin.setSurname("Giannuli");
 			superAdmin.setDateOfBirth(LocalDate.of(1952,06,18));
 			superAdmin.setUsername("ricercatoreAttempato");
-			superAdmin.setPassword("buongiornissimo!SISMI?");
+			superAdmin.setPassword(passwordEncoder.encode("buongiornissimo!SISMI?"));
 			superAdmin.setMailAddress("mafiaMondiale@protonmail.com");
 			superAdmin.setMobile("39102487629");
 			superAdmin.setRole(Role.ROLE_SUPER_ADMIN);

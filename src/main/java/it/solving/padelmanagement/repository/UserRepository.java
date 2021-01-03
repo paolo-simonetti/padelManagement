@@ -13,8 +13,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	
 	public Set<User> findAllByRole(Role role);
 	
-	@Query("from User u where u.username=?1")
-	public Optional<User> findByUsername(String username);
+	@Query("from User u left join fetch u.proPicFile p where u.username=?1")
+	public Optional<User> findByUsernameWithProPicFile(String username);
 	
 	@Query("from User u where u.mailAddress=?1")
 	public Optional<User> findByMailAddress(String address);

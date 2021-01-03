@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.time.LocalDate;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import it.solving.padelmanagement.dto.UserDTO;
@@ -16,7 +18,10 @@ import it.solving.padelmanagement.util.MyUtil;
 
 @Component
 public class UserMapper extends AbstractMapper<User, UserDTO, UserInsertMessageDTO, UserUpdateMessageDTO> {
-
+	
+	@Autowired
+	private PasswordEncoder passwordEncoder;
+	
 	@Override
 	public UserDTO convertEntityToDTO(User entity) {
 		if(entity==null) {
@@ -168,7 +173,7 @@ public class UserMapper extends AbstractMapper<User, UserDTO, UserInsertMessageD
 		}
 		
 		if(StringUtils.isNotBlank(insertMessageDTO.getPassword())) {
-			entity.setPassword(insertMessageDTO.getPassword());
+			entity.setPassword(passwordEncoder.encode(insertMessageDTO.getPassword()));
 		}
 		
 		if(StringUtils.isNotBlank(insertMessageDTO.getMailAddress())) {

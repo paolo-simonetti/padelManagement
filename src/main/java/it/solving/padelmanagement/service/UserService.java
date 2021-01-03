@@ -148,6 +148,6 @@ public class UserService {
 	}
 	
 	public boolean userAlreadyExists(String username) {
-		return (userRepository.findByUsername(username).isPresent());
+		return (userRepository.findByUsernameWithProPicFile(username).isPresent());
 	}
 }

@@ -13,7 +13,8 @@ public interface NewClubProposalRepository extends JpaRepository<NewClubProposal
 	
 	public Set<NewClubProposal> findAllByCreator(User creator);
 	
-	@Query("from NewClubProposal n left join fetch n.creator c where n.id=?1")
-	public Optional<NewClubProposal> findByIdWithCreator(Long id);
+	@Query("from NewClubProposal n left join fetch n.creator c left join fetch n.logo l left join fetch c.proPicFile "
+			+ "where n.id=?1")
+	public Optional<NewClubProposal> findByIdWithCreatorTheirProPicAndLogo(Long id);
 	
 }

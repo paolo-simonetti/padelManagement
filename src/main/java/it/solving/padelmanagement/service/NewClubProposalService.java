@@ -57,8 +57,8 @@ public class NewClubProposalService {
 	}
 	
 	public void delete (Long id) {
-		if (newClubProposalRepository.findByIdWithCreator(id).isPresent()) {
-			NewClubProposal newClubProposal=newClubProposalRepository.findByIdWithCreator(id).get();
+		if (newClubProposalRepository.findByIdWithCreatorTheirProPicAndLogo(id).isPresent()) {
+			NewClubProposal newClubProposal=newClubProposalRepository.findByIdWithCreatorTheirProPicAndLogo(id).get();
 			User creator=newClubProposal.getCreator();
 			creator.removeFromNewClubProposals(newClubProposal);
 			newClubProposal.setCreator(null);
@@ -77,9 +77,9 @@ public class NewClubProposalService {
 		}
 	}
 	
-	public NewClubProposal findByIdWithCreator(Long id) {
-		if (newClubProposalRepository.findByIdWithCreator(id).isPresent()) {
-			return newClubProposalRepository.findByIdWithCreator(id).get();
+	public NewClubProposal findByIdWithCreatorTheirProPicAndLogo(Long id) {
+		if (newClubProposalRepository.findByIdWithCreatorTheirProPicAndLogo(id).isPresent()) {
+			return newClubProposalRepository.findByIdWithCreatorTheirProPicAndLogo(id).get();
 		} else {
 			throw new NoSuchElementException();
 		}

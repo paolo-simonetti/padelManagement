@@ -14,7 +14,6 @@ import it.solving.padelmanagement.dto.JoinProposalDTO;
 import it.solving.padelmanagement.dto.ResultDTO;
 import it.solving.padelmanagement.exception.EmailException;
 import it.solving.padelmanagement.exception.ProposalStatusException;
-import it.solving.padelmanagement.service.EmailService;
 import it.solving.padelmanagement.service.JoinProposalService;
 
 //TODO: in tutte questo package, devo controllare che l'admin stia agendo su roba riguardante il proprio circolo

@@ -52,7 +52,7 @@ public class SuperAdminController {
 	
 	@GetMapping("approveNewClubProposal")
 	public ResponseEntity<ResultDTO> approveNewClubProposal(@RequestParam Long newClubProposalId) throws EmailException {
-		NewClubProposal newClubProposal=newClubProposalService.findByIdWithCreator(newClubProposalId);
+		NewClubProposal newClubProposal=newClubProposalService.findByIdWithCreatorTheirProPicAndLogo(newClubProposalId);
 		if (newClubProposal!=null && newClubProposal.getProposalStatus()==ProposalStatus.PENDING) {
 			newClubProposal.setProposalStatus(ProposalStatus.APPROVED);
 			UserInsertMessageDTO admin=myUtil.getAdminFromNewClubProposal(newClubProposal);
@@ -69,7 +69,7 @@ public class SuperAdminController {
 	
 	@GetMapping("rejectNewClubProposal")
 	public ResponseEntity<ResultDTO> rejectNewClubProposal(@RequestParam Long newClubProposalId) throws EmailException {
-		NewClubProposal newClubProposal=newClubProposalService.findByIdWithCreator(newClubProposalId);
+		NewClubProposal newClubProposal=newClubProposalService.findByIdWithCreatorTheirProPicAndLogo(newClubProposalId);
 		if(newClubProposal!=null && newClubProposal.getProposalStatus()==ProposalStatus.PENDING) {
 			newClubProposal.setProposalStatus(ProposalStatus.REJECTED);
 			newClubProposalRepository.save(newClubProposal);

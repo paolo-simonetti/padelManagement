@@ -12,4 +12,7 @@ public interface AdminRepository extends JpaRepository<Admin, Long>{
 	@Query("from Admin a where a.mailAddress=?1")
 	public Optional<Admin> findByMailAddress(String address);
 	
+	@Query("from Admin a left join fetch a.proPicFile p where a.username=?1")
+	public Optional<Admin> findByUsernameWithProPicFile(String username);
+	
 }
