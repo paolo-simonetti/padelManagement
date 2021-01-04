@@ -5,6 +5,7 @@ import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,11 +20,12 @@ import it.solving.padelmanagement.dto.PlayerDTO;
 import it.solving.padelmanagement.dto.ResultDTO;
 import it.solving.padelmanagement.dto.message.member.InputUpdateMemberMessageDTO;
 import it.solving.padelmanagement.exception.AbandonClubException;
+import it.solving.padelmanagement.model.Player;
+import it.solving.padelmanagement.securitymodel.PlayerPrincipal;
 import it.solving.padelmanagement.service.PlayerService;
 import it.solving.padelmanagement.util.MyUtil;
 import it.solving.padelmanagement.validator.InputUpdateMemberValidator;
 
-//TODO: in tutto questo package, devo controllare che il socio stia agendo sulle proprie robe
 @RestController
 @RequestMapping("player/member")
 public class MemberController {
@@ -38,8 +40,10 @@ public class MemberController {
 	private MyUtil myUtil;
 	
 	@GetMapping("get")
-	public ResponseEntity<PlayerDTO> getMember(@RequestParam Long id) {
-		PlayerDTO playerDTO=playerService.findByIdWithClub(id);
+	public ResponseEntity<PlayerDTO> getMember() {
+		//Recupero il player dal Security context holder
+		Player player=((PlayerPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getPlayer();
+		PlayerDTO playerDTO=playerService.findByIdWithClub(player.getId());
 		return ResponseEntity.status(HttpStatus.OK).body(playerDTO);
 	}
 	
@@ -56,15 +60,14 @@ public class MemberController {
 	}
 	
 	@DeleteMapping("abandonclub")
-	public ResponseEntity<ResultDTO> abandonClub(@RequestParam Long playerId) throws AbandonClubException {
-		// ricordati il controllo sullo stato di pagamento 
-		playerService.abandonClub(playerId);
+	public ResponseEntity<ResultDTO> abandonClub() throws AbandonClubException {
+		playerService.abandonClub();
 		return ResponseEntity.status(HttpStatus.OK).body(new ResultDTO("The player has successfully abandoned the club"));
 	}
 	
 	@GetMapping("getnotices")
-	public ResponseEntity<Set<NoticeDTO>> getClubNotices(@RequestParam Long playerId) {
-		return ResponseEntity.status(HttpStatus.OK).body(playerService.getClubNotices(playerId));
+	public ResponseEntity<Set<NoticeDTO>> getClubNotices() {
+		return ResponseEntity.status(HttpStatus.OK).body(playerService.getClubNotices());
 	}
 	
 }

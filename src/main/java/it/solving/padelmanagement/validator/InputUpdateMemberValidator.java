@@ -22,11 +22,7 @@ public class InputUpdateMemberValidator implements Validator {
 	@Override
 	public void validate(Object target, Errors errors) {
 		InputUpdateMemberMessageDTO inputMessage=(InputUpdateMemberMessageDTO) target;
-		// Controllo che lo user esista
-		if (!playerRepository.findById(Long.parseLong(inputMessage.getId())).isPresent()) {
-			errors.rejectValue("id","nonExistentPlayer","The player does not exist");
-		}
-	
+		
 		// Controllo che la mail e lo username non siano già in uso
 		if (playerRepository.findAllByMailAddress(inputMessage.getMailAddress())!=null && 
 				playerRepository.findAllByMailAddress(inputMessage.getMailAddress()).size()>0) {

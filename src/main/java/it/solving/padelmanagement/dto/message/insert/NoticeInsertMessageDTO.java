@@ -8,8 +8,6 @@ public class NoticeInsertMessageDTO {
 	@NotBlank
 	private String message;
 	
-	@Positive
-	private String clubId;
 
 	public String getMessage() {
 		return message;
@@ -19,18 +17,9 @@ public class NoticeInsertMessageDTO {
 		this.message = message;
 	}
 
-	public String getClubId() {
-		return clubId;
-	}
-
-	public void setClubId(String clubId) {
-		this.clubId = clubId;
-	}
-
 	public NoticeInsertMessageDTO(@NotBlank String message, @Positive String clubId) {
 		super();
 		this.message = message;
-		this.clubId = clubId;
 	}
 
 	public NoticeInsertMessageDTO() {

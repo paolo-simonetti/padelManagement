@@ -7,6 +7,8 @@ import java.util.Set;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import it.solving.padelmanagement.model.Admin;
+import it.solving.padelmanagement.model.Club;
 import it.solving.padelmanagement.model.Court;
 
 public interface CourtRepository extends JpaRepository<Court, Long> {
@@ -30,4 +32,8 @@ public interface CourtRepository extends JpaRepository<Court, Long> {
 	
 	@Query("from Court c left join fetch c.club cl where c.id=?1")
 	public Optional<Court> findByIdWithClub(Long id);
+
+	public Set<Court> findAllByClub(Club club);
+	
+	public Set<Court> findAllByClub_Admin(Admin admin);
 }

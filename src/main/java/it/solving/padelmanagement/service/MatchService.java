@@ -6,6 +6,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import it.solving.padelmanagement.dto.MatchDTO;
@@ -13,9 +14,11 @@ import it.solving.padelmanagement.dto.message.callforactions.InputUpdateMissingP
 import it.solving.padelmanagement.dto.message.createpadelmatch.InputValidateAndInsertInputMessageDTO;
 import it.solving.padelmanagement.dto.message.createpadelmatch.InputValidateAndUpdateInputMessageDTO;
 import it.solving.padelmanagement.exception.EmailException;
-import it.solving.padelmanagement.exception.MatchPaymentException;
+import it.solving.padelmanagement.exception.ForbiddenOperationException;
 import it.solving.padelmanagement.exception.VerifyAvailabilityException;
 import it.solving.padelmanagement.mapper.MatchMapper;
+import it.solving.padelmanagement.model.Admin;
+import it.solving.padelmanagement.model.Club;
 import it.solving.padelmanagement.model.Court;
 import it.solving.padelmanagement.model.PadelMatch;
 import it.solving.padelmanagement.model.Player;
@@ -24,6 +27,8 @@ import it.solving.padelmanagement.repository.CourtRepository;
 import it.solving.padelmanagement.repository.MatchRepository;
 import it.solving.padelmanagement.repository.PlayerRepository;
 import it.solving.padelmanagement.repository.SlotRepository;
+import it.solving.padelmanagement.securitymodel.AdminPrincipal;
+import it.solving.padelmanagement.securitymodel.PlayerPrincipal;
 import it.solving.padelmanagement.util.MyUtil;
 
 @Service
@@ -53,8 +58,10 @@ public class MatchService {
 	public void insert(InputValidateAndInsertInputMessageDTO inputMessage) throws VerifyAvailabilityException, EmailException {
 		PadelMatch match=matchMapper.convertInputValidateAndInsertInputMessageDTOToPadelMatch(inputMessage);
 		Set<Slot> slots=myUtil.convertInputVerifyAvailabilityMessageDTOToSlots(inputMessage);
-		Player creator=playerRepository.findByIdWithAllMatches(Long.parseLong(
-				inputMessage.getPlayerId())).get();
+		//Recupero il player dal Security context holder
+		Player creator=((PlayerPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getPlayer();
+	
+		creator=playerRepository.findByIdWithAllMatches(creator.getId()).get();
 		matchRepository.save(match);
 		
 		match.setCreator(creator);
@@ -80,6 +87,9 @@ public class MatchService {
 	}
 	
 	public void update (InputValidateAndUpdateInputMessageDTO inputMessage) throws VerifyAvailabilityException {
+		//Recupero il player dal Security context holder
+		Player creator=((PlayerPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getPlayer();
+				
 		PadelMatch match=matchMapper.convertInputValidateAndUpdateInputMessageDTOToPadelMatch(inputMessage);
 		// Nell'update non passo il numero di giocatori mancanti, quindi lo recupero dal db qui
 		match.setMissingPlayers(matchRepository.findById(match.getId()).get().getMissingPlayers());
@@ -87,8 +97,7 @@ public class MatchService {
 		match.setPayed(matchRepository.findById(match.getId()).get().isPayed());
 		
 		Set<Slot> slots=myUtil.convertInputVerifyAvailabilityMessageDTOToSlots(inputMessage);
-		Player creator=playerRepository.findByIdWithAllMatches(Long.parseLong(
-				inputMessage.getPlayerId())).get();
+		creator=playerRepository.findByIdWithAllMatches(creator.getId()).get();
 		matchRepository.save(match);
 		
 		match.setCreator(creator);
@@ -170,10 +179,15 @@ public class MatchService {
 	}
 	
 	public Set<MatchDTO> findAllByDate(LocalDate date) {
-		if(matchRepository.findAllByDate(date)==null || matchRepository.findAllByDate(date).size()==0) {
+		//Recupero il player dal Security context holder
+		Player player=((PlayerPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getPlayer();
+		// Recupero dal contesto di persistenza il club in cui gioca il player
+		player=playerRepository.findByIdWithClub(player.getId()).get();
+		Club club=player.getClub();
+		if(matchRepository.findAllByDateAndClub(date,club)==null || matchRepository.findAllByDateAndClub(date,club).size()==0) {
 			return null;
 		}
-		return matchMapper.convertEntityToDTO(matchRepository.findAllByDate(date).stream().collect(Collectors.toSet()));
+		return matchMapper.convertEntityToDTO(matchRepository.findAllByDateAndClub(date,club).stream().collect(Collectors.toSet()));
 	}
 	
 	public Set<MatchDTO> findAllOthersCallForActions(Long idPlayer) {
@@ -191,13 +205,22 @@ public class MatchService {
 		return matchMapper.convertEntityToDTO(matches);
 	}
 	
-	public void writeDownPayment(Long matchId) throws MatchPaymentException {
-		PadelMatch match=matchRepository.findById(matchId).orElseThrow(NoSuchElementException::new);
+	public void writeDownPayment(Long matchId) throws ForbiddenOperationException {
+		// Recupero l'admin dal security context holder
+		Admin admin=((AdminPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal())
+			.getAdmin();
+		// Recupero il match dal contesto di persistenza
+		PadelMatch match=matchRepository.findByIdWithCourtClubAndAdmin(matchId).orElseThrow(NoSuchElementException::new);
+		// verifico che il match si svolga nel club amministrato dall'admin
+		if (match.getCourt().getClub().getAdmin()!=admin) {
+			throw new ForbiddenOperationException("This court does not belong to the admin's club!");
+		}
+		
 		if (!match.isPayed()) {
 			match.setPayed(true);
 			matchRepository.save(match);
 		} else {
-			throw new MatchPaymentException("The match was already payed!");
+			throw new ForbiddenOperationException("The match was already payed!");
 		}
 		
 	}

@@ -5,6 +5,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
@@ -14,6 +15,7 @@ import it.solving.padelmanagement.model.PadelMatch;
 import it.solving.padelmanagement.model.Player;
 import it.solving.padelmanagement.repository.MatchRepository;
 import it.solving.padelmanagement.repository.PlayerRepository;
+import it.solving.padelmanagement.securitymodel.PlayerPrincipal;
 import it.solving.padelmanagement.util.MyUtil;
 
 @Component
@@ -39,6 +41,9 @@ public class MatchUpdateValidator implements Validator {
 	@Override
 	public void validate(Object target, Errors errors) {
 		InputValidateAndUpdateInputMessageDTO inputMessage=(InputValidateAndUpdateInputMessageDTO) target;
+		//Recupero il player dal Security context holder
+		Player player=((PlayerPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getPlayer();
+				
 		// Ripeto la validazione già fatta per l'insert
 		matchInsertValidator.validate(inputMessage,errors);
 
@@ -47,7 +52,7 @@ public class MatchUpdateValidator implements Validator {
 				inputMessage.getMatchId())).orElseThrow(NoSuchElementException::new);		
 		// verifico che il match sia stato creato dall'id del player indicato come creatore
 		Long idMatchCreator=match.getCreator().getId();
-		if (idMatchCreator!=Long.parseLong(inputMessage.getPlayerId())) {
+		if (idMatchCreator!=player.getId()) {
 			errors.rejectValue("matchId","invalidMatchChoice","The match was not created by this player!");
 		}
 		
@@ -69,8 +74,8 @@ public class MatchUpdateValidator implements Validator {
 		if (match.getOtherPlayers()!=null && match.getOtherPlayers().size()>0) {
 			Set<Player> otherPlayersWithAllSlotsInWhichTheyAreBusy=match.getOtherPlayers().stream().map(p->
 			playerRepository.findByIdWithAllMatchesAndTheirSlots(p.getId()).get()).collect(Collectors.toSet());
-			for (Player player:otherPlayersWithAllSlotsInWhichTheyAreBusy) {
-				if (myUtil.thePlayerIsPlayingSomewhereElseAtThatTime(player,match)) {
+			for (Player p:otherPlayersWithAllSlotsInWhichTheyAreBusy) {
+				if (myUtil.thePlayerIsPlayingSomewhereElseAtThatTime(p,match)) {
 					errors.rejectValue("durationHour","otherPlayersAlreadyBusy","One of the other players is already busy at that time!");
 				}			
 			}

@@ -13,12 +13,19 @@ import it.solving.padelmanagement.model.User;
 
 public class UserPrincipal implements UserDetails {
 	
+	private static final long serialVersionUID = 1099943041288877538L;
+	
 	private final User user;
 	
 	public UserPrincipal(User user) {
 		this.user=user;
 	}
 	
+	public User getUser() {
+		return user;
+	}
+
+
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		return Collections.singletonList(new SimpleGrantedAuthority(user.getRole().getStringRole()));

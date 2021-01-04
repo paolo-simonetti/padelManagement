@@ -7,6 +7,7 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -20,17 +21,18 @@ import it.solving.padelmanagement.dto.ResultDTO;
 import it.solving.padelmanagement.dto.message.clubmanagement.ClubManagementMessageDTO;
 import it.solving.padelmanagement.dto.message.insert.CourtInsertMessageDTO;
 import it.solving.padelmanagement.dto.message.update.CourtUpdateMessageDTO;
-import it.solving.padelmanagement.exception.CourtBeReservedException;
-import it.solving.padelmanagement.exception.MatchPaymentException;
+import it.solving.padelmanagement.exception.ForbiddenOperationException;
 import it.solving.padelmanagement.service.CourtService;
 import it.solving.padelmanagement.service.MatchService;
+import it.solving.padelmanagement.validator.InputRenameCourtValidator;
 
-
-//TODO: in tutte questo package, devo controllare che l'admin stia agendo su roba riguardante il proprio circolo
 @RestController
 @RequestMapping("admin/courts")
 public class CourtsController {
-
+	
+	@Autowired
+	private InputRenameCourtValidator inputRenameCourtValidator;
+	
 	@Autowired
 	private CourtService courtService;
 	
@@ -46,7 +48,7 @@ public class CourtsController {
 	// qui faccio visualizzare tutti i campi
 	@GetMapping("findAllCourts")
 	public ResponseEntity<Set<CourtDTO>> findAllCourts() {
-		return ResponseEntity.status(HttpStatus.OK).body(courtService.findAll());
+		return ResponseEntity.status(HttpStatus.OK).body(courtService.findAllByClub());
 	}
 	
 	@PostMapping("insertCourt")
@@ -56,25 +58,30 @@ public class CourtsController {
 	}
 	
 	@PutMapping("renameCourt")
-	public ResponseEntity<ResultDTO> renameCourt(@Valid @RequestBody CourtUpdateMessageDTO courtUpdateMessageDTO) {
+	public ResponseEntity<ResultDTO> renameCourt(@Valid @RequestBody CourtUpdateMessageDTO courtUpdateMessageDTO,
+			BindingResult bindingResult) {
+		inputRenameCourtValidator.validate(courtUpdateMessageDTO,bindingResult);
+		if(bindingResult.hasErrors()) {
+			return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResultDTO("This court does not belong to the admin's club!"));
+		}
 		courtService.update(courtUpdateMessageDTO);
 		return ResponseEntity.status(HttpStatus.OK).body(new ResultDTO("Court successfully updated"));
 	}
 	
 	@GetMapping("cannotBeReserved")
-	public ResponseEntity<ResultDTO> cannotBeReserved(@RequestParam Long courtId) throws CourtBeReservedException {
+	public ResponseEntity<ResultDTO> cannotBeReserved(@RequestParam Long courtId) throws ForbiddenOperationException {
 		courtService.cannotBeReserved(courtId);
 		return ResponseEntity.status(HttpStatus.OK).body(new ResultDTO("Court won't be able to be reserved any longer"));
 	}
 	
 	@GetMapping("canBeReserved")
-	public ResponseEntity<ResultDTO> canBeReserved(@RequestParam Long courtId) throws CourtBeReservedException {
+	public ResponseEntity<ResultDTO> canBeReserved(@RequestParam Long courtId) throws ForbiddenOperationException {
 		courtService.canBeReserved(courtId);
 		return ResponseEntity.status(HttpStatus.OK).body(new ResultDTO("Court may be reserved since now"));
 	}
 	
 	@GetMapping("writeDownPayment")
-	public ResponseEntity<ResultDTO> writeDownPayment(@RequestParam Long matchId) throws MatchPaymentException {
+	public ResponseEntity<ResultDTO> writeDownPayment(@RequestParam Long matchId) throws ForbiddenOperationException {
 		matchService.writeDownPayment(matchId);
 		return ResponseEntity.status(HttpStatus.OK).body(new ResultDTO("Payment was successfully written down."));
 	}

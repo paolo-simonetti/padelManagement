@@ -4,6 +4,7 @@ import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
@@ -13,6 +14,7 @@ import it.solving.padelmanagement.model.PadelMatch;
 import it.solving.padelmanagement.model.Player;
 import it.solving.padelmanagement.repository.MatchRepository;
 import it.solving.padelmanagement.repository.PlayerRepository;
+import it.solving.padelmanagement.securitymodel.PlayerPrincipal;
 import it.solving.padelmanagement.service.PlayerService;
 import it.solving.padelmanagement.util.MyUtil;
 
@@ -39,10 +41,11 @@ public class InputJoinCallForActionValidator implements Validator {
 	@Override
 	public void validate(Object target, Errors errors) {
 		InputJoinCallForActionMessageDTO inputMessage=(InputJoinCallForActionMessageDTO) target;
-		// Controllo che il player esista
-		Player player = playerRepository.findByIdWithAllMatchesAndTheirSlots(Long.parseLong(
-				inputMessage.getPlayerId())).orElseThrow(NoSuchElementException::new);
+		//Recupero il player dal Security context holder
+		Player player=((PlayerPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getPlayer();
 		
+		// Ricarico il player dal db, recuperando tutte le info sulle sue partite
+		player=playerRepository.findByIdWithAllMatchesAndTheirSlots(player.getId()).get();
 		// Controllo che il match esista
 		PadelMatch match = matchRepository.findByIdWithCreatorAndOtherPlayersAndSlots(
 				Long.parseLong(inputMessage.getMatchId())).orElseThrow(NoSuchElementException::new);

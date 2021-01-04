@@ -7,6 +7,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
@@ -20,6 +21,7 @@ import it.solving.padelmanagement.model.Player;
 import it.solving.padelmanagement.model.Slot;
 import it.solving.padelmanagement.repository.CourtRepository;
 import it.solving.padelmanagement.repository.PlayerRepository;
+import it.solving.padelmanagement.securitymodel.PlayerPrincipal;
 import it.solving.padelmanagement.service.PlayerService;
 import it.solving.padelmanagement.util.MyUtil;
 
@@ -58,8 +60,8 @@ public class MatchInsertValidator implements Validator {
 			NoSuchElementException::new);
 		// Controllo che il campo sia nel circolo a cui è iscritto il player
 		Club courtsClub=MyUtil.initializeAndUnproxy(court.getClub());
-		Club playersClub=MyUtil.initializeAndUnproxy(playerRepository.findByIdWithClub(Long.parseLong(inputMessage
-				.getPlayerId())).get().getClub()) ;
+		Player player=((PlayerPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getPlayer();		
+		Club playersClub=MyUtil.initializeAndUnproxy(playerRepository.findByIdWithClub(player.getId())).get().getClub();
 		if (courtsClub.getId()!=playersClub.getId()) {
 			errors.rejectValue("courtId","courtInAnotherClub","The selected court is"
 					+ " not in the club the player has joined in");
@@ -72,8 +74,7 @@ public class MatchInsertValidator implements Validator {
 		
 		/* Controllo che il creatore non abbia altre partite previste per gli stessi slot della partita che 
 		 * sta provando a inserire */
-		Player player=playerRepository.findByIdWithAllMatches(Long.parseLong(inputMessage
-				.getPlayerId())).get();
+		player=playerRepository.findByIdWithAllMatches(player.getId()).get();
 		Set<Slot> slotsInWhichThePlayerIsBusy=new HashSet<>();
 		LocalDate dateOfTheMatch=LocalDate.parse(inputMessage.getDate());
 		for (PadelMatch m:player.getMatches().stream().filter(

@@ -5,20 +5,37 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import it.solving.padelmanagement.dto.NewClubProposalDTO;
+import it.solving.padelmanagement.dto.message.insert.ClubInsertMessageDTO;
 import it.solving.padelmanagement.dto.message.insert.NewClubProposalInsertMessageDTO;
+import it.solving.padelmanagement.dto.message.insert.UserInsertMessageDTO;
 import it.solving.padelmanagement.dto.message.update.NewClubProposalUpdateMessageDTO;
+import it.solving.padelmanagement.exception.EmailException;
 import it.solving.padelmanagement.mapper.NewClubProposalMapper;
 import it.solving.padelmanagement.model.NewClubProposal;
+import it.solving.padelmanagement.model.ProposalStatus;
 import it.solving.padelmanagement.model.User;
+import it.solving.padelmanagement.repository.ImageRepository;
 import it.solving.padelmanagement.repository.NewClubProposalRepository;
 import it.solving.padelmanagement.repository.UserRepository;
+import it.solving.padelmanagement.securitymodel.UserPrincipal;
+import it.solving.padelmanagement.util.MyUtil;
 
 @Service
 public class NewClubProposalService {
 
+	@Autowired
+	private MyUtil myUtil;
+	
+	@Autowired
+	private AdminService adminService;
+	
+	@Autowired
+	private EmailService emailService;
+	
 	@Autowired
 	private NewClubProposalRepository newClubProposalRepository;
 	
@@ -26,14 +43,20 @@ public class NewClubProposalService {
 	private NewClubProposalMapper newClubProposalMapper;
 	
 	@Autowired
+	private ImageRepository imageRepository;
+	
+	@Autowired
 	private UserRepository userRepository;
 	
 	public void insert (NewClubProposalInsertMessageDTO newClubProposalInsertMessageDTO) {
 		NewClubProposal newClubProposal=newClubProposalMapper
 				.convertInsertMessageDTOToEntity(newClubProposalInsertMessageDTO);
-		User creator=userRepository.findById(Long.parseLong(newClubProposalInsertMessageDTO.
-				getCreatorId())).orElse(null);
-		
+		User user=((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
+		User creator=userRepository.findByIdWithProPicFileAndNewClubProposals(user.getId()).get();
+		imageRepository.save(newClubProposal.getLogo());
+		newClubProposalRepository.save(newClubProposal);
+		userRepository.save(creator);
+
 		newClubProposal.setCreator(creator);
 		creator.addToNewClubProposals(newClubProposal);
 		newClubProposalRepository.save(newClubProposal);
@@ -88,6 +111,21 @@ public class NewClubProposalService {
 	public Set<NewClubProposalDTO> findAll() {
 		return newClubProposalMapper.convertEntityToDTO(newClubProposalRepository.findAll()
 			.stream().collect(Collectors.toSet()));
+	}
+	
+	public boolean approveNewClubProposal(Long newClubProposalId) throws EmailException {
+		NewClubProposal newClubProposal=newClubProposalRepository
+			.findByIdWithCreatorTheirProPicAndLogo(newClubProposalId).orElseThrow(NoSuchElementException::new);
+		if (newClubProposal.getProposalStatus()==ProposalStatus.PENDING) {
+			newClubProposal.setProposalStatus(ProposalStatus.APPROVED);
+			UserInsertMessageDTO admin=myUtil.getAdminFromNewClubProposal(newClubProposal);
+			ClubInsertMessageDTO club=myUtil.getClubFromNewClubProposal(newClubProposal);
+			adminService.insert(admin,club, newClubProposal.getCreator().getId());
+			emailService.sendApprovedNewClubProposalNotification(newClubProposal.getCreator().getMailAddress());
+			return true;
+		} else {
+			return false;
+		}
 	}
 	
 }

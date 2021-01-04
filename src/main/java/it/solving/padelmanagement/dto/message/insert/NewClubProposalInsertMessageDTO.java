@@ -22,8 +22,6 @@ public class NewClubProposalInsertMessageDTO {
 	@NotNull
 	private MultipartFile logo;
 	
-	@Positive
-	private String creatorId;
 
 	public String getName() {
 		return name;
@@ -52,14 +50,6 @@ public class NewClubProposalInsertMessageDTO {
 	public void setLogo(MultipartFile logo) {
 		this.logo = logo;
 	}
-
-	public String getCreatorId() {
-		return creatorId;
-	}
-
-	public void setCreatorId(String creatorId) {
-		this.creatorId = creatorId;
-	}
 	
 	public String getLogoName() {
 		return logoName;
@@ -70,13 +60,12 @@ public class NewClubProposalInsertMessageDTO {
 	}
 	
 	public NewClubProposalInsertMessageDTO(@NotBlank String name, @NotBlank String city, @NotBlank String logoName,
-			@NotNull MultipartFile logo, @Positive String creatorId) {
+			@NotNull MultipartFile logo) {
 		super();
 		this.name = name;
 		this.city = city;
 		this.logoName = logoName;
 		this.logo = logo;
-		this.creatorId = creatorId;
 	}
 
 	public NewClubProposalInsertMessageDTO() {

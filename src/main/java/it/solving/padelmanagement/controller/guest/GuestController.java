@@ -71,11 +71,7 @@ public class GuestController {
 	public ResponseEntity<ResultDTO> insertNewClubProposal(@Valid @ModelAttribute 
 			NewClubProposalInsertMessageDTO newClubProposalInsertMessageDTO, BindingResult bindingResult) 
 					throws NonAdmissibleProposalException, IOException {
-		newClubProposalsValidator.validate(newClubProposalInsertMessageDTO, bindingResult);
-		if (bindingResult.hasErrors()) {
-			return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResultDTO("Encountered errors in the creator field"));
-		}
-		
+		newClubProposalsValidator.validate(newClubProposalInsertMessageDTO,bindingResult);
 		newClubProposalService.insert(newClubProposalInsertMessageDTO);
 		return ResponseEntity.status(HttpStatus.OK).body(new ResultDTO("The proposal will be evaluated by the superAdmin"));
 	}

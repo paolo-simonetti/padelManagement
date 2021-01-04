@@ -11,9 +11,6 @@ import org.springframework.web.multipart.MultipartFile;
 public class InputUpdateMemberMessageDTO {
 
 	@NotBlank
-	private String id;
-	
-	@NotBlank
 	private String name;
 	
 	@NotBlank
@@ -47,14 +44,6 @@ public class InputUpdateMemberMessageDTO {
 	
 	@NotNull
 	private MultipartFile proPic;
-	
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
-	}
 
 	public String getName() {
 		return name;
@@ -140,12 +129,11 @@ public class InputUpdateMemberMessageDTO {
 		this.proPicName = proPicName;
 	}
 	
-	public InputUpdateMemberMessageDTO(@NotBlank String id, @NotBlank String name, @NotBlank String surname,
+	public InputUpdateMemberMessageDTO(@NotBlank String name, @NotBlank String surname,
 			@NotBlank @Past String dateOfBirth, @NotBlank String username, @NotBlank @Min(6) String password,
 			@NotBlank String mailAddress, @NotBlank String mobile, @Min(1) @Max(7) String userLevel,
 			@NotBlank String proPicName, @NotNull MultipartFile proPic) {
 		super();
-		this.id = id;
 		this.name = name;
 		this.surname = surname;
 		this.dateOfBirth = dateOfBirth;

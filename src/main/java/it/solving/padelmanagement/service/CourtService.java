@@ -6,6 +6,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import it.solving.padelmanagement.dto.CourtDTO;
@@ -13,18 +14,22 @@ import it.solving.padelmanagement.dto.message.clubmanagement.ClubManagementMessa
 import it.solving.padelmanagement.dto.message.createpadelmatch.InputVerifyAvailabilityMessageDTO;
 import it.solving.padelmanagement.dto.message.insert.CourtInsertMessageDTO;
 import it.solving.padelmanagement.dto.message.update.CourtUpdateMessageDTO;
-import it.solving.padelmanagement.exception.CourtBeReservedException;
+import it.solving.padelmanagement.exception.ForbiddenOperationException;
 import it.solving.padelmanagement.exception.VerifyAvailabilityException;
 import it.solving.padelmanagement.mapper.CourtMapper;
+import it.solving.padelmanagement.model.Admin;
 import it.solving.padelmanagement.model.Club;
 import it.solving.padelmanagement.model.Court;
 import it.solving.padelmanagement.model.PadelMatch;
 import it.solving.padelmanagement.model.Player;
 import it.solving.padelmanagement.model.Slot;
+import it.solving.padelmanagement.repository.AdminRepository;
 import it.solving.padelmanagement.repository.ClubRepository;
 import it.solving.padelmanagement.repository.CourtRepository;
 import it.solving.padelmanagement.repository.MatchRepository;
 import it.solving.padelmanagement.repository.PlayerRepository;
+import it.solving.padelmanagement.securitymodel.AdminPrincipal;
+import it.solving.padelmanagement.securitymodel.PlayerPrincipal;
 import it.solving.padelmanagement.util.MyUtil;
 
 @Service
@@ -44,6 +49,9 @@ public class CourtService {
 	
 	@Autowired
 	private PlayerRepository playerRepository;
+	
+	@Autowired
+	private AdminRepository adminRepository;
 	
 	@Autowired
 	private MyUtil myUtil;
@@ -80,9 +88,10 @@ public class CourtService {
 	}
 	
 	public void insert(CourtInsertMessageDTO courtInsertMessageDTO) throws NoSuchElementException {
-		// Recupero il club, lanciando un'eccezione se non esiste
-		Club club=clubRepository.findById(Long.parseLong(courtInsertMessageDTO.getClubId()))
-			.orElseThrow(NoSuchElementException::new);
+		// Recupero lo user dal security context holder
+		Admin admin=((AdminPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getAdmin();
+		// dallo user ricavo il club, di cui metto l'id nell'input dell'istruzione successiva
+		Club club=adminRepository.findByIdWithClub(admin.getId()).get().getClub();
 		Court court=courtMapper.convertInsertMessageDTOToEntity(courtInsertMessageDTO);
 		// Inserisco club e court nel contesto di persistenza
 		courtRepository.save(court);
@@ -95,27 +104,45 @@ public class CourtService {
 		
 	} 
 	
-	public void cannotBeReserved(Long courtId) throws CourtBeReservedException {
+	public void cannotBeReserved(Long courtId) throws ForbiddenOperationException {
 		Court court=courtRepository.findByIdWithMatches(courtId).orElseThrow(NoSuchElementException::new);
+		// Recupero l'admin dal security context holder
+		Admin admin=((AdminPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal())
+			.getAdmin();
+		// Prendo dal contesto di persistenza tutti i campi del circolo amministrato dall'admin, 
+		// e verifico che ci sia anche il campo in input
+		if(!courtRepository.findAllByClub_Admin(admin).stream().map(c->c.getId()).collect(Collectors.toSet())
+			.contains(courtId)) {
+			throw new ForbiddenOperationException("This court does not belong to the admin's club!");
+		}
 		if (court.getMatches()!=null && court.getMatches().size()>0) {
-			throw new CourtBeReservedException("Forbidden operation: there are scheduled matches for that court!");
+			throw new ForbiddenOperationException("There are scheduled matches for that court!");
 		} 
 		
 		if (court.mayBeReserved()) {
 			court.setMayBeReserved(false);
 			courtRepository.save(court);
 		} else {
-			throw new CourtBeReservedException("Forbidden operation: the court couldn't already be reserved!");
+			throw new ForbiddenOperationException("The court couldn't already be reserved!");
 		}
 	}
 	
-	public void canBeReserved(Long courtId) throws CourtBeReservedException {
-		Court court=courtRepository.findById(courtId).orElseThrow(NoSuchElementException::new); 
+	public void canBeReserved(Long courtId) throws ForbiddenOperationException {
+		Court court=courtRepository.findById(courtId).orElseThrow(NoSuchElementException::new);
+		// Recupero l'admin dal security context holder
+		Admin admin=((AdminPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal())
+			.getAdmin();
+		// Prendo dal contesto di persistenza tutti i campi del circolo amministrato dall'admin, 
+		// e verifico che ci sia anche il campo in input
+		if(!courtRepository.findAllByClub_Admin(admin).stream().map(c->c.getId()).collect(Collectors.toSet())
+			.contains(courtId)) {
+			throw new ForbiddenOperationException("This court does not belong to the admin's club!");
+		}
 		if (!court.mayBeReserved()) {
 			court.setMayBeReserved(true);
 			courtRepository.save(court);
 		} else {
-			throw new CourtBeReservedException("Forbidden operation: the court could already be reserved!");
+			throw new ForbiddenOperationException("The court could already be reserved!");
 		}
 	}
 	
@@ -128,20 +155,33 @@ public class CourtService {
 		
 	}
 	
-	public Set<CourtDTO> findAll() {
-		return courtMapper.convertEntityToDTO(courtRepository.findAll().stream().collect(Collectors.toSet()));
+	public Set<CourtDTO> findAllByClub() {
+		// Recupero lo user dal security context holder
+		Admin admin=((AdminPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getAdmin();
+		// dallo user ricavo il club, di cui metto l'id nell'input dell'istruzione successiva
+		admin=adminRepository.findByIdWithClub(admin.getId()).get();
+		return courtMapper.convertEntityToDTO(courtRepository.findAllByClub(admin.getClub()).stream().collect(Collectors.toSet()));
 	}
 	
 	public Set<CourtDTO> findAllWithMatchesAndTheirSlotsByDate(ClubManagementMessageDTO inputMessage) {
+		// Recupero lo user dal security context holder
+		Admin admin=((AdminPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getAdmin();
+		// dallo user ricavo il club, di cui metto l'id nell'input dell'istruzione successiva
+		admin=adminRepository.findByIdWithClub(admin.getId()).get();
+		
 		return courtMapper.convertEntityToDTO(courtRepository.findAllWithMatchesAndTheirSlotsByDate(
-				LocalDate.parse(inputMessage.getDate()), Long.parseLong(inputMessage.getClubId()))
+				LocalDate.parse(inputMessage.getDate()), admin.getClub().getId())
 				.stream().filter(court->court.mayBeReserved()).collect(Collectors.toSet()));
 	}
 	
 	public Set<CourtDTO> verifyAvailability(InputVerifyAvailabilityMessageDTO inputMessage) 
 		throws VerifyAvailabilityException {
+		//Recupero il player dal Security context holder
+		Player player=((PlayerPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal())
+			.getPlayer();
+				
 		Set<Slot> requiredSlots=myUtil.convertInputVerifyAvailabilityMessageDTOToSlots(inputMessage);
-		Player player=playerRepository.findByIdWithClub(Long.parseLong(inputMessage.getPlayerId()))
+		player=playerRepository.findByIdWithClub(player.getId())
 			.orElseThrow(NoSuchElementException::new);
 		Club club=MyUtil.initializeAndUnproxy(player.getClub());
 		

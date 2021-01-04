@@ -37,7 +37,6 @@ import it.solving.padelmanagement.validator.MatchInsertValidator;
 import it.solving.padelmanagement.validator.MatchUpdateValidator;
 import it.solving.padelmanagement.validator.VerifyAvailabilityValidator;
 
-//TODO: in tutto questo package, devo controllare che il player stia agendo sulle proprie robe
 @RestController
 @RequestMapping("player/padelmatch")
 public class PadelMatchController {

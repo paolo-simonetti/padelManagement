@@ -14,9 +14,6 @@ public class NoticeUpdateMessageDTO {
 	
 	@PastOrPresent
 	private String creationDate;
-	
-	@Positive
-	private String clubId;
 
 	public String getId() {
 		return id;
@@ -42,21 +39,11 @@ public class NoticeUpdateMessageDTO {
 		this.creationDate = creationDate;
 	}
 
-	public String getClubId() {
-		return clubId;
-	}
-
-	public void setClubId(String clubId) {
-		this.clubId = clubId;
-	}
-
-	public NoticeUpdateMessageDTO(@Positive String id, @NotBlank String message, @PastOrPresent String creationDate,
-			@Positive String clubId) {
+	public NoticeUpdateMessageDTO(@Positive String id, @NotBlank String message, @PastOrPresent String creationDate) {
 		super();
 		this.id = id;
 		this.message = message;
 		this.creationDate = creationDate;
-		this.clubId = clubId;
 	}
 
 	public NoticeUpdateMessageDTO() {

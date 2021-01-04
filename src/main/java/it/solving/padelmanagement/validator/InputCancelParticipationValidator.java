@@ -4,6 +4,7 @@ import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
@@ -13,15 +14,13 @@ import it.solving.padelmanagement.model.PadelMatch;
 import it.solving.padelmanagement.model.Player;
 import it.solving.padelmanagement.repository.MatchRepository;
 import it.solving.padelmanagement.repository.PlayerRepository;
+import it.solving.padelmanagement.securitymodel.PlayerPrincipal;
 
 @Component
 public class InputCancelParticipationValidator implements Validator {
 
 	@Autowired
 	private MatchRepository matchRepository;
-	
-	@Autowired
-	private PlayerRepository playerRepository;
 	
 	@Override
 	public boolean supports(Class<?> clazz) {
@@ -31,10 +30,9 @@ public class InputCancelParticipationValidator implements Validator {
 	@Override
 	public void validate(Object target, Errors errors) {
 		InputCancelParticipationMessageDTO inputMessage=(InputCancelParticipationMessageDTO) target;
-		// Controllo che il player esista
-		Player player=playerRepository.findById(Long.parseLong(inputMessage.getPlayerId()))
-				.orElseThrow(NoSuchElementException::new);
-		
+		//Recupero il player dal Security context holder
+		Player player=((PlayerPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getPlayer();
+			
 		// Controllo che il match esista
 		PadelMatch match=matchRepository.findByIdWithOtherPlayers(Long.parseLong(inputMessage.getMatchId()))
 				.orElseThrow(NoSuchElementException::new);

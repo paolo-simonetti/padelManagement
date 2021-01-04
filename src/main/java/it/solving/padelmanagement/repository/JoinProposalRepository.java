@@ -16,7 +16,7 @@ public interface JoinProposalRepository extends JpaRepository<JoinProposal, Long
 	@Query("from JoinProposal j left join fetch j.applicant a where j.id=?1")
 	public Optional<JoinProposal> findByIdWithApplicant (Long id);
 	
-	@Query("from JoinProposal j left join fetch j.applicant a left join fetch j.club c where j.id=?1")
+	@Query("from JoinProposal j left join fetch j.applicant a left join fetch a.proPicFile p left join fetch j.club c where j.id=?1")
 	public Optional<JoinProposal> findByIdWithCompleteInfos (Long id);
 	
 	@Query("from JoinProposal j left join fetch j.applicant a left join fetch j.club c where c.id=?1")

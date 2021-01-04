@@ -11,6 +11,8 @@ import it.solving.padelmanagement.model.Player;
 
 public class PlayerPrincipal implements UserDetails {
 
+	private static final long serialVersionUID = -3083600302438557925L;
+	
 	private final Player player;
 	
 	public PlayerPrincipal(Player player) {
@@ -50,6 +52,10 @@ public class PlayerPrincipal implements UserDetails {
 	@Override
 	public boolean isEnabled() {
 		return true;
+	}
+
+	public Player getPlayer() {
+		return player;
 	}
 
 }

@@ -6,17 +6,21 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import it.solving.padelmanagement.dto.NoticeDTO;
 import it.solving.padelmanagement.dto.message.insert.NoticeInsertMessageDTO;
 import it.solving.padelmanagement.dto.message.update.NoticeUpdateMessageDTO;
+import it.solving.padelmanagement.exception.ForbiddenOperationException;
 import it.solving.padelmanagement.mapper.NoticeMapper;
+import it.solving.padelmanagement.model.Admin;
 import it.solving.padelmanagement.model.Club;
 import it.solving.padelmanagement.model.Notice;
 import it.solving.padelmanagement.repository.ClubRepository;
 import it.solving.padelmanagement.repository.NoticeRepository;
+import it.solving.padelmanagement.securitymodel.AdminPrincipal;
 
 @Service
 public class NoticeService {
@@ -44,9 +48,14 @@ public class NoticeService {
 	
 	public void insert(NoticeInsertMessageDTO noticeInsertMessageDTO) {
 		Notice notice=noticeMapper.convertInsertMessageDTOToEntity(noticeInsertMessageDTO);
-		Club club=clubRepository.findById(Long.parseLong(noticeInsertMessageDTO.getClubId()))
-				.orElseThrow(NoSuchElementException::new);
-	
+		// Recupero l'admin dal security context holder
+		Admin admin=((AdminPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal())
+			.getAdmin();
+		// Recupero il club dalle info sull'admin
+		Club club=clubRepository.findByAdmin(admin).orElseThrow(NoSuchElementException::new);
+		// Salvo il messaggio nel contesto di persistenza
+		noticeRepository.save(notice);
+		// Lo lego al club
 		notice.setClub(club);
 		notice.setCreationDate(LocalDate.now());
 		club.addToNotices(notice);
@@ -55,10 +64,16 @@ public class NoticeService {
 		
 	}
 	
-	public void update(NoticeUpdateMessageDTO noticeUpdateMessageDTO) {
+	public void update(NoticeUpdateMessageDTO noticeUpdateMessageDTO) throws ForbiddenOperationException {
 		Notice oldNotice=noticeRepository.findByIdWithClub(Long.parseLong(noticeUpdateMessageDTO.getId()))
 			.orElseThrow(NoSuchElementException::new);
+		// Recupero l'admin dal security context holder
+		Admin admin=((AdminPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal())
+			.getAdmin();
 		Club club=oldNotice.getClub();
+		if(club.getAdmin()!=admin) {
+			throw new ForbiddenOperationException("This club is not managed by the user");
+		}
 		Notice newNotice=noticeMapper.convertUpdateMessageDTOToEntity(noticeUpdateMessageDTO);
 		newNotice.setClub(club);
 		newNotice.setCreationDate(oldNotice.getCreationDate());
@@ -69,9 +84,15 @@ public class NoticeService {
 					
 	}
 	
-	public void delete (@RequestParam Long noticeId) {
+	public void delete (@RequestParam Long noticeId) throws ForbiddenOperationException {
 		Notice notice=noticeRepository.findByIdWithClub(noticeId).orElseThrow(NoSuchElementException::new);
+		// Recupero l'admin dal security context holder
+		Admin admin=((AdminPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal())
+			.getAdmin();
 		Club club=notice.getClub();
+		if(club.getAdmin()!=admin) {
+			throw new ForbiddenOperationException("This club is not managed by the user");
+		}
 		club.removeFromNotices(notice);
 		notice.setClub(null);
 		clubRepository.save(club);

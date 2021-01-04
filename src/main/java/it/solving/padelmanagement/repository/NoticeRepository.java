@@ -10,7 +10,7 @@ import it.solving.padelmanagement.model.Notice;
 
 public interface NoticeRepository extends JpaRepository<Notice, Long> {
 	
-	@Query("from Notice n left join fetch n.club c where n.id=?1")
+	@Query("from Notice n left join fetch n.club c left join fetch c.admin a where n.id=?1")
 	public Optional<Notice> findByIdWithClub(Long id);
 	
 	@Query("from Notice n left join fetch n.club c left join fetch c.players p where p.id=?1")

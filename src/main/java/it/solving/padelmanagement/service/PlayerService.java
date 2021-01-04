@@ -6,6 +6,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import it.solving.padelmanagement.dto.NoticeDTO;
@@ -27,6 +28,7 @@ import it.solving.padelmanagement.repository.ClubRepository;
 import it.solving.padelmanagement.repository.MatchRepository;
 import it.solving.padelmanagement.repository.NoticeRepository;
 import it.solving.padelmanagement.repository.PlayerRepository;
+import it.solving.padelmanagement.securitymodel.PlayerPrincipal;
 
 @Service
 public class PlayerService {
@@ -117,6 +119,10 @@ public class PlayerService {
 	
 	public void updatePersonalData(InputUpdateMemberMessageDTO inputMessage) {
 		Player newPlayer=playerMapper.convertInputUpdateMemberMessageDTOToPlayer(inputMessage);
+		//Recupero il player dal Security context holder
+		Player player=((PlayerPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getPlayer();
+		// Setto nel nuovo player l'id del player recuperato dal security context holder
+		newPlayer.setId(player.getId());
 		// Recupero le informazioni sul club e sulle partite
 		Player oldPlayer=playerRepository.findByIdWithAllMatchesAndClub(newPlayer.getId()).get();
 		// Trascrivo i match creati
@@ -194,14 +200,17 @@ public class PlayerService {
 		return player.getMatches().stream().noneMatch(match->!match.isPayed());
 	}
 	
-	public void abandonClub(Long id) throws AbandonClubException {
+	public void abandonClub() throws AbandonClubException {
+		//Recupero il player dal Security context holder
+		Player player=((PlayerPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getPlayer();
+				
 		// controllo che il giocatore abbia pagato tutti i match creati, prima di svignarsela
-		if (!thePlayerHasPayedForEveryMatch(id)) {
+		if (!thePlayerHasPayedForEveryMatch(player.getId())) {
 			throw new AbandonClubException("The player has to pay for all the matches he created, before leaving the club!");
 		}
 		
 		// Controllo che il giocatore non abbia call-for-actions né partite fissate per il futuro
-		Player player = playerRepository.findByIdWithAllMatchesAndClub(id).orElseThrow(NoSuchElementException::new);
+		player = playerRepository.findByIdWithAllMatchesAndClub(player.getId()).orElseThrow(NoSuchElementException::new);
 		if (player.getMatches()!=null && player.getMatches().size()>0 && player.getMatches().stream()
 				.filter(match->match.getDate().compareTo(LocalDate.now())>=0).findFirst().orElse(null)==null) {
 			throw new AbandonClubException("The player has created at least one match to play today or in the future");
@@ -217,11 +226,10 @@ public class PlayerService {
 		playerRepository.delete(player);
 	}
 	
-	public Set<NoticeDTO> getClubNotices(Long playerId) {
-		if (!playerRepository.findById(playerId).isPresent()) {
-			throw new NoSuchElementException("One of the requested elements does not exist in the persistence context");
-		}
-		return noticeMapper.convertEntityToDTO(noticeRepository.findAllByClubPlayerId(playerId));
+	public Set<NoticeDTO> getClubNotices() {
+		//Recupero il player dal Security context holder
+		Player player=((PlayerPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getPlayer();				
+		return noticeMapper.convertEntityToDTO(noticeRepository.findAllByClubPlayerId(player.getId()));
 	}
 	
 }

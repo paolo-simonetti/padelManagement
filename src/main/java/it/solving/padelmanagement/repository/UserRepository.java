@@ -24,4 +24,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	
 	@Query("from User u left join fetch u.proPicFile p where u.id=?1")
 	public Optional<User> findByIdWithProPicFile(Long id);
+	
+	@Query("from User u left join fetch u.proPicFile p left join fetch u.newClubProposals n where u.id=?1")
+	public Optional<User> findByIdWithProPicFileAndNewClubProposals(Long id);
 }

@@ -7,6 +7,7 @@ import java.util.Set;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import it.solving.padelmanagement.model.Club;
 import it.solving.padelmanagement.model.PadelMatch;
 
 public interface MatchRepository extends JpaRepository<PadelMatch, Long> {
@@ -15,7 +16,8 @@ public interface MatchRepository extends JpaRepository<PadelMatch, Long> {
 			+ "left join fetch m.court ct left join fetch ct.club cl where m.id=?1")
 	public Optional<PadelMatch> findByIdWithCompleteInfo(Long id);
 	
-	public Set<PadelMatch> findAllByDate(LocalDate date);
+	@Query("from PadelMatch m left join fetch m.court co left join fetch co.club cl where m.date=?1")
+	public Set<PadelMatch> findAllByDateAndClub(LocalDate date, Club club);
 	
 	@Query("from PadelMatch m left join fetch m.creator c where m.id=?1")
 	public Optional<PadelMatch> findByIdWithCreator(Long id);
@@ -40,4 +42,7 @@ public interface MatchRepository extends JpaRepository<PadelMatch, Long> {
 	
 	@Query("from PadelMatch m left join fetch m.court co left join fetch co.club cl where m.id=?1")
 	public Optional<PadelMatch> findByIdWithCourtAndClub(Long id);
+	
+	@Query("from PadelMatch m left join fetch m.court co left join fetch co.club cl left join fetch cl.admin a where m.id=?1")
+	public Optional<PadelMatch> findByIdWithCourtClubAndAdmin(Long id);
 }

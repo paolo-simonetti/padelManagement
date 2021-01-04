@@ -6,6 +6,7 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
@@ -13,7 +14,9 @@ import org.springframework.validation.Validator;
 import it.solving.padelmanagement.dto.message.createpadelmatch.InputVerifyAvailabilityMessageDTO;
 import it.solving.padelmanagement.exception.VerifyAvailabilityException;
 import it.solving.padelmanagement.model.Court;
+import it.solving.padelmanagement.model.Player;
 import it.solving.padelmanagement.repository.PlayerRepository;
+import it.solving.padelmanagement.securitymodel.PlayerPrincipal;
 import it.solving.padelmanagement.util.MyUtil;
 
 @Component
@@ -30,16 +33,12 @@ public class VerifyAvailabilityValidator implements Validator {
 		return InputVerifyAvailabilityMessageDTO.class.isAssignableFrom(clazz);
 	}
 
-	/* TODO: fare un validator a parte, al momento dell'inserimento della partita, per il controllo 
-	 * sul dono dell'ubiquità del giocatore */
 	@Override
 	public void validate(Object target, Errors errors) {
 		InputVerifyAvailabilityMessageDTO inputMessage = (InputVerifyAvailabilityMessageDTO) target;
 		
-		// Controllo che il player esista
-		if (!playerRepository.findById(Long.parseLong(inputMessage.getPlayerId())).isPresent()) {
-			throw new NoSuchElementException();
-		}
+		//Recupero il player dal Security context holder
+		Player player=((PlayerPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getPlayer();		
 		
 		// Controlli di sintassi su inizio e durata della partita
 		LocalDate date=null;
@@ -71,10 +70,10 @@ public class VerifyAvailabilityValidator implements Validator {
 		}
 		
 		// Controllo che ci siano campi attivi nel club 
-		Set<Court> activeCourts=playerRepository.findByIdWithClubAndItsActiveCourts(Long.parseLong(
-				inputMessage.getPlayerId())).get().getClub().getCourts();
+		Set<Court> activeCourts=playerRepository.findByIdWithClubAndItsActiveCourts(player.getId()).get()
+				.getClub().getCourts();
 		if(activeCourts==null || activeCourts.size()==0) {
-			errors.rejectValue("playerId","noActiveCourts","There are no active courts in the club the player is member of");
+			errors.rejectValue("date","noActiveCourts","There are no active courts in the club the player is member of");
 		}
 	}
 

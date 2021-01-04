@@ -11,6 +11,8 @@ import it.solving.padelmanagement.model.Admin;
 
 public class AdminPrincipal implements UserDetails {
 	
+	private static final long serialVersionUID = -5968626130432369335L;
+	
 	private final Admin admin;
 	
 	public AdminPrincipal(Admin admin) {
@@ -50,6 +52,10 @@ public class AdminPrincipal implements UserDetails {
 	@Override
 	public boolean isEnabled() {
 		return true;
+	}
+
+	public Admin getAdmin() {
+		return admin;
 	}
 
 }

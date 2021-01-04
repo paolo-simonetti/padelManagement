@@ -7,22 +7,11 @@ import javax.validation.constraints.PositiveOrZero;
 public class InputUpdateMissingPlayersMessageDTO {
 	
 	@Positive
-	private String creatorId;
-	
-	@Positive
 	private String matchId;
 	
 	@PositiveOrZero
 	@Max(3)
 	private String missingPlayers;
-
-	public String getCreatorId() {
-		return creatorId;
-	}
-
-	public void setCreatorId(String creatorId) {
-		this.creatorId = creatorId;
-	}
 
 	public String getMatchId() {
 		return matchId;
@@ -40,10 +29,9 @@ public class InputUpdateMissingPlayersMessageDTO {
 		this.missingPlayers = missingPlayers;
 	}
 
-	public InputUpdateMissingPlayersMessageDTO(@Positive String creatorId, @Positive String matchId,
+	public InputUpdateMissingPlayersMessageDTO(@Positive String matchId,
 			@PositiveOrZero @Max(3) String missingPlayers) {
 		super();
-		this.creatorId = creatorId;
 		this.matchId = matchId;
 		this.missingPlayers = missingPlayers;
 	}

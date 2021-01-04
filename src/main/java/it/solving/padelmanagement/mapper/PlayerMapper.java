@@ -270,9 +270,6 @@ public class PlayerMapper extends AbstractMapper<Player, PlayerDTO, PlayerInsert
 	
 	public Player convertInputUpdateMemberMessageDTOToPlayer(InputUpdateMemberMessageDTO inputMessage) {
 		Player entity=new Player();
-		if(StringUtils.isNotBlank(inputMessage.getId())) {
-			entity.setId(Long.parseLong(inputMessage.getId()));
-		}
 		
 		if(StringUtils.isNotBlank(inputMessage.getName())) {
 			entity.setName(inputMessage.getName());

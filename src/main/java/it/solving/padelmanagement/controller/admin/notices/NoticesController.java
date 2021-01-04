@@ -14,9 +14,9 @@ import org.springframework.web.bind.annotation.RestController;
 import it.solving.padelmanagement.dto.ResultDTO;
 import it.solving.padelmanagement.dto.message.insert.NoticeInsertMessageDTO;
 import it.solving.padelmanagement.dto.message.update.NoticeUpdateMessageDTO;
+import it.solving.padelmanagement.exception.ForbiddenOperationException;
 import it.solving.padelmanagement.service.NoticeService;
 
-//TODO: in tutte questo package, devo controllare che l'admin stia agendo su roba riguardante il proprio circolo
 @RestController
 @RequestMapping("admin/notices")
 public class NoticesController {
@@ -31,13 +31,13 @@ public class NoticesController {
 	}
 	
 	@PutMapping("update")
-	public ResponseEntity<ResultDTO> updateNotice(@RequestBody NoticeUpdateMessageDTO noticeUpdateMessageDTO) {
+	public ResponseEntity<ResultDTO> updateNotice(@RequestBody NoticeUpdateMessageDTO noticeUpdateMessageDTO) throws ForbiddenOperationException {
 		noticeService.update(noticeUpdateMessageDTO);
 		return ResponseEntity.status(HttpStatus.OK).body(new ResultDTO("The notice was successfully updated"));
 	}
 	
 	@DeleteMapping("delete")
-	public ResponseEntity<ResultDTO> deleteNotice(@RequestParam Long noticeId) {
+	public ResponseEntity<ResultDTO> deleteNotice(@RequestParam Long noticeId) throws ForbiddenOperationException {
 		noticeService.delete(noticeId);
 		return ResponseEntity.status(HttpStatus.OK).body(new ResultDTO("The notice was successfully deleted"));
 	}

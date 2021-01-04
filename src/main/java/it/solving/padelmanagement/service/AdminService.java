@@ -17,6 +17,7 @@ import it.solving.padelmanagement.model.Admin;
 import it.solving.padelmanagement.model.Club;
 import it.solving.padelmanagement.repository.AdminRepository;
 import it.solving.padelmanagement.repository.ClubRepository;
+import it.solving.padelmanagement.repository.ImageRepository;
 
 @Service
 public class AdminService {
@@ -26,6 +27,9 @@ public class AdminService {
 	
 	@Autowired
 	private ClubRepository clubRepository;
+	
+	@Autowired
+	private ImageRepository imageRepository;
 	
 	@Autowired 
 	private AdminMapper adminMapper;
@@ -42,7 +46,9 @@ public class AdminService {
 		Club club=clubMapper.convertInsertMessageDTOToEntity(clubInsertMessageDTO);		
 		// Rimuovo l'admin dalla tabella User
 		userService.delete(idUserToBeDeleted);
-		// Inserisco club e admin nel contesto di persistenza
+		// Inserisco il logo del club, la proPic dell'admin, il club e l'admin nel contesto di persistenza
+		imageRepository.save(admin.getProPicFile());
+		imageRepository.save(club.getLogo());
 		adminRepository.save(admin);
 		clubRepository.save(club);
 		// Li lego tra loro

@@ -111,7 +111,7 @@ public class JoinProposalService {
 		}
 	}
 	
-	public Set<JoinProposalDTO> findAllPendingWithApplicantByClub(Long clubId) {
+	public Set<JoinProposalDTO> findAllPendingWithApplicantByClub(Long clubId) {		
 		return joinProposalMapper.convertEntityToDTO(joinProposalRepository
 			.findAllPendingWithApplicantByClub(clubId)
 			.stream().filter(joinProposal->joinProposal.getProposalStatus()==ProposalStatus.PENDING)

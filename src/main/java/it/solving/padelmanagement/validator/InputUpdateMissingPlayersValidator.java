@@ -3,6 +3,7 @@ package it.solving.padelmanagement.validator;
 import java.util.NoSuchElementException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
@@ -12,6 +13,7 @@ import it.solving.padelmanagement.model.PadelMatch;
 import it.solving.padelmanagement.model.Player;
 import it.solving.padelmanagement.repository.MatchRepository;
 import it.solving.padelmanagement.repository.PlayerRepository;
+import it.solving.padelmanagement.securitymodel.PlayerPrincipal;
 import it.solving.padelmanagement.util.MyUtil;
 
 @Component
@@ -35,9 +37,8 @@ public class InputUpdateMissingPlayersValidator implements Validator {
 	public void validate(Object target, Errors errors) {
 		InputUpdateMissingPlayersMessageDTO inputMessage=(InputUpdateMissingPlayersMessageDTO) target;
 		
-		// Controllo che il creatore esista
-		Player creator=playerRepository.findByIdWithAllMatches(Long.parseLong(inputMessage.getCreatorId()))
-				.orElseThrow(NoSuchElementException::new);
+		//Recupero il player dal Security context holder
+		Player creator=((PlayerPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getPlayer();
 		
 		// Controllo che il match esista
 		PadelMatch match=matchRepository.findByIdWithCreatorAndOtherPlayersAndSlots(

@@ -8,9 +8,6 @@ import javax.validation.constraints.PositiveOrZero;
 
 public class InputVerifyAvailabilityMessageDTO {
 	
-	@Positive
-	protected String playerId;
-	
 	@NotBlank
 	protected String date;
 	
@@ -29,14 +26,6 @@ public class InputVerifyAvailabilityMessageDTO {
 	@PositiveOrZero
 	@Max(30)
 	protected String durationMinute;
-
-	public String getPlayerId() {
-		return playerId;
-	}
-
-	public void setPlayerId(String playerId) {
-		this.playerId = playerId;
-	}
 
 	public String getDate() {
 		return date;
@@ -78,11 +67,10 @@ public class InputVerifyAvailabilityMessageDTO {
 		this.durationMinute = durationMinute;
 	}
 
-	public InputVerifyAvailabilityMessageDTO(@Positive String playerId, @NotBlank String date,
+	public InputVerifyAvailabilityMessageDTO(@NotBlank String date,
 			@Min(8) @Max(20) String hour, @Positive @Max(30) String minute, @Min(1) @Max(14) String durationHour,
 			@Positive @Max(30) String durationMinute) {
 		super();
-		this.playerId = playerId;
 		this.date = date;
 		this.hour = hour;
 		this.minute = minute;

@@ -9,10 +9,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import it.solving.padelmanagement.dto.ResultDTO;
 import it.solving.padelmanagement.exception.AbandonClubException;
-import it.solving.padelmanagement.exception.CourtBeReservedException;
 import it.solving.padelmanagement.exception.EmailException;
+import it.solving.padelmanagement.exception.ForbiddenOperationException;
 import it.solving.padelmanagement.exception.MatchInsertException;
-import it.solving.padelmanagement.exception.MatchPaymentException;
 import it.solving.padelmanagement.exception.MatchUpdateException;
 import it.solving.padelmanagement.exception.NonAdmissibleActionOnMatchNow;
 import it.solving.padelmanagement.exception.NonAdmissibleProposalException;
@@ -28,9 +27,9 @@ public class ExceptionsHandler {
     public ResponseEntity<ResultDTO> handleNoSuchElementException(NoSuchElementException e){
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResultDTO("One of the requested elements is not present in the persistence context."));
     }
-
-	@ExceptionHandler(MatchPaymentException.class)
-	public ResponseEntity<ResultDTO> handleMatchPaymentException(MatchPaymentException e){
+	
+	@ExceptionHandler(ForbiddenOperationException.class)
+	public ResponseEntity<ResultDTO> handleMatchPaymentException(ForbiddenOperationException e){
 	    return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResultDTO(e.getMessage()));
 	}
 	
@@ -39,11 +38,6 @@ public class ExceptionsHandler {
 	    return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResultDTO(e.getMessage()));
 	}
 	
-	@ExceptionHandler(CourtBeReservedException.class) 
-	public ResponseEntity<ResultDTO> handleCourtBeReservedException (CourtBeReservedException e) {
-		return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResultDTO(e.getMessage()));
-	}
-	   
 	@ExceptionHandler(ProposalStatusException.class) 
 	public ResponseEntity<ResultDTO> handleProposalStatusException (ProposalStatusException e) {
 		return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ResultDTO(e.getMessage()));
