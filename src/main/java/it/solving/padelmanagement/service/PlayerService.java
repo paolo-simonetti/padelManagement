@@ -165,7 +165,8 @@ public class PlayerService {
 	
 	public String joinCallForAction(InputJoinCallForActionMessageDTO inputMessage) throws EmailException {
 		PadelMatch match=matchRepository.findByIdWithOtherPlayersAndCreatorAndCourtAndClub(Long.parseLong(inputMessage.getMatchId())).get();
-		Player player=playerRepository.findByIdWithMatchesJoined(Long.parseLong(inputMessage.getPlayerId())).get();
+		Player player=((PlayerPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getPlayer();
+		player=playerRepository.findByIdWithMatchesJoined(player.getId()).get();
 		player.addToMatchesJoined(match);
 		match.addToOtherPlayers(player);
 		match.decrementMissingPlayers();

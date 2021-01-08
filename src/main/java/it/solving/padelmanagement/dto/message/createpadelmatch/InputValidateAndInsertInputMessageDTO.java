@@ -37,7 +37,7 @@ public class InputValidateAndInsertInputMessageDTO extends InputVerifyAvailabili
 	public InputValidateAndInsertInputMessageDTO(@Positive String playerId, @NotBlank String date,
 			@Min(8) @Max(20) String hour, @Positive @Max(30) String minute, @Min(1) @Max(14) String durationHour,
 			@Positive @Max(30) String durationMinute, @Min(0) @Max(3) String missingPlayers, @Positive String courtId) {
-		super(playerId, date, hour, minute, durationHour, durationMinute);
+		super(date, hour, minute, durationHour, durationMinute);
 		this.missingPlayers=missingPlayers;
 		this.courtId=courtId;
 	}
@@ -45,7 +45,7 @@ public class InputValidateAndInsertInputMessageDTO extends InputVerifyAvailabili
 	public InputValidateAndInsertInputMessageDTO(@Positive String playerId, @NotBlank String date,
 			@Min(8) @Max(20) String hour, @Positive @Max(30) String minute, @Min(1) @Max(14) String durationHour,
 			@Positive @Max(30) String durationMinute, @Positive String courtId) {
-		super(playerId, date, hour, minute, durationHour, durationMinute);
+		super(date, hour, minute, durationHour, durationMinute);
 		this.courtId = courtId;
 	}
 
